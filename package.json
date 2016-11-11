@@ -4,7 +4,10 @@
   "description": "",
   "scripts": {
     "install:client": "cd client && npm install && typings install",
-    "postinstall": "npm run install:client"
+    "postinstall": "npm run install:client",
+    "build:client": "cd client && gulp build",
+    "clean:client": "cd client && gulp clean",
+    "watch:client": "cd client && gulp watch"
   },
   "devDependencies": {
     "typings": "^2.0.0"
