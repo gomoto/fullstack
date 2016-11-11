@@ -2,5 +2,11 @@
   "name": "fullstack",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js"
+  "scripts": {
+    "install:client": "cd client && npm install && typings install",
+    "postinstall": "npm run install:client"
+  },
+  "devDependencies": {
+    "typings": "^2.0.0"
+  }
 }
