@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html ng-app="">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+  <title></title>
+  <base href="/">
+  <link rel="shortcut icon" href="/assets/favicon.ico">
+  <link rel="icon" type="image/png" href="/assets/favicon-192x192.png" sizes="192x192">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon-180x180.png">
+  <!--inject:css-->
+  <link rel="stylesheet" href="{app}">
+  <!--endinject-->
+</head>
+<body>
+  <div id="uiRoot" ui-view></div>
+
+  <!--inject:template-->
+  <script type="text/ng-template" id="{path}">{content}</script>
+  <!--endinject-->
+
+  <!--inject:js-->
+  <script src="{angular}"></script>
+  <script src="{angular-ui-router}"></script>
+  <script src="{app}"></script>
+  <!--endinject-->
+</body>
+</html>
