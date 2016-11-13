@@ -37,8 +37,8 @@ gulp.task('html', ['html:clean', 'sass'], function() {
 /**
  * Clean index.html
  */
-gulp.task('html:clean', function() {
-  trash(['index.html']);
+gulp.task('html:clean', function(done) {
+  trash(['index.html']).then(done);
 });
 
 /**
@@ -76,8 +76,8 @@ gulp.task('sass', ['sass:clean'], function() {
 /**
  * Delete index.css and its sourcemap.
  */
-gulp.task('sass:clean', function() {
-  trash(['index-*.css', 'index-*.css.map']);
+gulp.task('sass:clean', function(done) {
+  trash(['index-*.css', 'index-*.css.map']).then(done);
 });
 
 /**
