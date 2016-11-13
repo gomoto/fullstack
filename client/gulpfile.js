@@ -22,7 +22,7 @@ const logWatchEvent = (event) => {
 /**
  * Generate index.html
  */
-gulp.task('html', ['sass'], function() {
+gulp.task('html', ['html:clean', 'sass'], function() {
   fs.createReadStream('src/index.html')
   .pipe(htmlInjector('templates', null, ['src/modules/**/*.html']))
   .pipe(htmlInjector('css', null, ['index-*.css']))
@@ -82,10 +82,11 @@ gulp.task('sass:clean', function() {
 
 /**
  * Rebuild index.css and its sourcemap whenever any scss file changes.
+ * Rebuild index.html to update index.css hash.
  */
 gulp.task('sass:watch', ['sass'], function() {
   return gulp
-  .watch('src/**/*.scss', ['sass'])
+  .watch('src/**/*.scss', ['sass', 'html'])
   .on('change', logWatchEvent)
   .on('add', logWatchEvent)
   .on('delete', logWatchEvent)
