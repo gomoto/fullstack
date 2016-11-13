@@ -22,10 +22,10 @@ const logWatchEvent = (event) => {
 /**
  * Generate index.html
  */
-gulp.task('html', function(done) {
+gulp.task('html', ['sass'], function() {
   fs.createReadStream('src/index.html')
   .pipe(htmlInjector('templates', null, ['src/modules/**/*.html']))
-  .pipe(htmlInjector('css', { app: 'index.css' }))
+  .pipe(htmlInjector('css', null, ['index-*.css']))
   .pipe(htmlInjector('js', { app: 'index.js', vendor: 'vendor.js' }))
   .pipe(htmlMinifierStream({
     collapseWhitespace: true,
