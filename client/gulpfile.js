@@ -1,18 +1,62 @@
 const autoprefixer = require('gulp-autoprefixer');
+const fs = require('fs');
 const gulp = require('gulp');
+const htmlInjector = require('html-injector');
+const htmlMinifierStream = require('html-minifier-stream');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
 const trash = require('trash');
+
+
+const logWatchEvent = (event) => {
+ console.log(`${event.path} ${event.type}`);
+};
+
+
+
+/**
+ * index.html
+ */
+
+/**
+ * Generate index.html
+ */
+gulp.task('html', function(done) {
+  fs.createReadStream('src/index.html')
+  .pipe(htmlInjector('templates', null, ['src/modules/**/*.html']))
+  .pipe(htmlInjector('css', { app: 'index.css' }))
+  .pipe(htmlInjector('js', { app: 'index.js', vendor: 'vendor.js' }))
+  .pipe(htmlMinifierStream({
+    collapseWhitespace: true,
+    processScripts: ['text/ng-template']
+  }))
+  .pipe(fs.createWriteStream('index.html'));
+});
+
+/**
+ * Clean index.html
+ */
+gulp.task('html:clean', function() {
+  trash(['index.html']);
+});
+
+/**
+ * Rebuild index.html whenever any html file changes.
+ */
+gulp.task('html:watch', ['html'], function() {
+  return gulp
+  .watch(['src/**/*.html'], ['html'])
+  .on('change', logWatchEvent)
+  .on('add', logWatchEvent)
+  .on('delete', logWatchEvent)
+  .on('rename', logWatchEvent);
+});
 
 
 
 /**
  * index.css
  */
-
-const logWatchEvent = (event) => {
-  console.log(`${event.path} ${event.type}`);
-};
 
 /**
  * Generate index.css and its sourcemap.
@@ -35,7 +79,7 @@ gulp.task('sass:clean', function() {
 });
 
 /**
- * Rebuild index.css and its sourcemap each time a scss file changes.
+ * Rebuild index.css and its sourcemap whenever any scss file changes.
  */
 gulp.task('sass:watch', ['sass'], function() {
   return gulp
@@ -46,8 +90,8 @@ gulp.task('sass:watch', ['sass'], function() {
   .on('rename', logWatchEvent);
 });
 
-gulp.task('build', [/*'html',*/'sass'/*,'ts'*/]);
+gulp.task('build', ['html', 'sass'/*,'ts'*/]);
 
-gulp.task('clean', [/*'html:clean',*/'sass:clean'/*,'ts:clean'*/]);
+gulp.task('clean', ['html:clean', 'sass:clean'/*,'ts:clean'*/]);
 
-gulp.task('watch', [/*'html:watch',*/'sass:watch'/*,'ts:watch'*/]);
+gulp.task('watch', ['html:watch', 'sass:watch'/*,'ts:watch'*/]);
