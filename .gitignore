@@ -3,4 +3,6 @@ typings
 
 /client/index-*.css
 /client/index-*.css.map
+/client/index-*.js
+/client/index-*.js.map
 /client/index.html

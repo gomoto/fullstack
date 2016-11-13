@@ -5,4 +5,4 @@ angular.module('app', [
   'ui.router',
   widget
 ])
-.config(routes)
+.config(routes);
