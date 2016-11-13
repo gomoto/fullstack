@@ -3,6 +3,7 @@ const fs = require('fs');
 const gulp = require('gulp');
 const htmlInjector = require('html-injector');
 const htmlMinifierStream = require('html-minifier-stream');
+const rev = require('gulp-rev');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
 const trash = require('trash');
@@ -61,12 +62,13 @@ gulp.task('html:watch', ['html'], function() {
 /**
  * Generate index.css and its sourcemap.
  */
-gulp.task('sass', function() {
+gulp.task('sass', ['sass:clean'], function() {
   return gulp
   .src('src/index.scss')
   .pipe(sourcemaps.init())
   .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
   .pipe(autoprefixer({ browsers: ['last 2 versions'] }))
+  .pipe(rev())
   .pipe(sourcemaps.write('.'))
   .pipe(gulp.dest('.'));
 });
@@ -75,7 +77,7 @@ gulp.task('sass', function() {
  * Delete index.css and its sourcemap.
  */
 gulp.task('sass:clean', function() {
-  trash(['index.css', 'index.css.map']);
+  trash(['index-*.css', 'index-*.css.map']);
 });
 
 /**

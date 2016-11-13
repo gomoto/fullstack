@@ -10,6 +10,7 @@
     "watch:client": "cd client && gulp watch"
   },
   "devDependencies": {
+    "gulp-rev": "^7.1.2",
     "typings": "^2.0.0"
   }
 }
