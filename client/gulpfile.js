@@ -136,53 +136,44 @@ gulp.task('sass:watch', ['sass'], function() {
  * JS
  */
 
+// NOTE: When using watchify and tsify together, updating a typescript file in
+// one bundle triggers an update event in all bundles. Stick to one typescript
+// bundle until this is resolved.
 
-
-/**
- * Bundle specifications.
- * Each bundle cleans itself up before rebundling.
- */
-const bundles = [{
+const js = {
   entries: ['src/index.ts'],
   output: 'index.js',
   destination: '.',
+  // Bundle cleans itself up before rebundling
   pre: (done) => {
-    console.log('pre-app');
-    cleanJsApp().then(done);
+    console.log('pre-js');
+    cleanJs().then(done);
   },
   post: () => {
-    console.log('post-app');
-    rebuildHtml();
+    console.log('post-js');
+    rebuildHtml(() => {
+      console.log('index.html updated');
+    });
   }
-}, {
-  entries: ['src/vendor.ts'],
-  output: 'vendor.js',
-  destination: '.',
-  pre: (done) => {
-    console.log('pre-vendor');
-    cleanJsVendor().then(done);
-  },
-  post: () => {
-    console.log('post-vendor');
-    rebuildHtml();
-  }
-}];
-
-
+};
 
 /**
  * Create a single js bundle.
  * Hooks pre and post are not called on initial bundle.
- * @param  {string[]} options.entries array of bundle entry files
- * @param  {string} options.output name of bundle file
- * @param  {string} options.destination directory containing bundle file
+ * @param  {string[]} bundle.entries array of bundle entry files
+ * @param  {string} bundle.output name of bundle file
+ * @param  {string} bundle.destination directory containing bundle file
+ * @param  {Function} bundle.pre pre-bundle hook
+ * @param  {Function} bundle.post pose-bundle hook
  * @return {stream} browserifyBundleStream
  */
-const createBundle = (options, isWatchify) => {
+function buildJs(isWatchify) {
+  console.log('buildJs');
+
   const browserifyOptions = {
     cache: {},
     packageCache: {},
-    entries: options.entries,
+    entries: js.entries,
     debug: true
   };
 
@@ -192,13 +183,13 @@ const createBundle = (options, isWatchify) => {
   const rebundle = (callback) => {
     return b.bundle()
     .on('error', console.error)
-    .pipe(source(options.output))
+    .pipe(source(js.output))
     .pipe(buffer())
     .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(uglify())
     .pipe(rev())
-    .pipe(sourcemaps.write(options.destination))
-    .pipe(gulp.dest(options.destination))
+    .pipe(sourcemaps.write(js.destination))
+    .pipe(gulp.dest(js.destination))
     .on('finish', function() {
       if (typeof callback === 'function') {
         callback();
@@ -210,8 +201,8 @@ const createBundle = (options, isWatchify) => {
     b.plugin(watchify);
     b.on('update', (ids) => {
       console.log(ids);
-      options.pre(() => {
-        rebundle(options.post);
+      js.pre(() => {
+        rebundle(js.post);
       });
     });
     b.on('log', console.log);
@@ -222,37 +213,39 @@ const createBundle = (options, isWatchify) => {
 
 
 
-/**
- * Build js files, then rebuild html files.
- * @param {boolean} isWatching
- * @param {Function} done
- */
-function buildJs(isWatching, done) {
-  console.log('buildJs');
-  const bundleStreams = bundles.map((bundle) => {
-    return createBundle(bundle, isWatching);
-  });
-  mergeStream(...bundleStreams)
-  .on('finish', () => {
-    rebuildHtml(done);
-  });
-}
+const vendor = {
+  output: 'vendor.js',
+  destination: '.'
+};
 
-/**
- * Clean js files.
- * @return {promise}
- */
-function cleanJs() {
-  console.log('cleanJs');
-  return Promise.all([cleanJsApp(), cleanJsVendor()]);
-}
+function buildVendor() {
+  console.log('buildVendor');
+
+  const b = browserify({ debug: true });
+
+  require('./src/vendors.json').forEach((vendor) => {
+    b.require(vendor);
+  });
+
+  return b.bundle()
+  .on('error', console.error)
+  .pipe(source(vendor.output))
+  .pipe(buffer())
+  .pipe(sourcemaps.init({ loadMaps: true }))
+  .pipe(uglify())
+  .pipe(rev())
+  .pipe(sourcemaps.write(vendor.destination))
+  .pipe(gulp.dest(vendor.destination));
+};
+
+
 
 /**
  * Clean app js files.
  * @return {promise}
  */
-function cleanJsApp() {
-  console.log('cleanJsApp');
+function cleanJs() {
+  console.log('cleanJs');
   return trash(['index-*.js', 'index-*.js.map']);
 }
 
@@ -260,17 +253,21 @@ function cleanJsApp() {
  * Clean vendor js files.
  * @return {promise}
  */
-function cleanJsVendor() {
-  console.log('cleanJsVendor');
+function cleanVendor() {
+  console.log('cleanVendor');
   return trash(['vendor-*.js', 'vendor-*.js.map']);
 }
+
+
 
 /**
  * Generate js files and their sourcemaps.
  */
 gulp.task('js', function(done) {
   cleanJs().then(() => {
-    buildJs(false, done);
+    buildJs(false).on('finish', () => {
+      rebuildHtml(done);
+    });
   });
 });
 
@@ -282,19 +279,52 @@ gulp.task('js:clean', function(done) {
 });
 
 /**
- * Rebuild each bundle and its sourcemap whenever a file changes within it.
- * Rebuild index.html to update js file hashes.
+ * Rebuild js bundle and its sourcemap whenever a file changes within it.
+ * Rebuild index.html to update js file hash.
  */
 gulp.task('js:watch', function(done) {
   cleanJs().then(() => {
-    buildJs(true, done);
+    buildJs(true).on('finish', () => {
+      rebuildHtml(done);
+    });
   });
+});
+
+/**
+ * Generate vendor js files and their sourcemaps.
+ */
+gulp.task('vendor', function(done) {
+  cleanVendor().then(() => {
+    buildVendor().on('finish', () => {
+      rebuildHtml(done);
+    });
+  });
+});
+
+/**
+ * Delete vendor js files and their sourcemaps.
+ */
+gulp.task('vendor:clean', function(done) {
+  cleanVendor().then(done);
+});
+
+/**
+ * Rebuild vendor bundle and its sourcemap whenever a file changes within it.
+ * Rebuild index.html to update vendor file hash.
+ */
+gulp.task('vendor:watch', function() {
+  return gulp.watch('src/vendors.json', ['vendor'])
+  .on('change', logWatchEvent)
+  .on('add', logWatchEvent)
+  .on('delete', logWatchEvent)
+  .on('rename', logWatchEvent);
 });
 
 
 
-gulp.task('build', ['html', 'sass', 'js']);
 
-gulp.task('clean', ['html:clean', 'sass:clean', 'js:clean']);
+gulp.task('build', ['html', 'sass', 'js', 'vendor']);
 
-gulp.task('watch', ['html:watch', 'sass:watch', 'js:watch']);
+gulp.task('clean', ['html:clean', 'sass:clean', 'js:clean', 'vendor:clean']);
+
+gulp.task('watch', ['html:watch', 'sass:watch', 'js:watch', 'vendor:watch']);
