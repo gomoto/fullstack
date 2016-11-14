@@ -100,14 +100,7 @@ function rebuildHtml(done) {
  * Generate index.css and its sourcemap.
  */
 gulp.task('sass', ['sass:clean'], function() {
-  return gulp
-  .src('src/index.scss')
-  .pipe(sourcemaps.init())
-  .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
-  .pipe(autoprefixer({ browsers: ['last 2 versions'] }))
-  .pipe(rev())
-  .pipe(sourcemaps.write('.'))
-  .pipe(gulp.dest('.'));
+  return buildCss();
 });
 
 /**
@@ -130,6 +123,16 @@ gulp.task('sass:watch', ['sass'], function() {
   .on('rename', logWatchEvent);
 });
 
+function buildCss() {
+  console.log('buildCss');
+  return gulp.src('src/index.scss')
+  .pipe(sourcemaps.init())
+  .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
+  .pipe(autoprefixer({ browsers: ['last 2 versions'] }))
+  .pipe(rev())
+  .pipe(sourcemaps.write('.'))
+  .pipe(gulp.dest('.'));
+}
 
 
 /**
@@ -323,7 +326,16 @@ gulp.task('vendor:watch', function() {
 
 
 
-gulp.task('build', ['html', 'sass', 'js', 'vendor']);
+gulp.task('build', function(done) {
+  mergeStream([
+    buildCss(),
+    buildJs(false),
+    buildVendor()
+  ])
+  .on('finish', function() {
+    buildHtml(done);
+  })
+});
 
 gulp.task('clean', ['html:clean', 'sass:clean', 'js:clean', 'vendor:clean']);
 
