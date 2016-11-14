@@ -119,7 +119,7 @@ gulp.task('sass:clean', function(done) {
  */
 gulp.task('sass:watch', ['sass'], function() {
   return gulp
-  .watch('src/**/*.scss', ['sass', 'html'])
+  .watch('src/**/*.scss', ['sass'])
   .on('change', logWatchEvent)
   .on('add', logWatchEvent)
   .on('delete', logWatchEvent)
