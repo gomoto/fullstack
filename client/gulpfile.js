@@ -132,7 +132,7 @@ gulp.task('sass:watch', ['sass'], function() {
  * Generate index.js and its sourcemap.
  */
 gulp.task('ts', function() {
-  rebuildJs(createBrowserifier());
+  rebuildJs(createBrowserifier('src/index.ts'));
 });
 
 /**
@@ -148,7 +148,7 @@ gulp.task('ts:clean', function(done) {
  */
 gulp.task('ts:watch', function() {
   // watchify requires extra options
-  const browserifier = createBrowserifier({
+  const browserifier = createBrowserifier('src/index.ts', {
     cache: {},
     packageCache: {},
     plugin: [watchify]
@@ -169,7 +169,7 @@ gulp.task('ts:watch', function() {
  * @param  {Browserify} browserifier
  */
 function buildJs(browserifier) {
-  bundle(browserifier, function() {
+  bundle(browserifier, 'index.js', function() {
     rebuildHtml();
   });
 }
@@ -192,16 +192,86 @@ function rebuildJs(browserifier) {
   });
 }
 
+
+
+/**
+ * Vendor
+ */
+
+/**
+ * Generate vendor.js and its sourcemap.
+ */
+gulp.task('vendor', function() {
+  rebuildVendor(createBrowserifier('src/vendor.ts'));
+});
+
+/**
+ * Delete vendor.js and its sourcemap.
+ */
+gulp.task('vendor:clean', function(done) {
+  cleanVendor().then(done);
+});
+
+/**
+ * Rebuild vendor.js and its sourcemap whenever vendor.ts file changes.
+ * Rebuild index.html to update vendor.js hash.
+ */
+gulp.task('vendor:watch', function() {
+  // watchify requires extra options
+  const browserifier = createBrowserifier('src/vendor.ts', {
+    cache: {},
+    packageCache: {},
+    plugin: [watchify]
+  });
+
+  browserifier.on('update', (ids) => {
+    console.log(ids);
+    rebuildVendor(browserifier);
+  });
+
+  browserifier.on('log', console.log);
+
+  rebuildVendor(browserifier);
+});
+
+/**
+ * Build vendor files, then rebuild html files.
+ * @param  {Browserify} browserifier
+ */
+function buildVendor(browserifier) {
+  bundle(browserifier, 'vendor.js', function() {
+    rebuildHtml();
+  });
+}
+
+/**
+ * Clean vendor files.
+ * @return {promise}
+ */
+function cleanVendor() {
+  return trash(['vendor-*.js', 'vendor-*.js.map']);
+}
+
+/**
+ * Clean and rebuild vendor files.
+ * @param  {Browserify} browserifier
+ */
+function rebuildVendor(browserifier) {
+  cleanVendor().then(function() {
+    buildVendor(browserifier);
+  });
+}
+
 /**
  * Create a browserify instance.
  * @param  {BrowserifyOptions} options
  * @return {Browserify} instance
  */
-function createBrowserifier(options) {
+function createBrowserifier(entry, options) {
   options = options || {};
   options.debug = true;
   return browserify(options)
-  .add('src/index.ts')
+  .add(entry)
   .plugin(tsify, { project: 'tsconfig.json' });
 }
 
@@ -211,10 +281,10 @@ function createBrowserifier(options) {
  * @param  {browserify} browserifier
  * @param  {Function} callback
  */
-function bundle(browserifier, callback) {
+function bundle(browserifier, name, callback) {
   browserifier.bundle()
   .on('error', console.error)
-  .pipe(source('index.js'))
+  .pipe(source(name))
   .pipe(buffer())
   .pipe(sourcemaps.init({ loadMaps: true }))
   .pipe(uglify())
@@ -230,8 +300,8 @@ function bundle(browserifier, callback) {
 
 
 
-gulp.task('build', ['html', 'sass', 'ts']);
+gulp.task('build', ['html', 'sass', 'ts', 'vendor']);
 
-gulp.task('clean', ['html:clean', 'sass:clean', 'ts:clean']);
+gulp.task('clean', ['html:clean', 'sass:clean', 'ts:clean', 'vendor:clean']);
 
-gulp.task('watch', ['html:watch', 'sass:watch', 'ts:watch']);
+gulp.task('watch', ['html:watch', 'sass:watch', 'ts:watch', 'vendor:watch']);
