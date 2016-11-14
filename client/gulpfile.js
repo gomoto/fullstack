@@ -327,7 +327,7 @@ gulp.task('vendor:clean', function(done) {
  * Rebuild vendor bundle and its sourcemap whenever a file changes within it.
  * Rebuild index.html to update vendor file hash.
  */
-gulp.task('vendor:watch', function() {
+gulp.task('vendor:watch', ['vendor'], function() {
   return gulp.watch('src/vendors.json', ['vendor'])
   .on('change', logWatchEvent)
   .on('add', logWatchEvent)
