@@ -53,6 +53,7 @@ gulp.task('html:watch', ['html'], function() {
 
 /**
  * Build html files.
+ * FIXME: In build task, this gets called twice because of buildJs().
  */
 function buildHtml() {
   fs.createReadStream('src/index.html')
