@@ -28,23 +28,15 @@ const logWatchEvent = (event) => {
 /**
  * Generate index.html
  */
-gulp.task('html', ['html:clean', 'sass'], function() {
-  fs.createReadStream('src/index.html')
-  .pipe(htmlInjector('templates', null, ['src/modules/**/*.html']))
-  .pipe(htmlInjector('css', null, ['index-*.css']))
-  .pipe(htmlInjector('js', { app: 'index.js', vendor: 'vendor.js' }))
-  .pipe(htmlMinifierStream({
-    collapseWhitespace: true,
-    processScripts: ['text/ng-template']
-  }))
-  .pipe(fs.createWriteStream('index.html'));
+gulp.task('html', ['sass'], function() {
+  rebuildHtml();
 });
 
 /**
  * Clean index.html
  */
 gulp.task('html:clean', function(done) {
-  trash(['index.html']).then(done);
+  cleanHtml().then(done);
 });
 
 /**
@@ -58,6 +50,36 @@ gulp.task('html:watch', ['html'], function() {
   .on('delete', logWatchEvent)
   .on('rename', logWatchEvent);
 });
+
+/**
+ * Build html files.
+ */
+function buildHtml() {
+  fs.createReadStream('src/index.html')
+  .pipe(htmlInjector('templates', null, ['src/modules/**/*.html']))
+  .pipe(htmlInjector('css', null, ['index-*.css']))
+  .pipe(htmlInjector('js', null, ['index-*.js']))
+  .pipe(htmlMinifierStream({
+    collapseWhitespace: true,
+    processScripts: ['text/ng-template']
+  }))
+  .pipe(fs.createWriteStream('index.html'));
+}
+
+/**
+ * Clean html files.
+ * @return {promise}
+ */
+function cleanHtml() {
+  return trash(['index.html']);
+}
+
+/**
+ * Clean and rebuild html files.
+ */
+function rebuildHtml() {
+  cleanHtml().then(buildHtml);
+}
 
 
 
@@ -108,56 +130,87 @@ gulp.task('sass:watch', ['sass'], function() {
 /**
  * Generate index.js and its sourcemap.
  */
-gulp.task('ts', ['ts:clean'], function() {
-  bundle(createBrowserifier());
+gulp.task('ts', function() {
+  rebuildJs(createBrowserifier());
 });
 
 /**
  * Delete index.js and its sourcemap.
  */
 gulp.task('ts:clean', function(done) {
-  trash(['index-*.js', 'index-*.js.map']).then(done);
+  cleanJs().then(done);
 });
 
 /**
  * Rebuild index.js and its sourcemap whenever any ts file changes.
  * Rebuild index.html to update index.js hash.
  */
-gulp.task('ts:watch', ['ts'], function() {
-  bundle(createBrowserifier(true));
+gulp.task('ts:watch', function() {
+  // watchify requires extra options
+  const browserifier = createBrowserifier({
+    cache: {},
+    packageCache: {},
+    plugin: [watchify]
+  });
+
+  browserifier.on('update', (ids) => {
+    console.log(ids);
+    rebuildJs(browserifier);
+  });
+
+  browserifier.on('log', console.log);
+
+  rebuildJs(browserifier);
 });
 
-
-
-function createBrowserifier(watchMode) {
-  const options = {
-    debug: true
-  };
-
-  if (watchMode) {
-    options.cache = {};
-    options.packageCache = {};
-  }
-
-  const browserifier = browserify(options)
-  .add('src/index.ts')
-  .plugin(tsify, { project: 'tsconfig.json' });
-
-  if (watchMode) {
-    browserifier.plugin(watchify)
-    .on('update', (ids) => {
-      console.log(ids);
-      bundle(browserifier);
-    })
-    .on('log', console.log);
-  }
-
-  return browserifier;
+/**
+ * Build js files, then rebuild html files.
+ * @param  {Browserify} browserifier
+ */
+function buildJs(browserifier) {
+  bundle(browserifier, function() {
+    rebuildHtml();
+  });
 }
 
+/**
+ * Clean js files.
+ * @return {promise}
+ */
+function cleanJs() {
+  return trash(['index-*.js', 'index-*.js.map']);
+}
 
+/**
+ * Clean and rebuild js files.
+ * @param  {Browserify} browserifier
+ */
+function rebuildJs(browserifier) {
+  cleanJs().then(function() {
+    buildJs(browserifier);
+  });
+}
 
-function bundle(browserifier) {
+/**
+ * Create a browserify instance.
+ * @param  {BrowserifyOptions} options
+ * @return {Browserify} instance
+ */
+function createBrowserifier(options) {
+  options = options || {};
+  options.debug = true;
+  return browserify(options)
+  .add('src/index.ts')
+  .plugin(tsify, { project: 'tsconfig.json' });
+}
+
+/**
+ * Bundle the given browserify instance.
+ * Call the given callback after bundle is written to disk.
+ * @param  {browserify} browserifier
+ * @param  {Function} callback
+ */
+function bundle(browserifier, callback) {
   browserifier.bundle()
   .on('error', console.error)
   .pipe(source('index.js'))
@@ -166,7 +219,12 @@ function bundle(browserifier) {
   .pipe(uglify())
   .pipe(rev())
   .pipe(sourcemaps.write('.'))
-  .pipe(gulp.dest('.'));
+  .pipe(gulp.dest('.'))
+  .on('finish', function() {
+    if (typeof callback === 'function') {
+      callback();
+    }
+  });
 }
 
 
