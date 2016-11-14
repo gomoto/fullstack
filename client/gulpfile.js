@@ -30,8 +30,8 @@ const logWatchEvent = (event) => {
 /**
  * Generate index.html
  */
-gulp.task('html', ['sass'], function() {
-  rebuildHtml();
+gulp.task('html', function(done) {
+  rebuildHtml(done);
 });
 
 /**
