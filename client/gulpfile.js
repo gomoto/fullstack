@@ -349,6 +349,13 @@ gulp.task('build', function(done) {
   })
 });
 
-gulp.task('clean', ['html:clean', 'sass:clean', 'js:clean', 'vendor:clean']);
+gulp.task('clean', function(done) {
+  Promise.all([
+    cleanHtml(),
+    cleanCss(),
+    cleanJs(),
+    cleanVendor()
+  ]).then(() => done());
+});
 
 gulp.task('watch', ['html:watch', 'sass:watch', 'js:watch', 'vendor:watch']);
