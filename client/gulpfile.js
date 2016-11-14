@@ -84,7 +84,6 @@ function cleanHtml() {
  * Clean and rebuild html files.
  */
 function rebuildHtml(done) {
-  console.log('rebuildHtml');
   cleanHtml().then(() => {
     buildHtml(done);
   });
@@ -99,15 +98,19 @@ function rebuildHtml(done) {
 /**
  * Generate index.css and its sourcemap.
  */
-gulp.task('sass', ['sass:clean'], function() {
-  return buildCss();
+gulp.task('sass', function(done) {
+  cleanCss().then(() => {
+    buildCss().on('finish', () => {
+      rebuildHtml(done);
+    });
+  });
 });
 
 /**
  * Delete index.css and its sourcemap.
  */
 gulp.task('sass:clean', function(done) {
-  trash(['index-*.css', 'index-*.css.map']).then(done);
+  cleanCss().then(done);
 });
 
 /**
@@ -132,6 +135,15 @@ function buildCss() {
   .pipe(rev())
   .pipe(sourcemaps.write('.'))
   .pipe(gulp.dest('.'));
+}
+
+/**
+ * Clean css files.
+ * @return {promise}
+ */
+function cleanCss() {
+  console.log('cleanCss');
+  return trash(['index-*.css', 'index-*.css.map']);
 }
 
 
