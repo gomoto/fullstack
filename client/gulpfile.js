@@ -305,7 +305,7 @@ function buildVendor() {
 
   const b = browserify({ debug: true });
 
-  require('./src/vendors.json').forEach((vendor) => {
+  require('./vendors.json').forEach((vendor) => {
     b.require(vendor);
   });
 
@@ -340,7 +340,7 @@ function cleanVendor() {
  */
 function watchVendor() {
   console.log('watching vendor');
-  gulp.watch('src/vendors.json', () => {
+  gulp.watch('vendors.json', () => {
     cleanVendor().then(() => {
       buildVendor().on('finish', () => {
         rebuildHtml();
