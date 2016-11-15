@@ -1,0 +1,25 @@
+{
+  "globalDependencies": {
+    "body-parser": "registry:dt/body-parser#0.0.0+20160619023215",
+    "cookie-parser": "registry:dt/cookie-parser#1.3.4+20160316155526",
+    "errorhandler": "registry:dt/errorhandler#0.0.0+20160316155526",
+    "express": "registry:dt/express#4.0.0+20160708185218",
+    "express-serve-static-core": "registry:dt/express-serve-static-core#4.0.0+20161012061536",
+    "express-session": "registry:dt/express-session#0.0.0+20160930124524",
+    "lodash": "registry:dt/lodash#4.14.0+20161110215204",
+    "method-override": "registry:dt/method-override#0.0.0+20160925094606",
+    "mocha": "registry:dt/mocha#2.2.5+20161028141524",
+    "morgan": "registry:dt/morgan#1.7.0+20160524142355",
+    "node": "registry:dt/node#6.0.0+20161110151007",
+    "proxyquire": "registry:dt/proxyquire#1.3.0+20160316155526",
+    "serve-favicon": "registry:dt/serve-favicon#0.0.0+20160316155526",
+    "serve-static": "registry:dt/serve-static#0.0.0+20160606155157",
+    "winston": "registry:dt/winston#0.0.0+20161108133445"
+  },
+  "devDependencies": {
+    "chai": "registry:npm/chai#3.5.0+20160723033700",
+    "sinon": "registry:npm/sinon#1.16.0+20160723033700",
+    "sinon-chai": "registry:npm/sinon-chai#2.8.0+20160310030142"
+  },
+  "dependencies": {}
+}

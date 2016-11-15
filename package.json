@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "install:client": "cd client && npm install && typings install",
-    "postinstall": "npm run install:client",
+    "install:server": "cd server && npm install && typings install",
+    "postinstall": "npm run install:client && npm run install:server",
     "build:client": "cd client && gulp build",
     "clean:client": "cd client && gulp clean",
     "watch:client": "cd client && gulp watch"
