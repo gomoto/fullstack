@@ -244,7 +244,7 @@ function buildJs(isWatchify) {
         rebundle(js.post);
       });
     });
-    b.on('log', console.log);
+    // b.on('log', console.log);
   }
 
   return rebundle(() => {
@@ -382,7 +382,19 @@ function watchVendor() {
 
 
 
-gulp.task('build', function(done) {
+gulp.task('clean', function(done) {
+  Promise.all([
+    cleanHtml(),
+    cleanCss(),
+    cleanJs(),
+    cleanVendor()
+  ])
+  .then(() => {
+    done();
+  });
+});
+
+gulp.task('build', ['clean'], function(done) {
   mergeStream([
     buildCss(),
     buildJs(false),
@@ -393,16 +405,7 @@ gulp.task('build', function(done) {
   });
 });
 
-gulp.task('clean', function(done) {
-  Promise.all([
-    cleanHtml(),
-    cleanCss(),
-    cleanJs(),
-    cleanVendor()
-  ]).then(() => done());
-});
-
-gulp.task('watch', (done) => {
+gulp.task('watch', ['clean'], (done) => {
   mergeStream([
     buildCss(),
     buildJs(true),// watch js
