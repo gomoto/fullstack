@@ -45,20 +45,14 @@ gulp.task('html:clean', function(done) {
  * Rebuild index.html whenever any html file changes.
  */
 gulp.task('html:watch', ['html'], function() {
-  return gulp
-  .watch(['src/**/*.html'], ['html'])
-  .on('change', logWatchEvent)
-  .on('add', logWatchEvent)
-  .on('delete', logWatchEvent)
-  .on('rename', logWatchEvent);
+  watchHtml();
 });
 
 /**
  * Build html files.
- * FIXME: In build task, this gets called twice because of buildJs().
  */
 function buildHtml(done) {
-  console.log('buildHtml');
+  console.time('buildHtml');
   fs.createReadStream('src/index.html')
   .pipe(htmlInjector('templates', null, ['src/modules/**/*.html']))
   .pipe(htmlInjector('css', null, ['index-*.css']))
@@ -68,7 +62,10 @@ function buildHtml(done) {
     processScripts: ['text/ng-template']
   }))
   .pipe(fs.createWriteStream('index.html'))
-  .on('finish', done);
+  .on('finish', () => {
+    console.timeEnd('buildHtml')
+    done && typeof done === 'function' && done();
+  });
 }
 
 /**
@@ -76,8 +73,10 @@ function buildHtml(done) {
  * @return {promise}
  */
 function cleanHtml() {
-  console.log('cleanHtml');
-  return trash(['index.html']);
+  console.time('cleanHtml');
+  return trash(['index.html']).then(() => {
+    console.timeEnd('cleanHtml');
+  });
 }
 
 /**
@@ -87,6 +86,18 @@ function rebuildHtml(done) {
   cleanHtml().then(() => {
     buildHtml(done);
   });
+}
+
+
+function watchHtml() {
+  console.log('watching html');
+  gulp.watch(['src/**/*.html'], () => {
+    rebuildHtml();
+  })
+  .on('change', logWatchEvent)
+  .on('add', logWatchEvent)
+  .on('delete', logWatchEvent)
+  .on('rename', logWatchEvent);
 }
 
 
@@ -118,23 +129,21 @@ gulp.task('sass:clean', function(done) {
  * Rebuild index.html to update index.css hash.
  */
 gulp.task('sass:watch', ['sass'], function() {
-  return gulp
-  .watch('src/**/*.scss', ['sass'])
-  .on('change', logWatchEvent)
-  .on('add', logWatchEvent)
-  .on('delete', logWatchEvent)
-  .on('rename', logWatchEvent);
+  watchCss();
 });
 
 function buildCss() {
-  console.log('buildCss');
+  console.time('buildCss');
   return gulp.src('src/index.scss')
   .pipe(sourcemaps.init())
   .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
   .pipe(autoprefixer({ browsers: ['last 2 versions'] }))
   .pipe(rev())
   .pipe(sourcemaps.write('.'))
-  .pipe(gulp.dest('.'));
+  .pipe(gulp.dest('.'))
+  .on('finish', () => {
+    console.timeEnd('buildCss');
+  });
 }
 
 /**
@@ -142,10 +151,27 @@ function buildCss() {
  * @return {promise}
  */
 function cleanCss() {
-  console.log('cleanCss');
-  return trash(['index-*.css', 'index-*.css.map']);
+  console.time('cleanCss');
+  return trash(['index-*.css', 'index-*.css.map']).then(() => {
+    console.timeEnd('cleanCss');
+  });
 }
 
+
+function watchCss() {
+  console.log('watching css');
+  gulp.watch('src/**/*.scss', () => {
+    cleanCss().then(() => {
+      buildCss().on('finish', () => {
+        rebuildHtml();
+      });
+    });
+  })
+  .on('change', logWatchEvent)
+  .on('add', logWatchEvent)
+  .on('delete', logWatchEvent)
+  .on('rename', logWatchEvent);
+}
 
 /**
  * JS
@@ -161,14 +187,12 @@ const js = {
   destination: '.',
   // Bundle cleans itself up before rebundling
   pre: (done) => {
-    console.log('pre-js');
+    console.time('buildJs (incremental)');
     cleanJs().then(done);
   },
   post: () => {
-    console.log('post-js');
-    rebuildHtml(() => {
-      console.log('index.html updated');
-    });
+    console.timeEnd('buildJs (incremental)');
+    rebuildHtml();
   }
 };
 
@@ -183,7 +207,7 @@ const js = {
  * @return {stream} browserifyBundleStream
  */
 function buildJs(isWatchify) {
-  console.log('buildJs');
+  console.time('buildJs');
 
   const browserifyOptions = {
     cache: {},
@@ -223,7 +247,9 @@ function buildJs(isWatchify) {
     b.on('log', console.log);
   }
 
-  return rebundle();
+  return rebundle(() => {
+    console.timeEnd('buildJs');
+  });
 };
 
 
@@ -234,7 +260,7 @@ const vendor = {
 };
 
 function buildVendor() {
-  console.log('buildVendor');
+  console.time('buildVendor');
 
   const b = browserify({ debug: true });
 
@@ -250,7 +276,10 @@ function buildVendor() {
   .pipe(uglify())
   .pipe(rev())
   .pipe(sourcemaps.write(vendor.destination))
-  .pipe(gulp.dest(vendor.destination));
+  .pipe(gulp.dest(vendor.destination))
+  .on('finish', () => {
+    console.timeEnd('buildVendor')
+  });
 };
 
 
@@ -260,8 +289,10 @@ function buildVendor() {
  * @return {promise}
  */
 function cleanJs() {
-  console.log('cleanJs');
-  return trash(['index-*.js', 'index-*.js.map']);
+  console.time('cleanJs');
+  return trash(['index-*.js', 'index-*.js.map']).then(() => {
+    console.timeEnd('cleanJs');
+  });
 }
 
 /**
@@ -269,8 +300,10 @@ function cleanJs() {
  * @return {promise}
  */
 function cleanVendor() {
-  console.log('cleanVendor');
-  return trash(['vendor-*.js', 'vendor-*.js.map']);
+  console.time('cleanVendor');
+  return trash(['vendor-*.js', 'vendor-*.js.map']).then(() => {
+    console.timeEnd('cleanVendor');
+  });
 }
 
 
@@ -328,12 +361,23 @@ gulp.task('vendor:clean', function(done) {
  * Rebuild index.html to update vendor file hash.
  */
 gulp.task('vendor:watch', ['vendor'], function() {
-  return gulp.watch('src/vendors.json', ['vendor'])
+  watchVendor();
+});
+
+function watchVendor() {
+  console.log('watching vendor');
+  gulp.watch('src/vendors.json', () => {
+    cleanVendor().then(() => {
+      buildVendor().on('finish', () => {
+        rebuildHtml();
+      });
+    });
+  })
   .on('change', logWatchEvent)
   .on('add', logWatchEvent)
   .on('delete', logWatchEvent)
   .on('rename', logWatchEvent);
-});
+}
 
 
 
@@ -346,7 +390,7 @@ gulp.task('build', function(done) {
   ])
   .on('finish', function() {
     buildHtml(done);
-  })
+  });
 });
 
 gulp.task('clean', function(done) {
@@ -358,4 +402,18 @@ gulp.task('clean', function(done) {
   ]).then(() => done());
 });
 
-gulp.task('watch', ['html:watch', 'sass:watch', 'js:watch', 'vendor:watch']);
+gulp.task('watch', (done) => {
+  mergeStream([
+    buildCss(),
+    buildJs(true),// watch js
+    buildVendor()
+  ])
+  .on('finish', function() {
+    buildHtml(() => {
+      watchCss();
+      console.log('watching js');
+      watchVendor();
+      watchHtml();
+    });
+  });
+});
