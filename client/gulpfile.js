@@ -109,7 +109,7 @@ function watchHtml() {
 /**
  * Generate index.css and its sourcemap.
  */
-gulp.task('sass', function(done) {
+gulp.task('css', function(done) {
   cleanCss().then(() => {
     buildCss().on('finish', () => {
       rebuildHtml(done);
@@ -120,7 +120,7 @@ gulp.task('sass', function(done) {
 /**
  * Delete index.css and its sourcemap.
  */
-gulp.task('sass:clean', function(done) {
+gulp.task('css:clean', function(done) {
   cleanCss().then(done);
 });
 
@@ -128,7 +128,7 @@ gulp.task('sass:clean', function(done) {
  * Rebuild index.css and its sourcemap whenever any scss file changes.
  * Rebuild index.html to update index.css hash.
  */
-gulp.task('sass:watch', ['sass'], function() {
+gulp.task('css:watch', ['css'], function() {
   watchCss();
 });
 
