@@ -24,32 +24,14 @@ const logWatchEvent = (event) => {
 
 
 /**
- * index.html
+ * HTML
  */
+
+
 
 /**
  * Generate index.html
- */
-gulp.task('html', function(done) {
-  rebuildHtml(done);
-});
-
-/**
- * Clean index.html
- */
-gulp.task('html:clean', function(done) {
-  cleanHtml().then(done);
-});
-
-/**
- * Rebuild index.html whenever any html file changes.
- */
-gulp.task('html:watch', ['html'], function() {
-  watchHtml();
-});
-
-/**
- * Build html files.
+ * @param  {Function} done called once index.html is written to disk
  */
 function buildHtml(done) {
   console.time('buildHtml');
@@ -69,7 +51,7 @@ function buildHtml(done) {
 }
 
 /**
- * Clean html files.
+ * Delete index.html
  * @return {promise}
  */
 function cleanHtml() {
@@ -80,7 +62,8 @@ function cleanHtml() {
 }
 
 /**
- * Clean and rebuild html files.
+ * Shortcut to clean and build index.html
+ * @param  {Function} done called once index.html is written to disk
  */
 function rebuildHtml(done) {
   cleanHtml().then(() => {
@@ -88,7 +71,9 @@ function rebuildHtml(done) {
   });
 }
 
-
+/**
+ * Rebuild index.html whenever any html file changes.
+ */
 function watchHtml() {
   console.log('watching html');
   gulp.watch(['src/**/*.html'], () => {
@@ -100,38 +85,30 @@ function watchHtml() {
   .on('rename', logWatchEvent);
 }
 
+gulp.task('html', function(done) {
+  rebuildHtml(done);
+});
+
+gulp.task('html:clean', function(done) {
+  cleanHtml().then(done);
+});
+
+gulp.task('html:watch', ['html'], function() {
+  watchHtml();
+});
+
 
 
 /**
- * index.css
+ * CSS
  */
+
+
 
 /**
  * Generate index.css and its sourcemap.
+ * @return {stream}
  */
-gulp.task('css', function(done) {
-  cleanCss().then(() => {
-    buildCss().on('finish', () => {
-      rebuildHtml(done);
-    });
-  });
-});
-
-/**
- * Delete index.css and its sourcemap.
- */
-gulp.task('css:clean', function(done) {
-  cleanCss().then(done);
-});
-
-/**
- * Rebuild index.css and its sourcemap whenever any scss file changes.
- * Rebuild index.html to update index.css hash.
- */
-gulp.task('css:watch', ['css'], function() {
-  watchCss();
-});
-
 function buildCss() {
   console.time('buildCss');
   return gulp.src('src/index.scss')
@@ -147,7 +124,7 @@ function buildCss() {
 }
 
 /**
- * Clean css files.
+ * Delete index.css and its sourcemap.
  * @return {promise}
  */
 function cleanCss() {
@@ -157,7 +134,10 @@ function cleanCss() {
   });
 }
 
-
+/**
+ * Rebuild index.css and its sourcemap whenever any scss file changes.
+ * Rebuild index.html to update index.css hash.
+ */
 function watchCss() {
   console.log('watching css');
   gulp.watch('src/**/*.scss', () => {
@@ -173,19 +153,34 @@ function watchCss() {
   .on('rename', logWatchEvent);
 }
 
+gulp.task('css', function(done) {
+  cleanCss().then(() => {
+    buildCss().on('finish', () => {
+      rebuildHtml(done);
+    });
+  });
+});
+
+gulp.task('css:clean', function(done) {
+  cleanCss().then(done);
+});
+
+gulp.task('css:watch', ['css'], function() {
+  watchCss();
+});
+
+
+
 /**
  * JS
  */
 
-// NOTE: When using watchify and tsify together, updating a typescript file in
-// one bundle triggers an update event in all bundles. Stick to one typescript
-// bundle until this is resolved.
+
 
 const js = {
   entries: ['src/index.ts'],
   output: 'index.js',
   destination: '.',
-  // Bundle cleans itself up before rebundling
   pre: (done) => {
     console.time('buildJs (incremental)');
     cleanJs().then(done);
@@ -197,8 +192,13 @@ const js = {
 };
 
 /**
- * Create a single js bundle.
+ * Generate main bundle and its sourcemap.
  * Hooks pre and post are not called on initial bundle.
+ *
+ * NOTE: When using watchify and tsify together, updating a typescript file in
+ * one bundle triggers an update event in all bundles. Stick to one typescript
+ * bundle until this is resolved.
+ *
  * @param  {string[]} bundle.entries array of bundle entry files
  * @param  {string} bundle.output name of bundle file
  * @param  {string} bundle.destination directory containing bundle file
@@ -252,6 +252,43 @@ function buildJs(isWatchify) {
   });
 };
 
+/**
+ * Delete index.js file and its sourcemap.
+ * @return {promise}
+ */
+function cleanJs() {
+  console.time('cleanJs');
+  return trash(['index-*.js', 'index-*.js.map']).then(() => {
+    console.timeEnd('cleanJs');
+  });
+}
+
+gulp.task('js', function(done) {
+  cleanJs().then(() => {
+    buildJs(false).on('finish', () => {
+      rebuildHtml(done);
+    });
+  });
+});
+
+gulp.task('js:clean', function(done) {
+  cleanJs().then(done);
+});
+
+gulp.task('js:watch', function(done) {
+  cleanJs().then(() => {
+    buildJs(true).on('finish', () => {
+      rebuildHtml(done);
+    });
+  });
+});
+
+
+
+/**
+ * VENDOR
+ */
+
 
 
 const vendor = {
@@ -259,6 +296,10 @@ const vendor = {
   destination: '.'
 };
 
+/**
+ * Generate vendor js files and their sourcemaps.
+ * @return {stream} browserifyBundleStream
+ */
 function buildVendor() {
   console.time('buildVendor');
 
@@ -282,21 +323,8 @@ function buildVendor() {
   });
 };
 
-
-
 /**
- * Clean app js files.
- * @return {promise}
- */
-function cleanJs() {
-  console.time('cleanJs');
-  return trash(['index-*.js', 'index-*.js.map']).then(() => {
-    console.timeEnd('cleanJs');
-  });
-}
-
-/**
- * Clean vendor js files.
+ * Delete vendor bundle and its sourcemap.
  * @return {promise}
  */
 function cleanVendor() {
@@ -306,64 +334,10 @@ function cleanVendor() {
   });
 }
 
-
-
 /**
- * Generate js files and their sourcemaps.
+ * Rebuild vendor bundle and its sourcemap whenever vendors.json changes.
+ * Rebuild index.html to update file hash.
  */
-gulp.task('js', function(done) {
-  cleanJs().then(() => {
-    buildJs(false).on('finish', () => {
-      rebuildHtml(done);
-    });
-  });
-});
-
-/**
- * Delete js files and their sourcemaps.
- */
-gulp.task('js:clean', function(done) {
-  cleanJs().then(done);
-});
-
-/**
- * Rebuild js bundle and its sourcemap whenever a file changes within it.
- * Rebuild index.html to update js file hash.
- */
-gulp.task('js:watch', function(done) {
-  cleanJs().then(() => {
-    buildJs(true).on('finish', () => {
-      rebuildHtml(done);
-    });
-  });
-});
-
-/**
- * Generate vendor js files and their sourcemaps.
- */
-gulp.task('vendor', function(done) {
-  cleanVendor().then(() => {
-    buildVendor().on('finish', () => {
-      rebuildHtml(done);
-    });
-  });
-});
-
-/**
- * Delete vendor js files and their sourcemaps.
- */
-gulp.task('vendor:clean', function(done) {
-  cleanVendor().then(done);
-});
-
-/**
- * Rebuild vendor bundle and its sourcemap whenever a file changes within it.
- * Rebuild index.html to update vendor file hash.
- */
-gulp.task('vendor:watch', ['vendor'], function() {
-  watchVendor();
-});
-
 function watchVendor() {
   console.log('watching vendor');
   gulp.watch('src/vendors.json', () => {
@@ -379,6 +353,27 @@ function watchVendor() {
   .on('rename', logWatchEvent);
 }
 
+gulp.task('vendor', function(done) {
+  cleanVendor().then(() => {
+    buildVendor().on('finish', () => {
+      rebuildHtml(done);
+    });
+  });
+});
+
+gulp.task('vendor:clean', function(done) {
+  cleanVendor().then(done);
+});
+
+gulp.task('vendor:watch', ['vendor'], function() {
+  watchVendor();
+});
+
+
+
+/**
+ * MAIN TASKS
+ */
 
 
 
