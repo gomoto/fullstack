@@ -13,6 +13,7 @@ import path = require('path');
 import session = require('express-session');
 const lusca = require('lusca');
 import errorHandler = require('errorhandler');
+import ejs = require('ejs');
 // import passport = require('passport');
 
 import config from './environment';
@@ -32,7 +33,7 @@ export default (app: express.Application) => {
   app.use(morgan('dev'));
 
   app.set('views', `${config.root}/server/views`);
-  app.engine('html', require('ejs').renderFile);
+  app.engine('html', ejs.renderFile);
   app.set('view engine', 'html');
   app.use(shrinkRay());
   app.use(bodyParser.urlencoded({ extended: false }));
