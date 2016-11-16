@@ -1,5 +1,31 @@
 # fullstack
 
+
+
+## Installation
+
+`npm i`
+
+
+
+## typings
+
+Typings for client and server are managed separately.
+
+### client
+```
+npm run client:typings install <name> [options]
+npm run client:typings uninstall <name> [options]
+```
+
+### server
+```
+npm run server:typings install <name> [options]
+npm run server:typings uninstall <name> [options]
+```
+
+
+
 ## Environment variables
 
 variable          | default               | description
