@@ -3,6 +3,7 @@ const autoprefixer = require('gulp-autoprefixer');
 const browserify = require('browserify');
 const buffer = require('vinyl-buffer');
 const fs = require('fs');
+const fsExtra = require('fs-extra');
 const gulp = require('gulp');
 const htmlInjector = require('html-injector');
 const htmlMinifierStream = require('html-minifier-stream');
@@ -39,6 +40,8 @@ const paths = {
     vendor: `${clientPath}/vendors.json`,
     vendorExit: `${appPath}/${clientPath}/vendor.js`,
     vendorExitRevPattern: `${appPath}/${clientPath}/vendor-*.js`,
+    assets: `${clientPath}/assets`,
+    assetsDestination: `${appPath}/${clientPath}/assets`,
     tsconfig: `${clientPath}/tsconfig.json`
   },
   server: {
@@ -415,6 +418,22 @@ gulp.task('vendor:watch', ['vendor'], function() {
 
 
 /**
+ * Copy
+ */
+
+
+
+function copyAssets() {
+  console.time('copyAssets');
+  fsExtra.copy(paths.client.assets, paths.client.assetsDestination, (err) => {
+    if (err) console.error('Error copying assets!');
+    console.timeEnd('copyAssets');
+  });
+}
+
+
+
+/**
  * Client
  */
 
@@ -433,6 +452,7 @@ gulp.task('clean', function(done) {
 });
 
 gulp.task('build', ['clean'], function(done) {
+  copyAssets();
   mergeStream([
     buildCss(),
     buildJs(false),
