@@ -1,13 +1,13 @@
 import { merge } from 'lodash';
-import development from './development';
-import production from './production';
-import shared from './shared';
-import test from './test';
+import development, { IDevelopmentEnvironment } from './development';
+import production, { IProductionEnvironment } from './production';
+import shared, { ISharedEnvironment } from './shared';
+import test, { ITestEnvironment } from './test';
 
 // Export the config object based on the NODE_ENV
 // ==============================================
 
-let config;
+let config: IDevelopmentEnvironment | IProductionEnvironment | ITestEnvironment | {};
 switch(process.env.NODE_ENV) {
   case 'production': {
     config = production;

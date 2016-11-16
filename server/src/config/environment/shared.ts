@@ -2,7 +2,7 @@ import path = require('path');
 
 // All configurations will extend these options
 // ============================================
-export default {
+export default <ISharedEnvironment> {
   env: process.env.NODE_ENV,
 
   // Root path of server
@@ -24,4 +24,14 @@ export default {
 
   // List of user roles
   userRoles: ['guest', 'user', 'admin']
+}
+
+export interface ISharedEnvironment {
+  env: string;
+  root: string;
+  port: number;
+  ip: string;
+  seedDB: boolean;
+  secrets: any;
+  userRoles: string[];
 }

@@ -1,6 +1,7 @@
 node_modules
 typings
 
+/app
 /client/index-*.css
 /client/index-*.css.map
 /client/index-*.js

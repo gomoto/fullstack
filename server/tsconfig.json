@@ -6,9 +6,6 @@
     "suppressImplicitAnyIndexErrors": true,
     "target": "es5"
   },
-  "include": [
-    "./**/*.ts"
-  ],
   "compileOnSave": false,
   "buildOnSave": false
 }

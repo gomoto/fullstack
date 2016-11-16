@@ -1,3 +1,5 @@
 // Development specific configuration
 // ==================================
-export default {};
+export default <IDevelopmentEnvironment> {};
+
+export interface IDevelopmentEnvironment {}
