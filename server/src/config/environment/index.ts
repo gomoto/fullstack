@@ -3,6 +3,10 @@ import development, { IDevelopmentEnvironment } from './development';
 import production, { IProductionEnvironment } from './production';
 import shared, { ISharedEnvironment } from './shared';
 import test, { ITestEnvironment } from './test';
+import dotenv = require('dotenv');
+
+// Load environment variables from .env
+dotenv.config();
 
 // Export the config object based on the NODE_ENV
 // ==============================================
