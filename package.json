@@ -6,12 +6,9 @@
     "postinstall": "npm run client:typings i && npm run server:typings i",
     "client:typings": "cd client && typings",
     "server:typings": "cd server && typings",
-    "client:build": "cd client && gulp build",
-    "client:clean": "cd client && gulp clean",
-    "client:watch": "cd client && gulp watch",
-    "server:build": "gulp build:server",
-    "server:clean": "gulp clean:server",
-    "server:watch": "gulp watch:server"
+    "build": "gulp build",
+    "watch": "gulp watch",
+    "clean": "gulp clean"
   },
   "dependencies": {
     "angular": "^1.5.8",
