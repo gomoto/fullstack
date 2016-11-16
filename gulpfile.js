@@ -8,6 +8,7 @@ const htmlInjector = require('html-injector');
 const htmlMinifierStream = require('html-minifier-stream');
 const mergeStream = require('merge-stream');
 const Promise = require('pinkie-promise');
+const rename = require('gulp-rename');
 const rev = require('gulp-rev');
 const sass = require('gulp-sass');
 const source = require('vinyl-source-stream');
@@ -24,10 +25,28 @@ const appPath = 'app';
 const clientPath = 'client';
 const serverPath = 'server';
 const paths = {
+  client: {
+    htmlTemplates: `${clientPath}/src/modules/*.html`,
+    htmlEntry: `${clientPath}/src/index.html`,
+    htmlExit: `${appPath}/${clientPath}/index.html`,
+    css: `${clientPath}/src/**/*.scss`,
+    cssEntry: `${clientPath}/src/index.scss`,
+    cssExit: `${appPath}/${clientPath}/index.css`,
+    cssExitRevPattern: `${appPath}/${clientPath}/index-*.css`,
+    jsEntry: `${clientPath}/src/index.ts`,
+    jsExit: `${appPath}/${clientPath}/index.js`,
+    jsExitRevPattern: `${appPath}/${clientPath}/index-*.js`,
+    vendor: `${clientPath}/vendors.json`,
+    vendorExit: `${appPath}/${clientPath}/vendor.js`,
+    vendorExitRevPattern: `${appPath}/${clientPath}/vendor-*.js`,
+    tsconfig: `${clientPath}/tsconfig.json`
+  },
   server: {
+    destination: `${appPath}/${serverPath}`,
     typescript: `${serverPath}/src/**/!(*.spec).ts`,
     typings: `${serverPath}/typings/**/*.d.ts`,
-    html: `${serverPath}/src/**/*.html`
+    html: `${serverPath}/src/**/*.html`,
+    tsconfig: `${serverPath}/tsconfig.json`
   }
 };
 
@@ -57,15 +76,15 @@ const logWatchEvent = (event) => {
  */
 function buildHtml(done) {
   console.time('buildHtml');
-  fs.createReadStream('src/index.html')
-  .pipe(htmlInjector('templates', null, ['src/modules/**/*.html']))
-  .pipe(htmlInjector('css', null, ['index-*.css']))
-  .pipe(htmlInjector('js', null, ['index-*.js']))
+  fs.createReadStream(paths.client.htmlEntry)
+  .pipe(htmlInjector('templates', null, [paths.client.htmlTemplates]))
+  .pipe(htmlInjector('css', null, [paths.client.cssExitRevPattern]))
+  .pipe(htmlInjector('js', null, [paths.client.jsExitRevPattern]))
   .pipe(htmlMinifierStream({
     collapseWhitespace: true,
     processScripts: ['text/ng-template']
   }))
-  .pipe(fs.createWriteStream('index.html'))
+  .pipe(fs.createWriteStream(paths.client.htmlExit))
   .on('finish', () => {
     console.timeEnd('buildHtml')
     done && typeof done === 'function' && done();
@@ -78,7 +97,7 @@ function buildHtml(done) {
  */
 function cleanHtml() {
   console.time('cleanHtml');
-  return trash(['index.html']).then(() => {
+  return trash([paths.client.htmlExit]).then(() => {
     console.timeEnd('cleanHtml');
   });
 }
@@ -98,7 +117,10 @@ function rebuildHtml(done) {
  */
 function watchHtml() {
   console.log('watching html');
-  gulp.watch(['src/**/*.html'], () => {
+  gulp.watch([
+    paths.client.htmlTemplates,
+    paths.client.htmlEntry
+  ], () => {
     rebuildHtml();
   })
   .on('change', logWatchEvent)
@@ -133,10 +155,11 @@ gulp.task('html:watch', ['html'], function() {
  */
 function buildCss() {
   console.time('buildCss');
-  return gulp.src('src/index.scss')
+  return gulp.src(paths.client.cssEntry)
   .pipe(sourcemaps.init())
   .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
   .pipe(autoprefixer({ browsers: ['last 2 versions'] }))
+  .pipe(rename(paths.client.cssExit))
   .pipe(rev())
   .pipe(sourcemaps.write('.'))
   .pipe(gulp.dest('.'))
@@ -151,7 +174,11 @@ function buildCss() {
  */
 function cleanCss() {
   console.time('cleanCss');
-  return trash(['index-*.css', 'index-*.css.map']).then(() => {
+  return trash([
+    paths.client.cssExitRevPattern,
+    `${paths.client.cssExitRevPattern}.map`
+  ])
+  .then(() => {
     console.timeEnd('cleanCss');
   });
 }
@@ -162,7 +189,7 @@ function cleanCss() {
  */
 function watchCss() {
   console.log('watching css');
-  gulp.watch('src/**/*.scss', () => {
+  gulp.watch(paths.client.css, () => {
     cleanCss().then(() => {
       buildCss().on('finish', () => {
         rebuildHtml();
@@ -199,18 +226,14 @@ gulp.task('css:watch', ['css'], function() {
 
 
 
-const js = {
-  entries: ['src/index.ts'],
-  output: 'index.js',
-  destination: '.',
-  pre: (done) => {
-    console.time('buildJs (incremental)');
-    cleanJs().then(done);
-  },
-  post: () => {
-    console.timeEnd('buildJs (incremental)');
-    rebuildHtml();
-  }
+const prebundle = (done) => {
+  console.time('buildJs (incremental)');
+  cleanJs().then(done);
+};
+
+const postbundle = () => {
+  console.timeEnd('buildJs (incremental)');
+  rebuildHtml();
 };
 
 /**
@@ -221,11 +244,6 @@ const js = {
  * one bundle triggers an update event in all bundles. Stick to one typescript
  * bundle until this is resolved.
  *
- * @param  {string[]} bundle.entries array of bundle entry files
- * @param  {string} bundle.output name of bundle file
- * @param  {string} bundle.destination directory containing bundle file
- * @param  {Function} bundle.pre pre-bundle hook
- * @param  {Function} bundle.post pose-bundle hook
  * @return {stream} browserifyBundleStream
  */
 function buildJs(isWatchify) {
@@ -234,23 +252,23 @@ function buildJs(isWatchify) {
   const browserifyOptions = {
     cache: {},
     packageCache: {},
-    entries: js.entries,
+    entries: [paths.client.jsEntry],
     debug: true
   };
 
   const b = browserify(browserifyOptions)
-  .plugin(tsify, { project: 'tsconfig.json' });
+  .plugin(tsify, { project: paths.client.tsconfig });
 
   const rebundle = (callback) => {
     return b.bundle()
     .on('error', console.error)
-    .pipe(source(js.output))
+    .pipe(source(paths.client.jsExit))
     .pipe(buffer())
     .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(uglify())
     .pipe(rev())
-    .pipe(sourcemaps.write(js.destination))
-    .pipe(gulp.dest(js.destination))
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('.'))
     .on('finish', function() {
       if (typeof callback === 'function') {
         callback();
@@ -262,8 +280,8 @@ function buildJs(isWatchify) {
     b.plugin(watchify);
     b.on('update', (ids) => {
       console.log(ids);
-      js.pre(() => {
-        rebundle(js.post);
+      prebundle(() => {
+        rebundle(postbundle);
       });
     });
     // b.on('log', console.log);
@@ -280,7 +298,11 @@ function buildJs(isWatchify) {
  */
 function cleanJs() {
   console.time('cleanJs');
-  return trash(['index-*.js', 'index-*.js.map']).then(() => {
+  return trash([
+    paths.client.jsExitRevPattern,
+    `${paths.client.jsExitRevPattern}.map`
+  ])
+  .then(() => {
     console.timeEnd('cleanJs');
   });
 }
@@ -313,13 +335,8 @@ gulp.task('js:watch', function(done) {
 
 
 
-const vendor = {
-  output: 'vendor.js',
-  destination: '.'
-};
-
 /**
- * Generate vendor js files and their sourcemaps.
+ * Generate vendor js file and its sourcemap.
  * @return {stream} browserifyBundleStream
  */
 function buildVendor() {
@@ -327,19 +344,19 @@ function buildVendor() {
 
   const b = browserify({ debug: true });
 
-  require('./vendors.json').forEach((vendor) => {
+  require(`./${paths.client.vendor}`).forEach((vendor) => {
     b.require(vendor);
   });
 
   return b.bundle()
   .on('error', console.error)
-  .pipe(source(vendor.output))
+  .pipe(source(paths.client.vendorExit))
   .pipe(buffer())
   .pipe(sourcemaps.init({ loadMaps: true }))
   .pipe(uglify())
   .pipe(rev())
-  .pipe(sourcemaps.write(vendor.destination))
-  .pipe(gulp.dest(vendor.destination))
+  .pipe(sourcemaps.write('.'))
+  .pipe(gulp.dest('.'))
   .on('finish', () => {
     console.timeEnd('buildVendor')
   });
@@ -351,7 +368,11 @@ function buildVendor() {
  */
 function cleanVendor() {
   console.time('cleanVendor');
-  return trash(['vendor-*.js', 'vendor-*.js.map']).then(() => {
+  return trash([
+    paths.client.vendorExitRevPattern,
+    `${paths.client.vendorExitRevPattern}.map`
+  ])
+  .then(() => {
     console.timeEnd('cleanVendor');
   });
 }
@@ -362,7 +383,7 @@ function cleanVendor() {
  */
 function watchVendor() {
   console.log('watching vendor');
-  gulp.watch('vendors.json', () => {
+  gulp.watch(paths.client.vendor, () => {
     cleanVendor().then(() => {
       buildVendor().on('finish', () => {
         rebuildHtml();
@@ -446,7 +467,7 @@ gulp.task('watch', ['clean'], (done) => {
 
 
 
-const serverTypescript = typescript.createProject(`${serverPath}/tsconfig.json`);
+const serverTypescript = typescript.createProject(paths.server.tsconfig);
 
 gulp.task('build:server', () => {
   return gulp.src([
@@ -455,5 +476,5 @@ gulp.task('build:server', () => {
   ])
   .pipe(serverTypescript())
   .pipe(addSrc(paths.server.html))
-  .pipe(gulp.dest(`${appPath}/${serverPath}`));
+  .pipe(gulp.dest(paths.server.destination));
 });
