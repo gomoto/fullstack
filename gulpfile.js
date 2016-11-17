@@ -22,34 +22,56 @@ const watchify = require('watchify');
 
 
 
-const appPath = 'app';
-const clientPath = 'client';
-const serverPath = 'server';
+const names = {
+  app: 'app',
+  client: 'client',
+  server: 'server'
+};
+
 const paths = {
+  app: {
+    client: {
+      directory: `${names.app}/${names.client}`,
+      html: `${names.app}/${names.client}/index.html`,
+      css: {
+        raw: `${names.app}/${names.client}/index.css`,
+        hashed: `${names.app}/${names.client}/index-*.css`
+      },
+      js: {
+        raw: `${names.app}/${names.client}/index.js`,
+        hashed: `${names.app}/${names.client}/index-*.js`
+      },
+      vendor: {
+        raw: `${names.app}/${names.client}/vendor.js`,
+        hashed: `${names.app}/${names.client}/vendor-*.js`
+      },
+      assets: `${names.app}/${names.client}/assets`
+    },
+    server: {
+      directory: `${names.app}/${names.server}`
+    }
+  },
   client: {
-    htmlTemplates: `${clientPath}/src/modules/*.html`,
-    htmlEntry: `${clientPath}/src/index.html`,
-    htmlExit: `${appPath}/${clientPath}/index.html`,
-    css: `${clientPath}/src/**/*.scss`,
-    cssEntry: `${clientPath}/src/index.scss`,
-    cssExit: `${appPath}/${clientPath}/index.css`,
-    cssExitRevPattern: `${appPath}/${clientPath}/index-*.css`,
-    jsEntry: `${clientPath}/src/index.ts`,
-    jsExit: `${appPath}/${clientPath}/index.js`,
-    jsExitRevPattern: `${appPath}/${clientPath}/index-*.js`,
-    vendor: `${clientPath}/vendors.json`,
-    vendorExit: `${appPath}/${clientPath}/vendor.js`,
-    vendorExitRevPattern: `${appPath}/${clientPath}/vendor-*.js`,
-    assets: `${clientPath}/assets`,
-    assetsDestination: `${appPath}/${clientPath}/assets`,
-    tsconfig: `${clientPath}/tsconfig.json`
+    html: {
+      templates: `${names.client}/src/modules/*.html`,
+      entry: `${names.client}/src/index.html`
+    },
+    css: {
+      source: `${names.client}/src/**/*.scss`,
+      entry: `${names.client}/src/index.scss`
+    },
+    js: {
+      entry: `${names.client}/src/index.ts`,
+    },
+    vendor: `${names.client}/vendors.json`,
+    assets: `${names.client}/assets`,
+    tsconfig: `${names.client}/tsconfig.json`
   },
   server: {
-    destination: `${appPath}/${serverPath}`,
-    typescript: `${serverPath}/src/**/!(*.spec).ts`,
-    typings: `${serverPath}/typings/**/*.d.ts`,
-    html: `${serverPath}/src/**/*.html`,
-    tsconfig: `${serverPath}/tsconfig.json`
+    typescript: `${names.server}/src/**/!(*.spec).ts`,
+    typings: `${names.server}/typings/**/*.d.ts`,
+    html: `${names.server}/src/**/*.html`,
+    tsconfig: `${names.server}/tsconfig.json`
   }
 };
 
@@ -79,25 +101,25 @@ const logWatchEvent = (event) => {
  */
 function buildHtml(done) {
   console.time('buildHtml');
-  fs.createReadStream(paths.client.htmlEntry)
+  fs.createReadStream(paths.client.html.entry)
   .pipe(htmlInjector({
     templates: {
-      globs: [paths.client.htmlTemplates]
+      globs: [paths.client.html.templates]
     },
     css: {
-      globs: [paths.client.cssExitRevPattern],
-      cwd: `${appPath}/${clientPath}`
+      globs: [paths.app.client.css.hashed],
+      cwd: paths.app.client.directory
     },
     js: {
-      globs: [paths.client.jsExitRevPattern],
-      cwd: `${appPath}/${clientPath}`
+      globs: [paths.app.client.js.hashed],
+      cwd: paths.app.client.directory
     }
   }))
   .pipe(htmlMinifierStream({
     collapseWhitespace: true,
     processScripts: ['text/ng-template']
   }))
-  .pipe(fs.createWriteStream(paths.client.htmlExit))
+  .pipe(fs.createWriteStream(paths.app.client.html))
   .on('finish', () => {
     console.timeEnd('buildHtml')
     done && typeof done === 'function' && done();
@@ -110,7 +132,7 @@ function buildHtml(done) {
  */
 function cleanHtml() {
   console.time('cleanHtml');
-  return trash([paths.client.htmlExit]).then(() => {
+  return trash([paths.app.client.html]).then(() => {
     console.timeEnd('cleanHtml');
   });
 }
@@ -131,8 +153,8 @@ function rebuildHtml(done) {
 function watchHtml() {
   console.log('watching html');
   gulp.watch([
-    paths.client.htmlTemplates,
-    paths.client.htmlEntry
+    paths.client.html.templates,
+    paths.client.html.entry
   ], () => {
     rebuildHtml();
   })
@@ -168,11 +190,11 @@ gulp.task('html:watch', ['html'], function() {
  */
 function buildCss() {
   console.time('buildCss');
-  return gulp.src(paths.client.cssEntry)
+  return gulp.src(paths.client.css.entry)
   .pipe(sourcemaps.init())
   .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
   .pipe(autoprefixer({ browsers: ['last 2 versions'] }))
-  .pipe(rename(paths.client.cssExit))
+  .pipe(rename(paths.app.client.css.raw))
   .pipe(rev())
   .pipe(sourcemaps.write('.'))
   .pipe(gulp.dest('.'))
@@ -188,8 +210,8 @@ function buildCss() {
 function cleanCss() {
   console.time('cleanCss');
   return trash([
-    paths.client.cssExitRevPattern,
-    `${paths.client.cssExitRevPattern}.map`
+    paths.app.client.css.hashed,
+    `${paths.app.client.css.hashed}.map`
   ])
   .then(() => {
     console.timeEnd('cleanCss');
@@ -202,7 +224,7 @@ function cleanCss() {
  */
 function watchCss() {
   console.log('watching css');
-  gulp.watch(paths.client.css, () => {
+  gulp.watch(paths.client.css.source, () => {
     cleanCss().then(() => {
       buildCss().on('finish', () => {
         rebuildHtml();
@@ -265,7 +287,7 @@ function buildJs(isWatchify) {
   const browserifyOptions = {
     cache: {},
     packageCache: {},
-    entries: [paths.client.jsEntry],
+    entries: [paths.client.js.entry],
     debug: true
   };
 
@@ -275,7 +297,7 @@ function buildJs(isWatchify) {
   const rebundle = (callback) => {
     return b.bundle()
     .on('error', console.error)
-    .pipe(source(paths.client.jsExit))
+    .pipe(source(paths.app.client.js.raw))
     .pipe(buffer())
     .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(uglify())
@@ -312,8 +334,8 @@ function buildJs(isWatchify) {
 function cleanJs() {
   console.time('cleanJs');
   return trash([
-    paths.client.jsExitRevPattern,
-    `${paths.client.jsExitRevPattern}.map`
+    paths.app.client.js.hashed,
+    `${paths.app.client.js.hashed}.map`
   ])
   .then(() => {
     console.timeEnd('cleanJs');
@@ -363,7 +385,7 @@ function buildVendor() {
 
   return b.bundle()
   .on('error', console.error)
-  .pipe(source(paths.client.vendorExit))
+  .pipe(source(paths.app.client.vendor.raw))
   .pipe(buffer())
   .pipe(sourcemaps.init({ loadMaps: true }))
   .pipe(uglify())
@@ -382,8 +404,8 @@ function buildVendor() {
 function cleanVendor() {
   console.time('cleanVendor');
   return trash([
-    paths.client.vendorExitRevPattern,
-    `${paths.client.vendorExitRevPattern}.map`
+    paths.app.client.vendor.hashed,
+    `${paths.app.client.vendor.hashed}.map`
   ])
   .then(() => {
     console.timeEnd('cleanVendor');
@@ -435,7 +457,7 @@ gulp.task('vendor:watch', ['vendor'], function() {
 
 function copyAssets() {
   console.time('copyAssets');
-  fsExtra.copy(paths.client.assets, paths.client.assetsDestination, (err) => {
+  fsExtra.copy(paths.client.assets, paths.app.client.assets, (err) => {
     if (err) console.error('Error copying assets!');
     console.timeEnd('copyAssets');
   });
@@ -506,5 +528,5 @@ gulp.task('build:server', () => {
   ])
   .pipe(serverTypescript())
   .pipe(addSrc(paths.server.html))
-  .pipe(gulp.dest(paths.server.destination));
+  .pipe(gulp.dest(paths.app.server.directory));
 });
