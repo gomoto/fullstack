@@ -1,3 +1,4 @@
+import angular = require('angular');
 import routes from './config/routes';
 import widget from './modules/widget/widget.module';
 

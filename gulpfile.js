@@ -111,7 +111,10 @@ function buildHtml(done) {
       cwd: paths.app.client.directory
     },
     js: {
-      globs: [paths.app.client.js.hashed],
+      globs: [
+        paths.app.client.vendor.hashed,
+        paths.app.client.js.hashed
+      ],
       cwd: paths.app.client.directory
     }
   }))
