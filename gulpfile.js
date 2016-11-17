@@ -8,7 +8,6 @@ const gulp = require('gulp');
 const htmlInjector = require('html-injector');
 const htmlMinifierStream = require('html-minifier-stream');
 const mergeStream = require('merge-stream');
-const Promise = require('pinkie-promise');
 const rename = require('gulp-rename');
 const rev = require('gulp-rev');
 const sass = require('gulp-sass');
@@ -30,6 +29,7 @@ const names = {
 
 const paths = {
   app: {
+    directory: `${names.app}`,
     client: {
       directory: `${names.app}/${names.client}`,
       html: `${names.app}/${names.client}/index.html`,
@@ -474,19 +474,11 @@ function copyAssets() {
 
 
 
-gulp.task('clean', function(done) {
-  Promise.all([
-    cleanHtml(),
-    cleanCss(),
-    cleanJs(),
-    cleanVendor()
-  ])
-  .then(() => {
-    done();
-  });
+gulp.task('clean:client', function(done) {
+  fsExtra.remove(paths.app.client.directory, done);
 });
 
-gulp.task('build', ['clean'], function(done) {
+gulp.task('build:client', ['clean:client'], function(done) {
   copyAssets();
   mergeStream([
     buildCss(),
@@ -524,7 +516,11 @@ gulp.task('watch', ['clean'], (done) => {
 
 const serverTypescript = typescript.createProject(paths.server.tsconfig);
 
-gulp.task('build:server', () => {
+gulp.task('clean:server', (done) => {
+  fsExtra.remove(paths.app.server.directory, done);
+});
+
+gulp.task('build:server', ['clean:server'], () => {
   return gulp.src([
     paths.server.typescript,
     paths.server.typings
@@ -533,3 +529,15 @@ gulp.task('build:server', () => {
   .pipe(addSrc(paths.server.html))
   .pipe(gulp.dest(paths.app.server.directory));
 });
+
+
+
+/**
+ * App
+ */
+
+gulp.task('clean', (done) => {
+  fsExtra.remove(paths.app.directory, done);
+});
+
+gulp.task('build', ['build:client', 'build:server']);
