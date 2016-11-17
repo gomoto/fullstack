@@ -80,9 +80,19 @@ const logWatchEvent = (event) => {
 function buildHtml(done) {
   console.time('buildHtml');
   fs.createReadStream(paths.client.htmlEntry)
-  .pipe(htmlInjector('templates', null, [paths.client.htmlTemplates]))
-  .pipe(htmlInjector('css', null, [paths.client.cssExitRevPattern]))
-  .pipe(htmlInjector('js', null, [paths.client.jsExitRevPattern]))
+  .pipe(htmlInjector({
+    templates: {
+      globs: [paths.client.htmlTemplates]
+    },
+    css: {
+      globs: [paths.client.cssExitRevPattern],
+      cwd: `${appPath}/${clientPath}`
+    },
+    js: {
+      globs: [paths.client.jsExitRevPattern],
+      cwd: `${appPath}/${clientPath}`
+    }
+  }))
   .pipe(htmlMinifierStream({
     collapseWhitespace: true,
     processScripts: ['text/ng-template']
