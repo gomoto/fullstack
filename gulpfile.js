@@ -11,10 +11,12 @@ const fsExtra = require('fs-extra');
 const gulp = require('gulp');
 const htmlInjector = require('html-injector');
 const htmlMinifierStream = require('html-minifier-stream');
+const imagemin = require('gulp-imagemin');
 const mergeStream = require('merge-stream');
 const nodemon = require('nodemon');
 const rename = require('gulp-rename');
 const rev = require('gulp-rev');
+const revReplace = require('gulp-rev-replace');
 const sass = require('gulp-sass');
 const source = require('vinyl-source-stream');
 const sourcemaps = require('gulp-sourcemaps');
@@ -54,7 +56,13 @@ const paths = {
         raw: `${names.app}/${names.client}/vendor.js`,
         hashed: `${names.app}/${names.client}/vendor-*.js`
       },
-      assets: `${names.app}/${names.client}/assets`
+      assets: {
+        directory: `${names.app}/${names.client}/assets`,
+        images: {
+          directory: `${names.app}/${names.client}/assets/images`,
+          manifest: `${names.app}/${names.client}/assets/images/manifest.json`,
+        }
+      },
     },
     server: {
       directory: `${names.app}/${names.server}`
@@ -73,7 +81,10 @@ const paths = {
       entry: `${names.client}/src/index.ts`,
     },
     vendor: `${names.client}/vendors.json`,
-    assets: `${names.client}/assets`,
+    assets: {
+      directory: `${names.client}/assets`,
+      images: `${names.client}/assets/images/**/*`
+    },
     tsconfig: `${names.client}/tsconfig.json`
   },
   server: {
@@ -120,7 +131,12 @@ function buildHtml(done) {
     collapseWhitespace: true,
     processScripts: ['text/ng-template']
   }))
-  .pipe(fs.createWriteStream(paths.app.client.html))
+  .pipe(source(paths.app.client.html))
+  .pipe(buffer())
+  .pipe(revReplace({
+    manifest: gulp.src(paths.app.client.assets.images.manifest)
+  }))
+  .pipe(gulp.dest('.'))
   .on('finish', () => {
     timeEndClient('html build');
     done();
@@ -482,6 +498,55 @@ gulp.task('vendor:watch', ['vendor'], function() {
 
 
 /**
+ * Images
+ */
+
+
+
+/**
+ * Minify and revision image files.
+ * @return {stream}
+ */
+function buildImages(done) {
+  timeClient('images build');
+  return gulp.src(paths.client.assets.images)
+  .pipe(imagemin())
+  .pipe(rev())
+  .pipe(gulp.dest(paths.app.client.assets.images.directory))
+  .pipe(rev.manifest(paths.app.client.assets.images.manifest))
+  .pipe(gulp.dest('.'))
+  .on('finish', () => {
+    timeEndClient('images build');
+    done();
+  });
+}
+
+/**
+ * Delete image files.
+ * @param  {Function} done
+ * @return {promise}
+ */
+function cleanImages(done) {
+  done = done || noop;
+  timeClient('images clean');
+  return trash([paths.app.client.assets.images.directory])
+  .then(() => {
+    timeEndClient('images clean');
+    done();
+  });
+}
+
+gulp.task('images', (done) => {
+  cleanImages(() => {
+    buildImages(() => {
+      rebuildHtml(done);
+    });
+  });
+});
+
+
+
+/**
  * Copy
  */
 
@@ -489,7 +554,7 @@ gulp.task('vendor:watch', ['vendor'], function() {
 
 function copyAssets() {
   timeClient('assets');
-  fsExtra.copy(paths.client.assets, paths.app.client.assets, (err) => {
+  fsExtra.copy(paths.client.assets.directory, paths.app.client.assets.directory, (err) => {
     if (err) console.error('Error copying assets!');
     timeEndClient('assets');
   });
