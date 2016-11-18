@@ -98,7 +98,7 @@ const paths = {
  */
 function buildHtml(done) {
   done = done || noop;
-  console.time('buildHtml');
+  timeClient('html build');
   fs.createReadStream(paths.client.html.entry)
   .pipe(htmlInjector({
     templates: {
@@ -122,7 +122,7 @@ function buildHtml(done) {
   }))
   .pipe(fs.createWriteStream(paths.app.client.html))
   .on('finish', () => {
-    console.timeEnd('buildHtml');
+    timeEndClient('html build');
     done();
   });
 }
@@ -133,10 +133,10 @@ function buildHtml(done) {
  */
 function cleanHtml(done) {
   done = done || noop;
-  console.time('cleanHtml');
+  timeClient('html clean');
   return trash([paths.app.client.html])
   .then(() => {
-    console.timeEnd('cleanHtml');
+    timeEndClient('html clean');
     done();
   });
 }
@@ -192,7 +192,7 @@ gulp.task('html:watch', ['html'], function() {
  */
 function buildCss(done) {
   done = done || noop;
-  console.time('buildCss');
+  timeClient('css build');
   return gulp.src(paths.client.css.entry)
   .pipe(sourcemaps.init())
   .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
@@ -203,7 +203,7 @@ function buildCss(done) {
   .pipe(gulp.dest('.'))
   .on('finish', () => {
     done();
-    console.timeEnd('buildCss');
+    timeEndClient('css build');
   });
 }
 
@@ -213,13 +213,13 @@ function buildCss(done) {
  */
 function cleanCss(done) {
   done = done || noop;
-  console.time('cleanCss');
+  timeClient('css clean');
   return trash([
     paths.app.client.css.hashed,
     `${paths.app.client.css.hashed}.map`
   ])
   .then(() => {
-    console.timeEnd('cleanCss');
+    timeEndClient('css clean');
     done();
   });
 }
@@ -277,7 +277,7 @@ gulp.task('css:watch', ['css'], function() {
  */
 function _buildJs(done, watchMode, watchCallback) {
   done = done || noop;
-  console.time('buildJs');
+  timeClient('js build');
 
   const browserifyOptions = {
     cache: {},
@@ -320,7 +320,7 @@ function _buildJs(done, watchMode, watchCallback) {
   }
 
   return bundle(() => {
-    console.timeEnd('buildJs');
+    timeEndClient('js build');
     done();
   });
 }
@@ -348,9 +348,9 @@ function buildAndWatchJs(buildDone, watchCallback) {
   watchCallback = watchCallback || noop;
   return _buildJs(buildDone, true, (bundle) => {
     cleanJs(() => {
-      console.time('buildJs (incremental)');
+      timeClient('js build (incremental)');
       bundle(() => {
-        console.timeEnd('buildJs (incremental)');
+        timeEndClient('js build (incremental)');
         rebuildHtml(() => {
           watchCallback();
         });
@@ -365,13 +365,13 @@ function buildAndWatchJs(buildDone, watchCallback) {
  */
 function cleanJs(done) {
   done = done || noop;
-  console.time('cleanJs');
+  timeClient('js clean');
   return trash([
     paths.app.client.js.hashed,
     `${paths.app.client.js.hashed}.map`
   ])
   .then(() => {
-    console.timeEnd('cleanJs');
+    timeEndClient('js clean');
     done();
   });
 }
@@ -406,7 +406,7 @@ gulp.task('js:watch', function(done) {
  */
 function buildVendor(done) {
   done = done || noop;
-  console.time('buildVendor');
+  timeClient('vendor build');
 
   const b = browserify({ debug: true });
 
@@ -424,7 +424,7 @@ function buildVendor(done) {
   .pipe(sourcemaps.write('.'))
   .pipe(gulp.dest('.'))
   .on('finish', () => {
-    console.timeEnd('buildVendor');
+    timeEndClient('vendor build');
     done();
   });
 };
@@ -435,13 +435,13 @@ function buildVendor(done) {
  */
 function cleanVendor(done) {
   done = done || noop;
-  console.time('cleanVendor');
+  timeClient('vendor clean');
   return trash([
     paths.app.client.vendor.hashed,
     `${paths.app.client.vendor.hashed}.map`
   ])
   .then(() => {
-    console.timeEnd('cleanVendor');
+    timeEndClient('vendor clean');
     done();
   });
 }
@@ -488,10 +488,10 @@ gulp.task('vendor:watch', ['vendor'], function() {
 
 
 function copyAssets() {
-  console.time('copyAssets');
+  timeClient('assets');
   fsExtra.copy(paths.client.assets, paths.app.client.assets, (err) => {
     if (err) console.error('Error copying assets!');
-    console.timeEnd('copyAssets');
+    timeEndClient('assets');
   });
 }
 
@@ -594,7 +594,7 @@ const serverTypescript = typescript.createProject(paths.server.tsconfig);
  */
 function buildServer(done) {
   done = done || noop;
-  console.time('buildServer');
+  timeServer('build');
   return gulp.src([
     paths.server.typescript,
     paths.server.typings
@@ -603,7 +603,7 @@ function buildServer(done) {
   .pipe(addSrc(paths.server.html))
   .pipe(gulp.dest(paths.app.server.directory))
   .on('finish', () => {
-    console.timeEnd('buildServer');
+    timeEndServer('build');
     done();
   });
 }
@@ -719,24 +719,54 @@ gulp.task('serve', (done) => {
  * Loggers
  */
 
-function logNodemon(message) {
-  console.log(chalk.yellow('[nodemon]'), message);
+
+
+// Client
+
+const clientLogPrefix = chalk.cyan('[client]');
+
+function logClient(message) {
+  console.log(clientLogPrefix, message);
 }
 
+function logClientWatchEvent(event) {
+  logClient(`${event.path} ${event.type}`);
+}
+
+function timeClient(key) {
+  console.time(`${clientLogPrefix} ${key}`);
+}
+
+function timeEndClient(key) {
+  console.timeEnd(`${clientLogPrefix} ${key}`);
+}
+
+// Server
+
+const serverLogPrefix = chalk.yellow('[server]');
+
 function logServer(message) {
-  console.log(chalk.yellow('[server]'), message);
+  console.log(serverLogPrefix, message);
 }
 
 function logServerWatchEvent(event) {
   logServer(`${event.path} ${event.type}`);
 }
 
-function logClient(message) {
-  console.log(chalk.white('[client]'), message);
+function timeServer(key) {
+  console.time(`${serverLogPrefix} ${key}`);
 }
 
-function logClientWatchEvent(event) {
-  logClient(`${event.path} ${event.type}`);
+function timeEndServer(key) {
+  console.timeEnd(`${serverLogPrefix} ${key}`);
+}
+
+// Nodemon
+
+const nodemonLogPrefix = chalk.yellow('[nodemon]');
+
+function logNodemon(message) {
+  console.log(nodemonLogPrefix, message);
 }
 
 
