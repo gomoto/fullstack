@@ -143,10 +143,13 @@ function buildHtml(done) {
  * Delete index.html
  * @return {promise}
  */
-function cleanHtml() {
+function cleanHtml(done) {
+  done = done || noop;
   console.time('cleanHtml');
-  return trash([paths.app.client.html]).then(() => {
+  return trash([paths.app.client.html])
+  .then(() => {
     console.timeEnd('cleanHtml');
+    done();
   });
 }
 
@@ -155,7 +158,7 @@ function cleanHtml() {
  * @param  {Function} done called once index.html is written to disk
  */
 function rebuildHtml(done) {
-  cleanHtml().then(() => {
+  cleanHtml(() => {
     buildHtml(done);
   });
 }
@@ -183,7 +186,7 @@ gulp.task('html', function(done) {
 });
 
 gulp.task('html:clean', function(done) {
-  cleanHtml().then(done);
+  cleanHtml(done);
 });
 
 gulp.task('html:watch', ['html'], function() {
@@ -223,7 +226,8 @@ function buildCss(done) {
  * Delete index.css and its sourcemap.
  * @return {promise}
  */
-function cleanCss() {
+function cleanCss(done) {
+  done = done || noop;
   console.time('cleanCss');
   return trash([
     paths.app.client.css.hashed,
@@ -231,6 +235,7 @@ function cleanCss() {
   ])
   .then(() => {
     console.timeEnd('cleanCss');
+    done();
   });
 }
 
@@ -242,7 +247,7 @@ function watchCss(callback) {
   callback = callback || noop;
   console.log('watching css');
   gulp.watch(paths.client.css.source, () => {
-    cleanCss().then(() => {
+    cleanCss(() => {
       buildCss(() => {
         rebuildHtml(callback);
       });
@@ -255,7 +260,7 @@ function watchCss(callback) {
 }
 
 gulp.task('css', function(done) {
-  cleanCss().then(() => {
+  cleanCss(() => {
     buildCss(() => {
       rebuildHtml(done);
     });
@@ -263,7 +268,7 @@ gulp.task('css', function(done) {
 });
 
 gulp.task('css:clean', function(done) {
-  cleanCss().then(done);
+  cleanCss(done);
 });
 
 gulp.task('css:watch', ['css'], function() {
@@ -360,7 +365,7 @@ function buildAndWatchJs(buildDone, watchCallback) {
   buildDone = buildDone || noop;
   watchCallback = watchCallback || noop;
   return _buildJs(buildDone, true, (bundle) => {
-    cleanJs().then(() => {
+    cleanJs(() => {
       console.time('buildJs (incremental)');
       bundle(() => {
         console.timeEnd('buildJs (incremental)');
@@ -376,7 +381,8 @@ function buildAndWatchJs(buildDone, watchCallback) {
  * Delete index.js file and its sourcemap.
  * @return {promise}
  */
-function cleanJs() {
+function cleanJs(done) {
+  done = done || noop;
   console.time('cleanJs');
   return trash([
     paths.app.client.js.hashed,
@@ -384,11 +390,12 @@ function cleanJs() {
   ])
   .then(() => {
     console.timeEnd('cleanJs');
+    done();
   });
 }
 
 gulp.task('js', function(done) {
-  cleanJs().then(() => {
+  cleanJs(() => {
     buildJs(() => {
       rebuildHtml(done);
     });
@@ -396,7 +403,7 @@ gulp.task('js', function(done) {
 });
 
 gulp.task('js:clean', function(done) {
-  cleanJs().then(done);
+  cleanJs(done);
 });
 
 gulp.task('js:watch', function(done) {
@@ -444,7 +451,8 @@ function buildVendor(done) {
  * Delete vendor bundle and its sourcemap.
  * @return {promise}
  */
-function cleanVendor() {
+function cleanVendor(done) {
+  done = done || noop;
   console.time('cleanVendor');
   return trash([
     paths.app.client.vendor.hashed,
@@ -452,6 +460,7 @@ function cleanVendor() {
   ])
   .then(() => {
     console.timeEnd('cleanVendor');
+    done();
   });
 }
 
@@ -463,8 +472,8 @@ function watchVendor(callback) {
   callback = callback || noop;
   console.log('watching vendor');
   gulp.watch(paths.client.vendor, () => {
-    cleanVendor().then(() => {
-      buildVendor().on('finish', () => {
+    cleanVendor(() => {
+      buildVendor(() => {
         rebuildHtml(callback);
       });
     });
@@ -476,15 +485,15 @@ function watchVendor(callback) {
 }
 
 gulp.task('vendor', function(done) {
-  cleanVendor().then(() => {
-    buildVendor().on('finish', () => {
+  cleanVendor(() => {
+    buildVendor(() => {
       rebuildHtml(done);
     });
   });
 });
 
 gulp.task('vendor:clean', function(done) {
-  cleanVendor().then(done);
+  cleanVendor(done);
 });
 
 gulp.task('vendor:watch', ['vendor'], function() {
