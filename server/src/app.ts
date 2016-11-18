@@ -22,12 +22,11 @@ configureRoutes(app);
 logger.info('Starting server');
 app.on('stormpath.ready', () => {
   server.listen(config.port, config.ip, () => {
-    logger.info(`Express server listening on ${config.port}, in ${app.get('env')} mode`);
+    logger.info(`Express server listening at ${config.ip}:${config.port}, in ${app.get('env')} mode`);
   });
 });
 
-// Expose app
-exports = module.exports = app;
+export { app }
 
 // Fix type error: "Property 'on' does not exist on type Application"
 declare global {
