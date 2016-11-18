@@ -87,18 +87,6 @@ const paths = {
 
 
 /**
- * Helpers
- */
-
-
-
-const logWatchEvent = (event) => {
- console.log(`${event.path} ${event.type}`);
-};
-
-
-
-/**
  * HTML
  */
 
@@ -134,7 +122,7 @@ function buildHtml(done) {
   }))
   .pipe(fs.createWriteStream(paths.app.client.html))
   .on('finish', () => {
-    console.timeEnd('buildHtml')
+    console.timeEnd('buildHtml');
     done();
   });
 }
@@ -168,17 +156,14 @@ function rebuildHtml(done) {
  */
 function watchHtml(callback) {
   callback = callback || noop;
-  console.log('watching html');
+  logClient('watching html');
   gulp.watch([
     paths.client.html.templates,
     paths.client.html.entry
-  ], () => {
+  ], (event) => {
+    logClientWatchEvent(event);
     rebuildHtml(callback);
-  })
-  .on('change', logWatchEvent)
-  .on('add', logWatchEvent)
-  .on('delete', logWatchEvent)
-  .on('rename', logWatchEvent);
+  });
 }
 
 gulp.task('html', function(done) {
@@ -245,18 +230,15 @@ function cleanCss(done) {
  */
 function watchCss(callback) {
   callback = callback || noop;
-  console.log('watching css');
-  gulp.watch(paths.client.css.source, () => {
+  logClient('watching css');
+  gulp.watch(paths.client.css.source, (event) => {
+    logClientWatchEvent(event);
     cleanCss(() => {
       buildCss(() => {
         rebuildHtml(callback);
       });
     });
-  })
-  .on('change', logWatchEvent)
-  .on('add', logWatchEvent)
-  .on('delete', logWatchEvent)
-  .on('rename', logWatchEvent);
+  });
 }
 
 gulp.task('css', function(done) {
@@ -332,7 +314,7 @@ function _buildJs(done, watchMode, watchCallback) {
     watchCallback = watchCallback || noop;
     b.plugin(watchify)
     b.on('update', (ids) => {
-      console.log(ids);
+      logClient(ids);
       watchCallback(bundle);
     });
   }
@@ -470,18 +452,15 @@ function cleanVendor(done) {
  */
 function watchVendor(callback) {
   callback = callback || noop;
-  console.log('watching vendor');
-  gulp.watch(paths.client.vendor, () => {
+  logClient('watching vendor');
+  gulp.watch(paths.client.vendor, (event) => {
+    logClientWatchEvent(event);
     cleanVendor(() => {
       buildVendor(() => {
         rebuildHtml(callback);
       });
     });
-  })
-  .on('change', logWatchEvent)
-  .on('add', logWatchEvent)
-  .on('delete', logWatchEvent)
-  .on('rename', logWatchEvent);
+  });
 }
 
 gulp.task('vendor', function(done) {
@@ -545,7 +524,7 @@ function _buildClient(done, watchMode, watchCallback) {
       if (watchMode) {
         // watch client files
         watchCss(watchCallback);
-        console.log('watching js');
+        logClient('watching js');
         watchVendor(watchCallback);
         watchHtml(watchCallback);
       }
@@ -637,13 +616,10 @@ function watchServer(watchCallback) {
   gulp.watch([
     paths.server.typescript,
     paths.server.typings
-  ], () => {
+  ], (event) => {
+    logServerWatchEvent(event);
     watchCallback();
-  })
-  .on('change', logWatchEvent)
-  .on('add', logWatchEvent)
-  .on('delete', logWatchEvent)
-  .on('rename', logWatchEvent);
+  });
 }
 
 /**
@@ -737,9 +713,33 @@ gulp.task('serve', (done) => {
   });
 });
 
+
+
+/**
+ * Loggers
+ */
+
 function logNodemon(message) {
   console.log(chalk.yellow('[nodemon]'), message);
 }
+
+function logServer(message) {
+  console.log(chalk.yellow('[server]'), message);
+}
+
+function logServerWatchEvent(event) {
+  logServer(`${event.path} ${event.type}`);
+}
+
+function logClient(message) {
+  console.log(chalk.white('[client]'), message);
+}
+
+function logClientWatchEvent(event) {
+  logClient(`${event.path} ${event.type}`);
+}
+
+
 
 // gulp.watch('gulpfile.js', () => {
 //   console.log(chalk.red('gulpfile changed'));
