@@ -58,7 +58,6 @@ const paths = {
       },
       assets: {
         directory: `${names.app}/${names.client}/assets`,
-        favicon: `${names.app}/${names.client}/assets/favicon.ico`,
         images: {
           directory: `${names.app}/${names.client}/assets/images`,
           manifest: `${names.app}/${names.client}/assets/images/manifest.json`,
@@ -84,7 +83,6 @@ const paths = {
     vendor: `${names.client}/vendors.json`,
     assets: {
       directory: `${names.client}/assets`,
-      favicon: `${names.client}/assets/favicon.ico`,
       images: `${names.client}/assets/images/**/*`
     },
     tsconfig: `${names.client}/tsconfig.json`
@@ -550,24 +548,6 @@ gulp.task('images', (done) => {
 
 
 /**
- * Copy favicon.
- * @return {stream}
- */
-function copyFavicon(done) {
-  done = done || noop;
-  timeClient('favicon copy');
-  return gulp.src(paths.client.assets.favicon)
-  .pipe(rename(paths.app.client.assets.favicon))
-  .pipe(gulp.dest('.'))
-  .on('finish', () => {
-    timeEndClient('favicon copy');
-    done();
-  });
-}
-
-
-
-/**
  * Client
  */
 
@@ -586,7 +566,6 @@ function _buildClient(done, watchMode, watchCallback) {
     buildCss(),
     watchMode ? buildAndWatchJs(null, watchCallback) : buildJs(),
     buildVendor(),
-    copyFavicon(),
     buildImages()
   ])
   .on('finish', function() {
