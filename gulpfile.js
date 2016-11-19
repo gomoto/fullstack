@@ -305,6 +305,10 @@ function _buildJs(done, watchMode, watchCallback) {
   const b = browserify(browserifyOptions)
   .plugin(tsify, { project: paths.client.tsconfig });
 
+  require(`./${paths.client.vendor}`).forEach((vendor) => {
+    b.external(vendor);
+  });
+
   /**
    * Bundle js files.
    * @param  {Function} callback called after bundle is written to disk
