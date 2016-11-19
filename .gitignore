@@ -1,12 +1,4 @@
 .env
+/app
 node_modules
 typings
-
-/app
-/client/index-*.css
-/client/index-*.css.map
-/client/index-*.js
-/client/index-*.js.map
-/client/vendor-*.js
-/client/vendor-*.js.map
-/client/index.html
