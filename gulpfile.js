@@ -537,12 +537,33 @@ function cleanImages(done) {
   });
 }
 
+/**
+ * Rebuild images whenever images change.
+ * Rebuild index.html to update file hashes.
+ */
+function watchImages(callback) {
+  callback = callback || noop;
+  logClient('watching images');
+  gulp.watch(paths.client.assets.images, (event) => {
+    logClientWatchEvent(event);
+    cleanImages(() => {
+      buildImages(() => {
+        rebuildHtml(callback);
+      });
+    });
+  });
+}
+
 gulp.task('images', (done) => {
   cleanImages(() => {
     buildImages(() => {
       rebuildHtml(done);
     });
   });
+});
+
+gulp.task('images:watch', ['images'], () => {
+  watchImages();
 });
 
 
@@ -576,6 +597,7 @@ function _buildClient(done, watchMode, watchCallback) {
         watchCss(watchCallback);
         logClient('watching js');
         watchVendor(watchCallback);
+        watchImages(watchCallback);
         watchHtml(watchCallback);
       }
     });
