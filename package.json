@@ -7,8 +7,9 @@
     "client:typings": "cd client && typings",
     "server:typings": "cd server && typings",
     "build": "gulp build",
-    "watch": "gulp watch",
-    "clean": "gulp clean"
+    "clean": "gulp clean",
+    "serve": "gulp serve",
+    "reset": "rm -rf node_modules client/typings server/typings"
   },
   "dependencies": {
     "angular": "^1.5.8",
