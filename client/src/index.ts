@@ -1,4 +1,5 @@
 import angular = require('angular');
+import 'angular-ui-router';
 import routes from './config/routes';
 import widget from './modules/widget/widget.module';
 

@@ -1,4 +1,11 @@
 {
+  "compilerOptions ": {
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "target": "es5"
+  },
   "compileOnSave": false,
   "buildOnSave": false
 }
