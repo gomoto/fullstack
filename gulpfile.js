@@ -732,7 +732,7 @@ gulp.task('clean', (done) => {
 
 gulp.task('build', ['build:client', 'build:server']);
 
-gulp.task('serve', (done) => {
+gulp.task('serve', ['clean'], (done) => {
   const host = `http://${process.env.IP}:${process.env.PORT}`;
   const browserSyncServer = browserSync.create();
   const waitOptions = {
@@ -745,7 +745,7 @@ gulp.task('serve', (done) => {
     buildAndWatchClient(callback, browserSyncServer.reload);
   };
   const serverTask = (callback) => {
-    rebuildServer(() => {
+    buildServer(() => {
       watchServer(() => {
         rebuildServer(() => {
           nodemon.emit('restart');
