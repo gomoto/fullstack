@@ -41,3 +41,46 @@ STORMPATH_APPLICATION_HREF     | ''         | Required by express-stormpath
 STORMPATH_CLIENT_APIKEY_ID     | ''         | Required by express-stormpath
 STORMPATH_CLIENT_APIKEY_SECRET | ''         | Required by express-stormpath
 STORMPATH_GROUPS               | ''         | Comma-separated list of group names
+
+
+
+## Project structure
+
+```
+├── app/
+│   ├── client/
+│   ├── server/
+│
+├── client/
+│   ├── assets/
+│   │   ├── images/
+│   │   │   ├── favicon.ico
+│   ├── src/
+│   │   ├── config/
+│   │   ├── modules/
+│   │   ├── styles/
+│   │   ├── index.html
+│   │   ├── index.scss
+│   │   ├── index.ts
+│   ├── tsconfig.json
+│   ├── typings.json
+│   ├── vendors.json
+│
+├── server/
+│   ├── src/
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── config/
+│   │   ├── stormpath/
+│   │   ├── views/
+│   │   ├── app.ts
+│   │   ├── routes.ts
+│   ├── tsconfig.json
+│   ├── typings.json
+│
+├── .env
+├── gulpfile.js
+├── package.json
+├── README.md
+
+```
