@@ -58,6 +58,7 @@ const paths = {
       },
       assets: {
         directory: `${names.app}/${names.client}/assets`,
+        favicon: `${names.app}/${names.client}/assets/favicon.ico`,
         images: {
           directory: `${names.app}/${names.client}/assets/images`,
           manifest: `${names.app}/${names.client}/assets/images/manifest.json`,
@@ -83,6 +84,7 @@ const paths = {
     vendor: `${names.client}/vendors.json`,
     assets: {
       directory: `${names.client}/assets`,
+      favicon: `${names.client}/assets/favicon.ico`,
       images: `${names.client}/assets/images/**/*`
     },
     tsconfig: `${names.client}/tsconfig.json`
@@ -498,7 +500,7 @@ gulp.task('vendor:watch', ['vendor'], function() {
 
 
 /**
- * Images
+ * Assets
  */
 
 
@@ -508,6 +510,7 @@ gulp.task('vendor:watch', ['vendor'], function() {
  * @return {stream}
  */
 function buildImages(done) {
+  done = done || noop;
   timeClient('images build');
   return gulp.src(paths.client.assets.images)
   .pipe(imagemin())
@@ -547,16 +550,18 @@ gulp.task('images', (done) => {
 
 
 /**
- * Copy
+ * Copy favicon.
+ * @return {stream}
  */
-
-
-
-function copyAssets() {
-  timeClient('assets');
-  fsExtra.copy(paths.client.assets.directory, paths.app.client.assets.directory, (err) => {
-    if (err) console.error('Error copying assets!');
-    timeEndClient('assets');
+function copyFavicon(done) {
+  done = done || noop;
+  timeClient('favicon copy');
+  return gulp.src(paths.client.assets.favicon)
+  .pipe(rename(paths.app.client.assets.favicon))
+  .pipe(gulp.dest('.'))
+  .on('finish', () => {
+    timeEndClient('favicon copy');
+    done();
   });
 }
 
@@ -577,11 +582,12 @@ function copyAssets() {
 function _buildClient(done, watchMode, watchCallback) {
   done = done || noop;
   watchCallback = watchCallback || noop;
-  copyAssets();//race condition!
   mergeStream([
     buildCss(),
     watchMode ? buildAndWatchJs(null, watchCallback) : buildJs(),
-    buildVendor()
+    buildVendor(),
+    copyFavicon(),
+    buildImages()
   ])
   .on('finish', function() {
     buildHtml(() => {
