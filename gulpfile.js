@@ -583,6 +583,7 @@ gulp.task('images:watch', ['images'], () => {
 function _buildClient(done, watchMode, watchCallback) {
   done = done || noop;
   watchCallback = watchCallback || noop;
+  timeClient('build');
   mergeStream([
     buildCss(),
     watchMode ? buildAndWatchJs(null, watchCallback) : buildJs(),
@@ -591,6 +592,7 @@ function _buildClient(done, watchMode, watchCallback) {
   ])
   .on('finish', function() {
     buildHtml(() => {
+      timeEndClient('build');
       done();
       if (watchMode) {
         // watch client files
@@ -730,7 +732,10 @@ gulp.task('clean', (done) => {
   fsExtra.remove(paths.app.directory, done);
 });
 
-gulp.task('build', ['build:client', 'build:server']);
+// If we use gulp subtasks, the time report for this task is not useful.
+gulp.task('build', ['clean'], (done) => {
+  async.parallel([rebuildClient, rebuildServer], done);
+});
 
 gulp.task('serve', ['clean'], (done) => {
   const host = `http://${process.env.IP}:${process.env.PORT}`;
