@@ -89,7 +89,6 @@ const paths = {
   },
   server: {
     typescript: `${names.server}/src/**/!(*.spec).ts`,
-    typings: `${names.server}/typings/**/*.d.ts`,
     html: `${names.server}/src/**/*.html`,
     tsconfig: `${names.server}/tsconfig.json`
   }
@@ -673,10 +672,7 @@ const serverTypescript = typescript.createProject(paths.server.tsconfig);
 function buildServer(done) {
   done = done || noop;
   timeServer('build');
-  return gulp.src([
-    paths.server.typescript,
-    paths.server.typings
-  ])
+  return gulp.src(paths.server.typescript)
   .pipe(serverTypescript())
   .pipe(addSrc(paths.server.html))
   .pipe(gulp.dest(paths.app.server.directory))
@@ -691,10 +687,7 @@ function buildServer(done) {
  * @param  {Function} watchCallback called whenever a server file changes
  */
 function watchServer(watchCallback) {
-  gulp.watch([
-    paths.server.typescript,
-    paths.server.typings
-  ], (event) => {
+  gulp.watch(paths.server.typescript, (event) => {
     logServerWatchEvent(event);
     watchCallback();
   });
