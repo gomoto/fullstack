@@ -1,6 +1,6 @@
-import angular = require('angular');
+import * as angular from 'angular';
 import 'angular-ui-router';
-import stormpath = require('stormpath-sdk-angularjs');
+import * as stormpath from 'stormpath-sdk-angularjs';
 import routes from './config/routes';
 import widget from './modules/widget/widget.module';
 

@@ -1,3 +1,5 @@
+import { ILogService } from 'angular';
+
 export default class WidgetController {
 
   static $inject = [
@@ -5,7 +7,7 @@ export default class WidgetController {
   ];
 
   constructor(
-    private $log: ng.ILogService
+    private $log: ILogService
   ) {}
 
 }

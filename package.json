@@ -12,6 +12,9 @@
     "reset": "rm -rf node_modules client/typings server/typings"
   },
   "dependencies": {
+    "@types/angular": "^1.5.20",
+    "@types/angular-ui-router": "^1.1.34",
+    "@types/jquery": "^2.0.34",
     "angular": "^1.5.8",
     "angular-ui-router": "^0.3.2",
     "body-parser": "^1.15.2",
@@ -28,7 +31,7 @@
     "passport": "^0.3.2",
     "serve-favicon": "^2.3.0",
     "shrink-ray": "^0.1.3",
-    "stormpath-sdk-angularjs": "^1.1.1",
+    "stormpath-sdk-angularjs": "git+ssh://git@github.com/gomoto/stormpath-sdk-angularjs.git#65dd5dec7724b272fe8f539f0e5b1bb40e37e311",
     "winston": "^2.3.0",
     "winston-sumologic": "0.0.0"
   },
