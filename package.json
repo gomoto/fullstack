@@ -21,7 +21,6 @@
     "@types/jquery": "^2.0.34",
     "@types/lodash": "^4.14.39",
     "@types/method-override": "0.0.29",
-    "@types/mime": "0.0.29",
     "@types/morgan": "^1.7.32",
     "@types/serve-favicon": "^2.2.28",
     "@types/serve-static": "^1.7.31",
