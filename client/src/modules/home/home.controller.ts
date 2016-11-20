@@ -1,6 +1,6 @@
 import { ILogService } from 'angular';
 
-export default class WidgetController {
+export default class HomeController {
 
   static $inject = [
     '$log'

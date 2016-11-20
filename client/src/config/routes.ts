@@ -12,9 +12,9 @@ export default [
     $locationProvider.html5Mode(true);
     $urlRouterProvider.otherwise('/');
     $stateProvider
-    .state('main', {
+    .state('home', {
       url: '/',
-      template: '<widget></widget>'
+      template: '<home></home>'
     });
   }
 ];
