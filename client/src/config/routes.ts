@@ -15,6 +15,10 @@ export default [
     .state('home', {
       url: '/',
       template: '<home></home>'
+    })
+    .state('dashboard', {
+      url: '/dashboard',
+      template: '<dashboard></dashboard>'
     });
   }
 ];
