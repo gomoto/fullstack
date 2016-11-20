@@ -1,4 +1,5 @@
 [
   "angular",
-  "angular-ui-router"
+  "angular-ui-router",
+  "stormpath-sdk-angularjs"
 ]
