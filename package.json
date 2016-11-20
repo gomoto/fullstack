@@ -3,13 +3,9 @@
   "version": "0.0.0",
   "description": "",
   "scripts": {
-    "postinstall": "npm run client:typings i && npm run server:typings i",
-    "client:typings": "cd client && typings",
-    "server:typings": "cd server && typings",
     "build": "gulp build",
     "clean": "gulp clean",
-    "serve": "gulp serve",
-    "reset": "rm -rf node_modules client/typings server/typings"
+    "serve": "gulp serve"
   },
   "dependencies": {
     "@types/angular": "^1.5.20",
@@ -86,7 +82,6 @@
     "trash": "^4.0.0",
     "tsify": "^2.0.2",
     "typescript": "^2.0.9",
-    "typings": "^2.0.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "wait-on": "^2.0.1",

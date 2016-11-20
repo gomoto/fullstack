@@ -8,24 +8,6 @@
 
 
 
-## typings
-
-Typings for client and server are managed separately.
-
-### client
-```
-npm run client:typings install <name> -- [options]
-npm run client:typings uninstall <name> -- [options]
-```
-
-### server
-```
-npm run server:typings install <name> -- [options]
-npm run server:typings uninstall <name> -- [options]
-```
-
-
-
 ## Environment variables
 
 Environment variables can be specified in a single .env file at the root of the project.
@@ -63,7 +45,6 @@ STORMPATH_GROUPS               | ''         | Comma-separated list of group name
 │   │   ├── index.scss
 │   │   ├── index.ts
 │   ├── tsconfig.json
-│   ├── typings.json
 │   ├── vendors.json
 │
 ├── server/
@@ -76,7 +57,6 @@ STORMPATH_GROUPS               | ''         | Comma-separated list of group name
 │   │   ├── app.ts
 │   │   ├── routes.ts
 │   ├── tsconfig.json
-│   ├── typings.json
 │
 ├── .env
 ├── gulpfile.js
