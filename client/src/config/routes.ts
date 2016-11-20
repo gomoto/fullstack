@@ -22,7 +22,10 @@ export default [
     })
     .state('dashboard', {
       url: '/dashboard',
-      template: '<dashboard></dashboard>'
+      template: '<dashboard></dashboard>',
+      sp: {
+        authenticate: true
+      }
     });
   }
 ];
