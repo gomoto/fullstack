@@ -70,7 +70,7 @@ const paths = {
   },
   client: {
     html: {
-      templates: `${names.client}/src/modules/**/*.html`,
+      templates: `${names.client}/src/*/**/*.html`,
       entry: `${names.client}/src/index.html`
     },
     css: {
