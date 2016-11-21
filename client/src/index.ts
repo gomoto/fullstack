@@ -1,18 +1,14 @@
 import * as angular from 'angular';
 import 'angular-ui-router';
-import routes from './config/routes';
-import home from './modules/home/home.module';
-import dashboard from './modules/dashboard/dashboard.module';
-import login from './modules/login/login.module';
 import auth from './auth';
+import components from './components';
 import errors from './errors';
+import routes from './config/routes';
 
 angular.module('app', [
   'ui.router',
-  home,
-  dashboard,
-  login,
   auth,
+  components,
   errors
 ])
 .config(routes);

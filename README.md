@@ -38,8 +38,10 @@ STORMPATH_GROUPS               | ''         | Comma-separated list of group name
 │   │   ├── images/
 │   │   │   ├── favicon.ico
 │   ├── src/
+│   │   ├── auth/
+│   │   ├── components/
 │   │   ├── config/
-│   │   ├── modules/
+│   │   ├── errors/
 │   │   ├── styles/
 │   │   ├── index.html
 │   │   ├── index.scss

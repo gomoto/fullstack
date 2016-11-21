@@ -1,9 +1,9 @@
 import angular = require('angular');
 import LoginController from './login.controller';
 
-export default angular.module('app.login', [])
+export default angular.module('components.login', [])
 .component('login', {
-  templateUrl: 'client/src/modules/login/login.html',
+  templateUrl: 'client/src/components/login/login.html',
   controller: LoginController
 })
 .name;
