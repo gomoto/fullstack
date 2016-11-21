@@ -40,11 +40,13 @@ export default (app: express.Application) => {
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
   app.use(methodOverride());
-  app.use(cookieParser());
 
   if (env !== 'test') {
     app.use(initializeStormpath(app));
   }
+
+  // stormpath parses and signs cookies, but stormpath might not be used.
+  app.use(cookieParser());
 
   // Lusca depends on sessions
   app.use(session({
