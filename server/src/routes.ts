@@ -2,7 +2,6 @@
  * Main application routes
  */
 
-import errors from './components/errors';
 import express = require('express');
 import path = require('path');
 const stormpath = require('express-stormpath');
@@ -45,10 +44,6 @@ export default (app: express.Application) => {
   // .get((req, res) => {
   //   res.sendFile(gitSha);
   // });
-
-  // All undefined asset or api routes should return a 404
-  app.route('/:url(api|auth|components|app|bower_components|assets)/*')
-   .get(errors['404']);
 
   // All other routes should redirect to the index.html
   app.route('/*')

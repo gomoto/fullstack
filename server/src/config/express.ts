@@ -28,9 +28,6 @@ export default (app: express.Application) => {
   app.use(express.static(app.get('appPath')));
   app.use(morgan('dev'));
 
-  app.set('views', `${config.root}/server/views`);
-  app.engine('html', ejs.renderFile);
-  app.set('view engine', 'html');
   app.use(shrinkRay());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
