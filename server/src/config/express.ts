@@ -14,7 +14,6 @@ import session = require('express-session');
 const lusca = require('lusca');
 import errorHandler = require('errorhandler');
 import ejs = require('ejs');
-// import passport = require('passport');
 
 import config from './environment';
 const imageManifest = require(`${config.root}/client/assets/images/manifest.json`);
@@ -41,7 +40,6 @@ export default (app: express.Application) => {
   app.use(bodyParser.json());
   app.use(methodOverride());
   app.use(cookieParser());
-  // app.use(passport.initialize());
 
   // Lusca depends on sessions
   app.use(session({
