@@ -26,6 +26,12 @@ export default [
       sp: {
         authenticate: true
       }
+    })
+    .state('403', {
+      template: '<error-forbidden></error-forbidden>'
+    })
+    .state('404', {
+      template: '<error-not-found></error-not-found>'
     });
   }
 ];
