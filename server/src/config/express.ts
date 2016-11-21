@@ -9,6 +9,7 @@ const shrinkRay = require('shrink-ray');
 import bodyParser = require('body-parser');
 import methodOverride = require('method-override');
 import cookieParser = require('cookie-parser');
+import csurf = require('csurf');
 import path = require('path');
 import initializeStormpath from '../stormpath/initialize';
 import errorHandler = require('errorhandler');
@@ -45,6 +46,13 @@ export default (app: express.Application) => {
 
   // stormpath parses and signs cookies, but stormpath might not be used.
   app.use(cookieParser());
+
+  // cross-site request forgery protection (angular)
+  app.use(csurf({ cookie: true }));
+  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    res.cookie('XSRF-TOKEN', req.csrfToken() /*, { signed: true }*/);
+    next();
+  });
 
   if(env === 'development' || env === 'test') {
     app.use(errorHandler()); // Error handler - has to be last
