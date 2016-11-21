@@ -10,7 +10,18 @@ export default [
     $urlRouterProvider: angular.ui.IUrlRouterProvider
   ) {
     $locationProvider.html5Mode(true);
-    $urlRouterProvider.otherwise('/');
+
+    // invalid routes redirect to 404 state without changing URL
+    $urlRouterProvider.otherwise((
+      $injector: angular.auto.IInjectorService,
+      $location: angular.ILocationService
+    ) => {
+      const $state =  $injector.get<angular.ui.IStateService>('$state');
+      $state.go('404');
+      return $location.path();
+    });
+
+    // ui-router states
     $stateProvider
     .state('home', {
       url: '/',
