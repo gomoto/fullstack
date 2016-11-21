@@ -7,7 +7,7 @@ import express = require('express');
 import path = require('path');
 const stormpath = require('express-stormpath');
 import requireGroups from './stormpath/require-groups';
-import initializeStormpath from './stormpath/initialize';
+
 
 // Routes
 import thing from './api/thing';
@@ -29,8 +29,6 @@ export default (app: express.Application) => {
 
   // Stormpath
   if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development') {
-    app.use(initializeStormpath(app));
-
     // require group authorization for /api endpoint
     if (process.env.STORMPATH_GROUPS) {
       const groups = process.env.STORMPATH_GROUPS.split(',');

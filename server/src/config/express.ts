@@ -10,6 +10,7 @@ import bodyParser = require('body-parser');
 import methodOverride = require('method-override');
 import cookieParser = require('cookie-parser');
 import path = require('path');
+import initializeStormpath from '../stormpath/initialize';
 import session = require('express-session');
 const lusca = require('lusca');
 import errorHandler = require('errorhandler');
@@ -40,6 +41,10 @@ export default (app: express.Application) => {
   app.use(bodyParser.json());
   app.use(methodOverride());
   app.use(cookieParser());
+
+  if (env !== 'test') {
+    app.use(initializeStormpath(app));
+  }
 
   // Lusca depends on sessions
   app.use(session({
