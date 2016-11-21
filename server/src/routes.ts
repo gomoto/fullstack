@@ -15,7 +15,6 @@ import thing from './api/thing';
 
 export default (app: express.Application) => {
   // const gitSha = '/app/git-sha.txt';
-  // var indexRoute = (process.env.NODE_ENV === "production")? '/app/public/index.html' : process.cwd() + '/'+ app.get('appPath') + '/index.html';
   const indexRoute = path.resolve(`${app.get('appPath')}/index.html`);
 
   // Preempt stormpath handling of /login route.

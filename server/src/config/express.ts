@@ -23,10 +23,6 @@ const imageManifest = require(`${config.root}/client/assets/images/manifest.json
 export default (app: express.Application) => {
   const env = app.get('env');
 
-  if(env === 'development' || env === 'test') {
-    app.use(express.static(path.join(config.root, '.tmp')));
-  }
-
   app.use(favicon(path.join(config.root, 'client/assets/images', imageManifest['favicon.ico'])));
   app.set('appPath', path.join(config.root, 'client'));
   app.use(express.static(app.get('appPath')));
