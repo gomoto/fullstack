@@ -11,8 +11,6 @@ import methodOverride = require('method-override');
 import cookieParser = require('cookie-parser');
 import path = require('path');
 import initializeStormpath from '../stormpath/initialize';
-import session = require('express-session');
-const lusca = require('lusca');
 import errorHandler = require('errorhandler');
 import ejs = require('ejs');
 
@@ -47,32 +45,6 @@ export default (app: express.Application) => {
 
   // stormpath parses and signs cookies, but stormpath might not be used.
   app.use(cookieParser());
-
-  // Lusca depends on sessions
-  app.use(session({
-    secret: config.secrets.session,
-    saveUninitialized: true,
-    resave: false
-  }));
-
-  /**
-   * Lusca - express server security
-   * https://github.com/krakenjs/lusca
-   */
-  if(env !== 'test') {
-    app.use(lusca({
-      csrf: {
-        angular: true
-      },
-      xframe: 'SAMEORIGIN',
-      hsts: {
-        maxAge: 31536000, //1 year, in seconds
-        includeSubDomains: true,
-        preload: true
-      },
-      xssProtection: true
-    }));
-  }
 
   if(env === 'development' || env === 'test') {
     app.use(errorHandler()); // Error handler - has to be last
