@@ -1,8 +1,24 @@
-export default [
+configureApp.$inject = [
+  '$compileProvider',
   '$locationProvider',
-  function (
-    $locationProvider: angular.ILocationProvider
-  ) {
-    $locationProvider.html5Mode(true);
-  }
+  '$logProvider'
 ];
+
+function configureApp(
+  $compileProvider: ng.ICompileProvider,
+  $locationProvider: ng.ILocationProvider,
+  $logProvider: ng.ILogProvider
+) {
+  $locationProvider.html5Mode(true);
+
+  $compileProvider.debugInfoEnabled(false);
+
+  // available in angular 1.5.9
+  // $compileProvider.commentDirectivesEnabled(false);
+  // $compileProvider.cssClassDirectivesEnabled(false);
+
+  // TODO: control this with environment variable
+  $logProvider.debugEnabled(true);
+}
+
+export default configureApp;

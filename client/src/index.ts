@@ -3,7 +3,7 @@ import 'angular-ui-router';
 import auth from './auth';
 import components from './components';
 import errors from './errors';
-import routes from './config/routes';
+import config from './config';
 
 angular.module('app', [
   'ui.router',
@@ -11,4 +11,4 @@ angular.module('app', [
   components,
   errors
 ])
-.config(routes);
+.config(config);
