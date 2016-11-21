@@ -67,10 +67,6 @@ export default (app: express.Application) => {
     }));
   }
 
-  // if ('development' === env || 'test' === env) {
-  //   app.use(require('connect-livereload')());
-  // }
-
   if(env === 'development' || env === 'test') {
     app.use(errorHandler()); // Error handler - has to be last
   }
