@@ -13,7 +13,6 @@ import csurf = require('csurf');
 import path = require('path');
 import initializeStormpath from '../stormpath/initialize';
 import errorHandler = require('errorhandler');
-import ejs = require('ejs');
 
 import config from './environment';
 const imageManifest = require(`${config.root}/client/assets/images/manifest.json`);
