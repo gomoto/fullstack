@@ -27,9 +27,6 @@ const uglify = require('gulp-uglify');
 const waitOn = require('wait-on');
 const watchify = require('watchify');
 
-// load environment variables from .env
-dotenv.config();
-
 const noop = Function.prototype;
 
 const names = {
@@ -735,6 +732,9 @@ gulp.task('build', ['clean'], (done) => {
 });
 
 gulp.task('serve', ['clean'], (done) => {
+  // load environment variables from .env
+  dotenv.config();
+
   const host = `http://${process.env.IP}:${process.env.PORT}`;
   const browserSyncServer = browserSync.create();
   const waitOptions = {
