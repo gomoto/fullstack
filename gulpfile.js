@@ -13,6 +13,7 @@ const gulp = require('gulp');
 const htmlInjector = require('html-injector');
 const htmlMinifierStream = require('html-minifier-stream');
 const imagemin = require('gulp-imagemin');
+const ini = require('ini');
 const mergeStream = require('merge-stream');
 const nodemon = require('nodemon');
 const rename = require('gulp-rename');
@@ -167,6 +168,7 @@ function rebuildHtml(done) {
 
 /**
  * Rebuild index.html whenever any html file changes.
+ * @param  {Function} callback called after index.html is written to disk
  */
 function watchHtml(callback) {
   callback = callback || noop;
@@ -241,6 +243,7 @@ function cleanCss(done) {
 /**
  * Rebuild index.css and its sourcemap whenever any scss file changes.
  * Rebuild index.html to update index.css hash.
+ * @param  {Function} callback called after files are written to disk
  */
 function watchCss(callback) {
   callback = callback || noop;
@@ -325,9 +328,8 @@ function buildJs(done) {
   done = done || noop;
   timeClient('js build');
 
-  // load environment variables from .env into process.env
-  dotenv.config();
   // TODO: reload env vars when .env changes
+  const env = ini.parse(fs.readFileSync(paths.env, 'utf-8'));
 
   const browserifyOptions = {
     cache: {},
@@ -344,7 +346,7 @@ function buildJs(done) {
   // replace environment variables
   jsBundle.transform(envify({
     _: 'purge',
-    NODE_ENV: process.env.NODE_ENV
+    NODE_ENV: env.NODE_ENV
   }));
 
   require(`./${paths.client.vendor}`).forEach((vendor) => {
@@ -361,7 +363,7 @@ function buildJs(done) {
  * Rebuild index.js and its sourcemap whenever any typescript file changes.
  * Rebuild index.html to update index.js hash.
  * NOTE: buildJs must be called at least once before this.
- * @param  {Function} callback called after each subsequent bundle is written to disk
+ * @param  {Function} callback called after bundle is written to disk
  */
 function watchJs(callback) {
   callback = callback || noop;
@@ -468,6 +470,7 @@ function cleanVendor(done) {
 /**
  * Rebuild vendor bundle and its sourcemap whenever vendors.json changes.
  * Rebuild index.html to update file hash.
+ * @param  {Function} callback called after files are written to disk
  */
 function watchVendor(callback) {
   callback = callback || noop;
@@ -543,6 +546,7 @@ function cleanImages(done) {
 /**
  * Rebuild images whenever images change.
  * Rebuild index.html to update file hashes.
+ * @param  {Function} callback called after files are written to disk
  */
 function watchImages(callback) {
   callback = callback || noop;
@@ -576,13 +580,18 @@ gulp.task('images:watch', ['images'], () => {
  */
 
 /**
- * When environment variables change, stop everything.
- * Hopefully someday browserify will support reloading transform options.
+ * When environment variables change, rebuild js bundle from scratch.
+ * @param  {Function} callback called after bundle is written to disk
  */
-function watchEnvironment() {
+function watchEnvironment(callback) {
+  callback = callback || noop;
   gulp.watch(paths.env, (event) => {
     logEnvironmentWatchEvent(event);
-    process.exit();
+    cleanJs(() => {
+      buildJs(() => {
+        rebuildHtml(callback);
+      });
+    });
   });
 }
 
