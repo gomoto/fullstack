@@ -41,7 +41,7 @@ export default (app: express.Application) => {
 
   // cross-site request forgery protection (angular)
   app.use(csurf({ cookie: true }));
-  app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+  app.use((req, res, next) => {
     res.cookie('XSRF-TOKEN', req.csrfToken() /*, { signed: true }*/);
     next();
   });
