@@ -1,11 +1,29 @@
+// Enable stormpath
+
 import express = require('express');
 const stormpath = require('express-stormpath');
 import path = require('path');
 
 export default (app: express.Application) => {
+  const env = app.get('env');
+
+  // disable stormpath in test mode
+  if (env === 'test') {
+    return;
+  }
+
   const indexRoute = path.resolve(`${app.get('appPath')}/index.html`);
 
-  return stormpath.init(app, {
+  // Preempt stormpath handling of /login route.
+  // Let frontend app handle the login view.
+  app.get('/login', (req, res, next) => {
+    if (req.accepts('html')) {
+      return res.sendFile(indexRoute);
+    }
+    next();
+  });
+
+  app.use(stormpath.init(app, {
     expand: {
       groups: true
     },
@@ -19,5 +37,6 @@ export default (app: express.Application) => {
       },
       spaRoot: indexRoute
     }
-  });
+  }));
+
 }

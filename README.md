@@ -15,6 +15,7 @@ Environment variables can be specified in a single .env file at the root of the 
 variable                       | default    | description
 ------------------------------ | ---------- | -----------------------
 ADMIN_GROUP                    | ''         | Admin group name
+COOKIE_SECRET                  | ''         | String for signing cookies
 IP                             | '0.0.0.0'  | Server ip address
 NODE_ENV                       | ''         | Node environment
 PORT                           | '9000'     | Server port

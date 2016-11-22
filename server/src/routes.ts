@@ -16,16 +16,7 @@ export default (app: express.Application) => {
   // const gitSha = '/app/git-sha.txt';
   const indexRoute = path.resolve(`${app.get('appPath')}/index.html`);
 
-  // Preempt stormpath handling of /login route.
-  // Let frontend app handle the login view.
-  app.get('/login', (req, res, next) => {
-    if (req.accepts('html')) {
-      return res.sendFile(indexRoute);
-    }
-    next();
-  });
-
-  // Stormpath
+  // Authenticated routes
   if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development') {
     // require group authorization for /api endpoint
     if (process.env.STORMPATH_GROUPS) {
@@ -37,7 +28,7 @@ export default (app: express.Application) => {
     }
   }
 
-  // Insert routes below
+  // All routes
   app.use('/api/things', thing);
 
   // app.route('/version')

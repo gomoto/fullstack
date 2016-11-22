@@ -11,7 +11,6 @@ import methodOverride = require('method-override');
 import cookieParser = require('cookie-parser');
 import csurf = require('csurf');
 import path = require('path');
-import initializeStormpath from '../stormpath/initialize';
 import errorHandler = require('errorhandler');
 
 import config from './environment';
@@ -32,12 +31,8 @@ export default (app: express.Application) => {
   app.use(bodyParser.json());
   app.use(methodOverride());
 
-  if (env !== 'test') {
-    app.use(initializeStormpath(app));
-  }
-
   // stormpath parses and signs cookies, but stormpath might not be used.
-  app.use(cookieParser());
+  app.use(cookieParser(process.env.COOKIE_SECRET));
 
   // cross-site request forgery protection (angular)
   app.use(csurf({ cookie: true }));
