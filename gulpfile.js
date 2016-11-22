@@ -26,7 +26,6 @@ const tsify = require('tsify');
 const typescript = require('gulp-typescript');
 const uglify = require('gulp-uglify');
 const waitOn = require('wait-on');
-const watchify = require('watchify');
 
 const noop = Function.prototype;
 
@@ -278,9 +277,12 @@ gulp.task('css:watch', ['css'], function() {
  */
 
 /**
+ * NOTE: watchify doesn't trigger update event when files are added, or when
+ * those newly added files are saved!
  * NOTE: When using watchify and tsify together, updating a typescript file in
  * one bundle triggers an update event in all bundles. Stick to one typescript
  * bundle until this is resolved.
+ * NOTE: This might be fixed with gulp.watch (watchify was removed).
  */
 
 /**
