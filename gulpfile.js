@@ -89,7 +89,8 @@ const paths = {
     typescript: `${names.server}/src/**/!(*.spec).ts`,
     html: `${names.server}/src/**/*.html`,
     tsconfig: `${names.server}/tsconfig.json`
-  }
+  },
+  env: '.env'
 };
 
 
@@ -571,6 +572,23 @@ gulp.task('images:watch', ['images'], () => {
 
 
 /**
+ * Environment
+ */
+
+/**
+ * When environment variables change, stop everything.
+ * Hopefully someday browserify will support reloading transform options.
+ */
+function watchEnvironment() {
+  gulp.watch(paths.env, (event) => {
+    logEnvironmentWatchEvent(event);
+    process.exit();
+  });
+}
+
+
+
+/**
  * Client
  */
 
@@ -606,6 +624,7 @@ function watchClient(callback) {
   watchVendor(callback);
   watchImages(callback);
   watchHtml(callback);
+  watchEnvironment(callback);
 }
 
 /**
@@ -831,6 +850,18 @@ const nodemonLogPrefix = chalk.yellow('[nodemon]');
 
 function logNodemon(message) {
   console.log(nodemonLogPrefix, message);
+}
+
+// Environment
+
+const environmentLogPrefix = chalk.green('[env]');
+
+function logEnvironment(message) {
+  console.log(environmentLogPrefix, message);
+}
+
+function logEnvironmentWatchEvent(event) {
+  logEnvironment(`${event.path} ${event.type}`);
 }
 
 
