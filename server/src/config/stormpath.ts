@@ -14,12 +14,17 @@ export default (app: express.Application) => {
 
   const indexRoute = path.resolve(`${app.get('appPath')}/index.html`);
 
-  // Preempt stormpath handling of /login route.
+  // Preempt stormpath handling of login route.
   // Let frontend app handle the login view.
-  app.get('/login', (req, res, next) => {
-    if (req.accepts('html')) {
+  app.use((req, res, next) => {
+    // login uri not known until stormpath initializes
+    const loginPath = req.app.get('stormpathConfig').web.login.uri;
+
+    // if user hits the login uri directly, send the frontend app
+    if (req.path === loginPath && req.accepts('html')) {
       return res.sendFile(indexRoute);
     }
+
     next();
   });
 
