@@ -6,6 +6,7 @@ const browserify = require('browserify');
 const buffer = require('vinyl-buffer');
 const chalk = require('chalk');
 const dotenv = require('dotenv');
+const envify = require('envify/custom');
 const fs = require('fs');
 const fsExtra = require('fs-extra');
 const gulp = require('gulp');
@@ -291,6 +292,9 @@ function _buildJs(done, watchMode, watchCallback) {
   done = done || noop;
   timeClient('js build');
 
+  // load environment variables from .env into process.env
+  dotenv.config();
+
   const browserifyOptions = {
     cache: {},
     packageCache: {},
@@ -298,8 +302,16 @@ function _buildJs(done, watchMode, watchCallback) {
     debug: true
   };
 
-  const b = browserify(browserifyOptions)
-  .plugin(tsify, { project: paths.client.tsconfig });
+  const b = browserify(browserifyOptions);
+
+  // transpile TypeScript
+  b.plugin(tsify, { project: paths.client.tsconfig });
+
+  // replace environment variables
+  b.transform(envify({
+    _: 'purge',
+    NODE_ENV: process.env.NODE_ENV
+  }));
 
   require(`./${paths.client.vendor}`).forEach((vendor) => {
     b.external(vendor);
@@ -732,7 +744,7 @@ gulp.task('build', ['clean'], (done) => {
 });
 
 gulp.task('serve', ['clean'], (done) => {
-  // load environment variables from .env
+  // load environment variables from .env into process.env
   dotenv.config();
 
   const host = `http://${process.env.IP}:${process.env.PORT}`;
