@@ -664,13 +664,13 @@ function buildServer(done) {
 
 /**
  * Watch server files.
- * @param  {Function} watchCallback called whenever a server file changes
+ * @param  {Function} callback called whenever a server file changes
  */
-function watchServer(watchCallback) {
-  watchCallback = watchCallback || noop;
+function watchServer(callback) {
+  callback = callback || noop;
   gulp.watch(paths.server.typescript, (event) => {
     logServerWatchEvent(event);
-    watchCallback();
+    rebuildServer(callback);
   });
 }
 
@@ -740,9 +740,7 @@ gulp.task('serve', ['clean'], (done) => {
   const serverTask = (callback) => {
     buildServer(() => {
       watchServer(() => {
-        rebuildServer(() => {
-          nodemon.emit('restart');
-        });
+        nodemon.emit('restart');
       });
       callback();
     });
