@@ -5,6 +5,7 @@
 import * as angular from 'angular';
 import 'angular-ui-router';
 import * as stormpath from 'stormpath-sdk-angularjs';
+import configureStormpath from './configure-stormpath';
 import enableStormpath from './enable-stormpath';
 
 export default angular.module('auth', [
@@ -12,5 +13,6 @@ export default angular.module('auth', [
   stormpath,
   'stormpath.templates'
 ])
+.config(configureStormpath)
 .run(enableStormpath)
 .name;
