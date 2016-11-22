@@ -76,7 +76,8 @@ const paths = {
       entry: `${names.client}/src/index.scss`
     },
     js: {
-      entry: `${names.client}/src/index.ts`,
+      source: `${names.client}/src/**/*.ts`,
+      entry: `${names.client}/src/index.ts`
     },
     vendor: `${names.client}/vendors.json`,
     assets: {
@@ -277,18 +278,47 @@ gulp.task('css:watch', ['css'], function() {
  */
 
 /**
- * Generate main bundle and its sourcemap.
- *
  * NOTE: When using watchify and tsify together, updating a typescript file in
  * one bundle triggers an update event in all bundles. Stick to one typescript
  * bundle until this is resolved.
- *
- * @param  {Function} done called after js files have been written to disk
- * @param  {boolean} watchMode should watchify plugin be used?
- * @param  {Function} watchCallback called, with the bundle function as its only argument, whenever watchify detects a change in files
+ */
+
+/**
+ * Browserify instance for the index.js bundle.
+ */
+var jsBundle;
+
+/**
+ * Bundle js files.
+ * @param  {Function} done called after bundle is written to disk
  * @return {stream} browserifyBundleStream
  */
-function _buildJs(done, watchMode, watchCallback) {
+function bundleJs(done) {
+  done = done || noop;
+  if (!jsBundle) {
+    console.error('buildJs() must be called at least once before this point');
+    process.exit();
+  }
+  return jsBundle.bundle()
+  .on('error', console.error)
+  .pipe(source(paths.app.client.js.raw))
+  .pipe(buffer())
+  .pipe(sourcemaps.init({ loadMaps: true }))
+  .pipe(uglify())
+  .pipe(rev())
+  .pipe(sourcemaps.write('.'))
+  .pipe(gulp.dest('.'))
+  .on('finish', function() {
+    done();
+  });
+}
+
+/**
+ * Generate index.js and its sourcemap.
+ * @param  {Function} done called after files are written to disk
+ * @return {stream} browserifyBundleStream
+ */
+function buildJs(done) {
   done = done || noop;
   timeClient('js build');
 
@@ -303,86 +333,43 @@ function _buildJs(done, watchMode, watchCallback) {
     debug: true
   };
 
-  const b = browserify(browserifyOptions);
+  jsBundle = browserify(browserifyOptions);
 
   // transpile TypeScript
-  b.plugin(tsify, { project: paths.client.tsconfig });
+  jsBundle.plugin(tsify, { project: paths.client.tsconfig });
 
   // replace environment variables
-  b.transform(envify({
+  jsBundle.transform(envify({
     _: 'purge',
     NODE_ENV: process.env.NODE_ENV
   }));
 
   require(`./${paths.client.vendor}`).forEach((vendor) => {
-    b.external(vendor);
+    jsBundle.external(vendor);
   });
 
-  /**
-   * Bundle js files.
-   * @param  {Function} callback called after bundle is written to disk
-   * @return {stream} browserifyBundleStream
-   */
-  const bundle = (callback) => {
-    callback = callback || noop;
-    return b.bundle()
-    .on('error', console.error)
-    .pipe(source(paths.app.client.js.raw))
-    .pipe(buffer())
-    .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(uglify())
-    .pipe(rev())
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('.'))
-    .on('finish', function() {
-      callback();
-    });
-  };
-
-  if (watchMode) {
-    watchCallback = watchCallback || noop;
-    b.plugin(watchify)
-    b.on('update', (ids) => {
-      logClient(ids);
-      watchCallback(bundle);
-    });
-  }
-
-  return bundle(() => {
+  return bundleJs(() => {
     timeEndClient('js build');
     done();
   });
 }
 
 /**
- * Generate index.js and its sourcemap.
- * @param  {Function} done called after files are written to disk
- * @return {stream} browserifyBundleStream
- */
-function buildJs(done) {
-  return _buildJs(done);
-}
-
-/**
  * Rebuild index.js and its sourcemap whenever any typescript file changes.
  * Rebuild index.html to update index.js hash.
- * NOTE: Because of how watchify and browserify work together, this function
- * builds the bundle one time, unlike other watch functions.
- * @param  {Function} buildDone called after the first bundle is written to disk
- * @param  {Function} watchCallback called after each subsequent bundle is written to disk
- * @return {stream} browserifyBundleStream for the first bundle
+ * NOTE: buildJs must be called at least once before this.
+ * @param  {Function} callback called after each subsequent bundle is written to disk
  */
-function buildAndWatchJs(buildDone, watchCallback) {
-  buildDone = buildDone || noop;
-  watchCallback = watchCallback || noop;
-  return _buildJs(buildDone, true, (bundle) => {
+function watchJs(callback) {
+  callback = callback || noop;
+  logClient('watching js');
+  gulp.watch(paths.client.js.source, (event) => {
+    logClientWatchEvent(event);
     cleanJs(() => {
       timeClient('js build (incremental)');
-      bundle(() => {
+      bundleJs(() => {
         timeEndClient('js build (incremental)');
-        rebuildHtml(() => {
-          watchCallback();
-        });
+        rebuildHtml(callback);
       });
     });
   });
@@ -417,8 +404,8 @@ gulp.task('js:clean', function(done) {
   cleanJs(done);
 });
 
-gulp.task('js:watch', function(done) {
-  buildAndWatchJs(done);
+gulp.task('js:watch', ['js'], function() {
+  watchJs();
 });
 
 
@@ -585,21 +572,16 @@ gulp.task('images:watch', ['images'], () => {
  * Client
  */
 
-
-
 /**
- * Helper function to build and watch client files.
- * @param  {Function} done called after all client files are written to disk the first time
- * @param  {boolean} watchMode should set up client watch functions?
- * @param  {Function} watchCallback passed to each client watch function
+ * Build client files.
+ * @param {Function} done called after all client files are written to disk
  */
-function _buildClient(done, watchMode, watchCallback) {
+function buildClient(done) {
   done = done || noop;
-  watchCallback = watchCallback || noop;
   timeClient('build');
   mergeStream([
     buildCss(),
-    watchMode ? buildAndWatchJs(null, watchCallback) : buildJs(),
+    buildJs(),
     buildVendor(),
     buildImages()
   ])
@@ -607,35 +589,21 @@ function _buildClient(done, watchMode, watchCallback) {
     buildHtml(() => {
       timeEndClient('build');
       done();
-      if (watchMode) {
-        // watch client files
-        watchCss(watchCallback);
-        logClient('watching js');
-        watchVendor(watchCallback);
-        watchImages(watchCallback);
-        watchHtml(watchCallback);
-      }
     });
   });
 }
 
 /**
- * Build client files.
- * @param {Function} done called after all client files are written to disk
+ * Watch each build cycle independently.
+ * @param  {Function} callback passed to each client watch function
  */
-function buildClient(done) {
-  _buildClient(done);
-}
-
-/**
- * Set up watch tasks for client modules (html, css, js).
- * NOTE: Because of buildAndWatchJs(), this function also builds the bundle one
- * time, unlike other watch functions.
- * @param  {Function} buildDone called after all client files are written to disk the first time
- * @param  {Function} watchCallback passed to each client watch function
- */
-function buildAndWatchClient(buildDone, watchCallback) {
-  _buildClient(buildDone, true, watchCallback);
+function watchClient(callback) {
+  callback = callback || noop;
+  watchCss(callback);
+  watchJs(callback);
+  watchVendor(callback);
+  watchImages(callback);
+  watchHtml(callback);
 }
 
 /**
@@ -697,6 +665,7 @@ function buildServer(done) {
  * @param  {Function} watchCallback called whenever a server file changes
  */
 function watchServer(watchCallback) {
+  watchCallback = watchCallback || noop;
   gulp.watch(paths.server.typescript, (event) => {
     logServerWatchEvent(event);
     watchCallback();
@@ -756,9 +725,16 @@ gulp.task('serve', ['clean'], (done) => {
   };
 
   // (1) Build and watch client and server files
+
   const clientTask = (callback) => {
-    buildAndWatchClient(callback, browserSyncServer.reload);
+    buildClient(() => {
+      watchClient(() => {
+        browserSyncServer.reload();
+      });
+      callback();
+    });
   };
+
   const serverTask = (callback) => {
     buildServer(() => {
       watchServer(() => {
@@ -769,6 +745,7 @@ gulp.task('serve', ['clean'], (done) => {
       callback();
     });
   };
+
   async.parallel([clientTask, serverTask], () => {
     // (2) Launch server
     nodemon(`-w .env ${paths.app.server.directory}/app.js`)
