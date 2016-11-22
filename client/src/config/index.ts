@@ -11,14 +11,13 @@ function configureApp(
 ) {
   $locationProvider.html5Mode(true);
 
-  $compileProvider.debugInfoEnabled(false);
+  $compileProvider.debugInfoEnabled(process.env.NODE_ENV === 'development');
 
   // available in angular 1.5.9
   // $compileProvider.commentDirectivesEnabled(false);
   // $compileProvider.cssClassDirectivesEnabled(false);
 
-  // TODO: control this with environment variable
-  $logProvider.debugEnabled(true);
+  $logProvider.debugEnabled(process.env.NODE_ENV === 'development');
 }
 
 export default configureApp;

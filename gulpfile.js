@@ -294,6 +294,7 @@ function _buildJs(done, watchMode, watchCallback) {
 
   // load environment variables from .env into process.env
   dotenv.config();
+  // TODO: reload env vars when .env changes
 
   const browserifyOptions = {
     cache: {},
