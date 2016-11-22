@@ -6,8 +6,8 @@ configureRoutes.$inject = [
 ];
 
 function configureRoutes(
-  $stateProvider: angular.ui.IStateProvider,
-  $urlRouterProvider: angular.ui.IUrlRouterProvider
+  $stateProvider: ng.ui.IStateProvider,
+  $urlRouterProvider: ng.ui.IUrlRouterProvider
 ) {
 
   // create one ui-router state for each error code
@@ -19,10 +19,10 @@ function configureRoutes(
 
   // invalid routes redirect to 404 state without changing URL
   $urlRouterProvider.otherwise((
-    $injector: angular.auto.IInjectorService,
-    $location: angular.ILocationService
+    $injector: ng.auto.IInjectorService,
+    $location: ng.ILocationService
   ) => {
-    const $state =  $injector.get<angular.ui.IStateService>('$state');
+    const $state =  $injector.get<ng.ui.IStateService>('$state');
     $state.go('404');
     return $location.path();
   });

@@ -1,5 +1,3 @@
-import * as angular from 'angular';
-
 export default class HomeController {
 
   static $inject = [
@@ -9,9 +7,9 @@ export default class HomeController {
   ];
 
   constructor(
-    private $auth: angular.stormpath.IAuthService,
-    private $log: angular.ILogService,
-    private $state: angular.ui.IStateService
+    private $auth: ng.stormpath.IAuthService,
+    private $log: ng.ILogService,
+    private $state: ng.ui.IStateService
   ) {}
 
   logout() {

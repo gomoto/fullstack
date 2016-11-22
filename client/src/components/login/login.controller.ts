@@ -1,5 +1,3 @@
-import * as angular from 'angular';
-
 export default class LoginController {
 
   static $inject = [
@@ -8,8 +6,8 @@ export default class LoginController {
   ];
 
   constructor(
-    private $auth: angular.stormpath.IAuthService,
-    private $log: angular.ILogService
+    private $auth: ng.stormpath.IAuthService,
+    private $log: ng.ILogService
   ) {}
 
   username: string;

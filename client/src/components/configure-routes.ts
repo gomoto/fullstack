@@ -3,7 +3,7 @@ configureRoutes.$inject = [
 ];
 
 function configureRoutes(
-  $stateProvider: angular.ui.IStateProvider
+  $stateProvider: ng.ui.IStateProvider
 ) {
   $stateProvider
   .state('home', {

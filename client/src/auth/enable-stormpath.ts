@@ -2,7 +2,7 @@ enableStormpath.$inject = [
   '$stormpath'
 ];
 
-function enableStormpath($stormpath: angular.stormpath.IStormpathService) {
+function enableStormpath($stormpath: ng.stormpath.IStormpathService) {
   $stormpath.uiRouter({
     defaultPostLoginState: 'dashboard',
     forbiddenState: 'home',
