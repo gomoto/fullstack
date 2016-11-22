@@ -14,6 +14,8 @@ export default <ISharedEnvironment> {
   // Server IP
   ip: process.env.IP || '0.0.0.0',
 
+  login: process.env.LOGIN_URI || '/login',
+
   // Should we populate the DB with sample data?
   seedDB: false,
 
@@ -26,6 +28,7 @@ export interface ISharedEnvironment {
   root: string;
   port: number;
   ip: string;
+  login: string;
   seedDB: boolean;
   secrets: any;
   userRoles: string[];

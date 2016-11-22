@@ -2,6 +2,7 @@
 
 import express = require('express');
 const stormpath = require('express-stormpath');
+import config from './environment';
 
 export default (app: express.Application) => {
   const env = app.get('env');
@@ -13,15 +14,10 @@ export default (app: express.Application) => {
 
   // Preempt stormpath handling of login route.
   // Let frontend app handle the login view.
-  app.use((req, res, next) => {
-    // login uri not known until stormpath initializes
-    const loginPath = req.app.get('stormpathConfig').web.login.uri;
-
-    // if user hits the login uri directly, send the frontend app
-    if (req.path === loginPath && req.accepts('html')) {
+  app.get(config.login, (req, res, next) => {
+    if (req.accepts('html')) {
       return res.sendFile(app.get('application'));
     }
-
     next();
   });
 
@@ -31,6 +27,10 @@ export default (app: express.Application) => {
     },
     website: true,
     web: {
+      login: {
+        enabled: true,
+        uri: config.login
+      },
       me: {
         expand: {
           customData: true,
