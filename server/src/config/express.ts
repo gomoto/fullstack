@@ -21,9 +21,12 @@ const imageManifest = require(`${config.root}/client/assets/images/manifest.json
 export default (app: express.Application) => {
   const env = app.get('env');
 
+  // paths - where are things located?
+  app.set('client', path.join(config.root, 'client'));
+  app.set('application', path.join(app.get('client'), 'index.html'));
+
   app.use(favicon(path.join(config.root, 'client/assets/images', imageManifest['favicon.ico'])));
-  app.set('appPath', path.join(config.root, 'client'));
-  app.use(express.static(app.get('appPath')));
+  app.use(express.static(app.get('client')));
   app.use(morgan('dev'));
 
   app.use(shrinkRay());

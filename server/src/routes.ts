@@ -3,7 +3,6 @@
  */
 
 import express = require('express');
-import path = require('path');
 const stormpath = require('express-stormpath');
 import requireGroups from './stormpath/require-groups';
 
@@ -14,7 +13,6 @@ import thing from './api/thing';
 
 export default (app: express.Application) => {
   // const gitSha = '/app/git-sha.txt';
-  const indexRoute = path.resolve(`${app.get('appPath')}/index.html`);
 
   // Authenticated routes
   if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development') {
@@ -46,7 +44,7 @@ export default (app: express.Application) => {
   // All other routes should redirect to the index.html
   app.route('/*')
   .get((req, res) => {
-    res.sendFile(indexRoute);
+    res.sendFile(app.get('application'));
   });
 
 }
