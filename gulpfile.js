@@ -803,7 +803,8 @@ gulp.task('serve', ['clean'], (done) => {
       browserSyncServer.init({
         proxy: host,
         browser: 'google chrome',
-        port: 7000
+        open: env.DEV_HOST || 'localhost',
+        port: env.DEV_PORT || 7000
       });
     });
 

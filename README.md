@@ -16,6 +16,8 @@ variable                       | default    | description
 ------------------------------ | ---------- | -----------------------
 ADMIN_GROUP                    | ''         | Admin group name
 COOKIE_SECRET                  | ''         | String for signing cookies
+DEV_HOST                       | 'local'    | Development host (local | external)
+DEV_PORT                       | '7000'     | Development port
 IP                             | '0.0.0.0'  | Server ip address
 NODE_ENV                       | ''         | Node environment
 PORT                           | '9000'     | Server port
