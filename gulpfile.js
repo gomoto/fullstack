@@ -884,11 +884,4 @@ function logEnvironmentWatchEvent(event) {
 
 
 
-// gulp.watch('gulpfile.js', () => {
-//   console.log(chalk.red('gulpfile changed'));
-//   process.exit();
-// });
-
-
-
 // TODO: test tasks
