@@ -5,7 +5,6 @@ const browserSync = require('browser-sync');
 const browserify = require('browserify-incremental');
 const buffer = require('vinyl-buffer');
 const chalk = require('chalk');
-const dotenv = require('dotenv');
 const envify = require('envify/custom');
 const fs = require('fs');
 const fsExtra = require('fs-extra');
@@ -327,10 +326,7 @@ function bundleJs(done) {
 function buildJs(done) {
   done = done || noop;
   timeClient('js build');
-
-  // TODO: reload env vars when .env changes
-  const env = ini.parse(fs.readFileSync(paths.env, 'utf-8'));
-
+  const env = getEnv();
   const browserifyOptions = {
     cache: {},
     packageCache: {},
@@ -596,6 +592,14 @@ function watchEnvironment(callback) {
   });
 }
 
+/**
+ * Return environment variables as an object, without loading them into process.env
+ * @return {Object} environmentVariables
+ */
+function getEnv() {
+  return ini.parse(fs.readFileSync(paths.env, 'utf-8'));
+}
+
 
 
 /**
@@ -745,10 +749,8 @@ gulp.task('build', ['clean'], (done) => {
 });
 
 gulp.task('serve', ['clean'], (done) => {
-  // load environment variables from .env into process.env
-  dotenv.config();
-
-  const host = `http://${process.env.IP}:${process.env.PORT}`;
+  const env = getEnv();
+  const host = `http://${env.IP}:${env.PORT}`;
   const browserSyncServer = browserSync.create();
   const waitOptions = {
     resources: [host],
