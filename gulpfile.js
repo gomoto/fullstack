@@ -806,6 +806,11 @@ gulp.task('serve', ['clean'], (done) => {
         port: 7000
       });
     });
+
+    // prevent 'Error: read EIO' after SIGINT when this task runs in npm scripts
+    process.once('SIGINT', () => {
+      process.exit(0);
+    });
   });
 });
 
