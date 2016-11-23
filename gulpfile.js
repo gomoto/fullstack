@@ -5,6 +5,7 @@ const browserSync = require('browser-sync');
 const browserify = require('browserify-incremental');
 const buffer = require('vinyl-buffer');
 const chalk = require('chalk');
+const child_process = require('child_process');
 const envify = require('envify/custom');
 const fs = require('fs');
 const fsExtra = require('fs-extra');
@@ -62,7 +63,8 @@ const paths = {
       },
     },
     server: {
-      directory: `${names.app}/${names.server}`
+      directory: `${names.app}/${names.server}`,
+      main: `${names.app}/${names.server}/app.js`
     }
   },
   client: {
@@ -749,6 +751,38 @@ gulp.task('build', ['clean'], (done) => {
   async.parallel([rebuildClient, rebuildServer], done);
 });
 
+
+
+/**
+ * Dev
+ */
+
+
+
+var fork, busy = false;
+function launchServer() {
+  if (busy) {
+    return;
+  }
+
+  function spawn() {
+    fork = child_process.fork(paths.app.server.main);
+    busy = false;
+  }
+
+  if (fork) {
+    busy = true;
+    fork.once('exit', spawn);
+    fork.kill();
+  } else {
+    spawn();
+  }
+}
+
+gulp.task('dev', () => {
+  nodemon(`-w .env -w gulpfile.js -x gulp serve`);
+});
+
 gulp.task('serve', ['clean'], (done) => {
   const env = getEnv();
   const host = `http://${env.IP}:${env.PORT}`;
@@ -772,7 +806,13 @@ gulp.task('serve', ['clean'], (done) => {
   const serverTask = (callback) => {
     buildServer(() => {
       watchServer(() => {
-        nodemon.emit('restart');
+        launchServer();
+
+        // reload browser-sync proxy server once app server is ready
+        waitOn(waitOptions, (err) => {
+          if (err) console.error(err);
+          browserSyncServer.reload();
+        });
       });
       callback();
     });
@@ -780,22 +820,7 @@ gulp.task('serve', ['clean'], (done) => {
 
   async.parallel([clientTask, serverTask], () => {
     // (2) Launch server
-    nodemon(`-w .env ${paths.app.server.directory}/app.js`)
-    .on('log', (log) => {
-      logNodemon(log.message);
-    })
-    .on('restart', (files) => {
-      logNodemon(`restarted`);
-
-      // reload browser-sync proxy server once app server is ready
-      waitOn(waitOptions, (err) => {
-        if (err) console.error(err);
-        browserSyncServer.reload();
-      });
-    })
-    .on('crash', () => logNodemon('crashed'))
-    .on('exit', () => logNodemon('exited'))
-    .on('quit', () => logNodemon('quit'));
+    launchServer();
 
     // (3) Launch browser-sync proxy server once app server is ready
     waitOn(waitOptions, (err) => {
