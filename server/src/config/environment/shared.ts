@@ -1,4 +1,8 @@
 import path = require('path');
+import dotenv = require('dotenv');
+
+// Load environment variables from .env into process.env
+dotenv.config();
 
 // All configurations will extend these options
 // ============================================
