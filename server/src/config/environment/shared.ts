@@ -20,6 +20,8 @@ export default <ISharedEnvironment> {
 
   login: process.env.LOGIN_URI || '/login',
 
+  logout: process.env.LOGOUT_URI || '/logout',
+
   // Should we populate the DB with sample data?
   seedDB: false,
 
@@ -33,6 +35,7 @@ export interface ISharedEnvironment {
   port: number;
   ip: string;
   login: string;
+  logout: string;
   seedDB: boolean;
   secrets: any;
   userRoles: string[];

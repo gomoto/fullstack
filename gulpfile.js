@@ -343,7 +343,8 @@ function buildJs(done) {
   jsBundle.transform(envify({
     _: 'purge',
     NODE_ENV: env.NODE_ENV,
-    LOGIN_URI: env.LOGIN_URI
+    LOGIN_URI: env.LOGIN_URI,
+    LOGOUT_URI: env.LOGOUT_URI
   }));
 
   require(`./${paths.client.vendor}`).forEach((vendor) => {

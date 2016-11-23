@@ -31,6 +31,10 @@ export default (app: express.Application) => {
         enabled: true,
         uri: config.login
       },
+      logout: {
+        enabled: true,
+        uri: config.logout
+      },
       me: {
         expand: {
           customData: true,
