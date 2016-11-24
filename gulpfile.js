@@ -742,15 +742,81 @@ gulp.task('build', ['clean'], (done) => {
  * Dev
  */
 
+
+
+/**
+ * Proxy server state
+ */
+const proxy = {
+  server: null,
+  target: null,
+  host: null,
+  port: null
+};
+
+/**
+ * Launch or reload proxy server once app server is ready.
+ * @param {Function} done called proxy server reloads or initializes
+ */
+function launchProxyServer(done) {
+  done = done || noop;
+  const env = getEnv();
+  const targetIp = env.IP || '0.0.0.0';
+  const targetPort = env.PORT || 9000;
+  const target = `http://${targetIp}:${targetPort}`;
+  const host = env.DEV_HOST || 'local';
+  const port = env.DEV_PORT || '7000';
+  const proxyServerName = 'proxy';
+  const waitOptions = {
+    resources: [target],
+    interval: 100
+  };
+  waitOn(waitOptions, (err) => {
+    if (err) console.error(err);
+
+    // If browser-sync configuration is still valid, reload.
+    // Otherwise, create new browser-sync server.
+    if (proxy.server) {
+      if (proxy.target === target && proxy.host === host && proxy.port === port) {
+        proxy.server.reload();
+        return done();
+      } else {
+        proxy.server.exit();
+      }
+    }
+
+    // update state
+    proxy.server = browserSync.create(proxyServerName);
+    proxy.server.init({
+      proxy: target,
+      browser: 'google chrome',
+      open: host,
+      port: port
+    }, done);
+    proxy.target = target;
+    proxy.host = host;
+    proxy.port = port;
+  });
+}
+
+
+
 var fork, busy = false;
-function launchServer() {
+/**
+ * Launch or restart app server.
+ * @param {Function} done called after child process spawns
+ */
+function launchServer(done) {
   if (busy) {
     return;
   }
 
+  done = done || noop;
+
   function spawn() {
     fork = child_process.fork(paths.app.server.main);
     busy = false;
+    done();
   }
 
   if (fork) {
@@ -762,6 +828,8 @@ function launchServer() {
   }
 }
 
+
+
 gulp.task('dev', ['clean'], (done) => {
   serve(() => {
     gulp.watch([paths.env], (event) => {
@@ -770,25 +838,26 @@ gulp.task('dev', ['clean'], (done) => {
     });
     done();
   });
+
+  // exit cleanly from npm scripts
+  process.once('SIGINT', () => {
+    process.exit(0);
+  });
 });
 
+
+
+/**
+ * Build and watch client and server files.
+ * @param  {Function} done called ...
+ */
 function serve(done) {
   done = done || noop;
-
-  const env = getEnv();
-  const host = `http://${env.IP}:${env.PORT}`;
-  const browserSyncServer = browserSync.create();
-  const waitOptions = {
-    resources: [host],
-    interval: 100
-  };
-
-  // (1) Build and watch client and server files
 
   const clientTask = (callback) => {
     buildClient(() => {
       watchClient(() => {
-        browserSyncServer.reload();
+        launchProxyServer();
       });
       callback();
     });
@@ -797,39 +866,16 @@ function serve(done) {
   const serverTask = (callback) => {
     buildServer(() => {
       watchServer(() => {
-        launchServer();
-
-        // reload browser-sync proxy server once app server is ready
-        waitOn(waitOptions, (err) => {
-          if (err) console.error(err);
-          browserSyncServer.reload();
-        });
+        launchServer(launchProxyServer);
       });
       callback();
     });
   };
 
   async.parallel([clientTask, serverTask], () => {
-    // (2) Launch server
-    launchServer();
-
-    // (3) Launch browser-sync proxy server once app server is ready
-    waitOn(waitOptions, (err) => {
-      if (err) console.error(err);
-      browserSyncServer.init({
-        proxy: host,
-        browser: 'google chrome',
-        open: env.DEV_HOST || 'localhost',
-        port: env.DEV_PORT || 7000
-      });
+    launchServer(() => {
+      launchProxyServer(done);
     });
-
-    // prevent 'Error: read EIO' after SIGINT when this task runs in npm scripts
-    process.once('SIGINT', () => {
-      process.exit(0);
-    });
-
-    done();
   });
 }
 
