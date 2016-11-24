@@ -16,7 +16,6 @@ const htmlMinifierStream = require('html-minifier-stream');
 const imagemin = require('gulp-imagemin');
 const ini = require('ini');
 const mergeStream = require('merge-stream');
-const nodemon = require('nodemon');
 const rename = require('gulp-rename');
 const rev = require('gulp-rev');
 const revReplace = require('gulp-rev-replace');
@@ -771,7 +770,6 @@ gulp.task('dev', ['clean'], (done) => {
     });
     done();
   });
-  // nodemon(`-w .env -w gulpfile.js -x gulp serve`);
 });
 
 function serve(done) {
@@ -881,14 +879,6 @@ function timeServer(key) {
 
 function timeEndServer(key) {
   console.timeEnd(`${serverLogPrefix} ${key}`);
-}
-
-// Nodemon
-
-const nodemonLogPrefix = chalk.yellow('[nodemon]');
-
-function logNodemon(message) {
-  console.log(nodemonLogPrefix, message);
 }
 
 // Environment
