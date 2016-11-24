@@ -580,22 +580,6 @@ gulp.task('images:watch', ['images'], () => {
  */
 
 /**
- * When environment variables change, rebuild js bundle from scratch.
- * @param  {Function} callback called after bundle is written to disk
- */
-function watchEnvironment(callback) {
-  callback = callback || noop;
-  gulp.watch(paths.env, (event) => {
-    logEnvironmentWatchEvent(event);
-    cleanJs(() => {
-      buildJs(() => {
-        rebuildHtml(callback);
-      });
-    });
-  });
-}
-
-/**
  * Return environment variables as an object, without loading them into process.env
  * @return {Object} environmentVariables
  */
@@ -641,7 +625,6 @@ function watchClient(callback) {
   watchVendor(callback);
   watchImages(callback);
   watchHtml(callback);
-  watchEnvironment(callback);
 }
 
 /**
