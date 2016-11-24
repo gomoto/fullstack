@@ -1,3 +1,4 @@
+require('time-require');
 const addSrc = require('gulp-add-src');
 const async = require('async');
 const autoprefixer = require('gulp-autoprefixer');
@@ -599,6 +600,7 @@ function getEnv() {
  */
 function buildClient(done) {
   done = done || noop;
+  logClient('building...');
   timeClient('build');
   mergeStream([
     buildCss(),
@@ -670,6 +672,7 @@ const serverTypescript = typescript.createProject(paths.server.tsconfig);
  */
 function buildServer(done) {
   done = done || noop;
+  logServer('building...');
   timeServer('build');
   return gulp.src(paths.server.typescript)
   .pipe(serverTypescript())
@@ -740,8 +743,6 @@ gulp.task('build', ['clean'], (done) => {
  * Dev
  */
 
-
-
 var fork, busy = false;
 function launchServer() {
   if (busy) {
@@ -762,11 +763,20 @@ function launchServer() {
   }
 }
 
-gulp.task('dev', () => {
-  nodemon(`-w .env -w gulpfile.js -x gulp serve`);
+gulp.task('dev', ['clean'], (done) => {
+  serve(() => {
+    gulp.watch([paths.env], (event) => {
+      logEnvironmentWatchEvent(event);
+      serve();
+    });
+    done();
+  });
+  // nodemon(`-w .env -w gulpfile.js -x gulp serve`);
 });
 
-gulp.task('serve', ['clean'], (done) => {
+function serve(done) {
+  done = done || noop;
+
   const env = getEnv();
   const host = `http://${env.IP}:${env.PORT}`;
   const browserSyncServer = browserSync.create();
@@ -820,8 +830,10 @@ gulp.task('serve', ['clean'], (done) => {
     process.once('SIGINT', () => {
       process.exit(0);
     });
+
+    done();
   });
-});
+}
 
 
 
