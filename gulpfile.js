@@ -689,6 +689,7 @@ function buildServer(done) {
  */
 function watchServer(callback) {
   callback = callback || noop;
+  logServer('watching all files');
   gulp.watch(paths.server.typescript, (event) => {
     logServerWatchEvent(event);
     rebuildServer(callback);
@@ -727,13 +728,18 @@ gulp.task('build:server', (done) => {
  * App
  */
 
+function build(done) {
+  done = done || noop;
+  async.parallel([buildClient, buildServer], done);
+}
+
 gulp.task('clean', (done) => {
   fsExtra.remove(paths.app.directory, done);
 });
 
 // If we use gulp subtasks, the time report for this task is not useful.
 gulp.task('build', ['clean'], (done) => {
-  async.parallel([rebuildClient, rebuildServer], done);
+  build(done);
 });
 
 
@@ -830,11 +836,32 @@ function launchServer(done) {
 
 
 
+/**
+ * Build and serve app.
+ * @param  {Function} done called after servers have launched
+ */
+function serve(done) {
+  done = done || noop;
+  build(() => {
+    launchServer(() => {
+      launchProxyServer(done);
+    });
+  });
+}
+
+
+
 gulp.task('dev', ['clean'], (done) => {
   serve(() => {
     gulp.watch([paths.env], (event) => {
       logEnvironmentWatchEvent(event);
       serve();
+    });
+    watchClient(() => {
+      launchProxyServer();
+    });
+    watchServer(() => {
+      launchServer(launchProxyServer);
     });
     done();
   });
@@ -844,40 +871,6 @@ gulp.task('dev', ['clean'], (done) => {
     process.exit(0);
   });
 });
-
-
-
-/**
- * Build and watch client and server files.
- * @param  {Function} done called ...
- */
-function serve(done) {
-  done = done || noop;
-
-  const clientTask = (callback) => {
-    buildClient(() => {
-      watchClient(() => {
-        launchProxyServer();
-      });
-      callback();
-    });
-  };
-
-  const serverTask = (callback) => {
-    buildServer(() => {
-      watchServer(() => {
-        launchServer(launchProxyServer);
-      });
-      callback();
-    });
-  };
-
-  async.parallel([clientTask, serverTask], () => {
-    launchServer(() => {
-      launchProxyServer(done);
-    });
-  });
-}
 
 
 
