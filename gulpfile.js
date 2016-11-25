@@ -865,11 +865,6 @@ gulp.task('dev', ['clean'], (done) => {
     });
     done();
   });
-
-  // exit cleanly from npm scripts
-  process.once('SIGINT', () => {
-    process.exit(0);
-  });
 });
 
 
