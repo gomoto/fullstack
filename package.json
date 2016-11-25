@@ -5,7 +5,7 @@
   "scripts": {
     "build": "gulp build",
     "clean": "gulp clean",
-    "serve": "gulper serve"
+    "dev": "gulper dev"
   },
   "dependencies": {
     "@types/angular": "^1.5.20",
