@@ -1,4 +1,3 @@
-require('time-require');
 const addSrc = require('gulp-add-src');
 const async = require('async');
 const autoprefixer = require('gulp-autoprefixer');

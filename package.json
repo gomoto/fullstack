@@ -81,7 +81,6 @@
     "sinon": "^1.17.6",
     "sinon-chai": "^2.8.0",
     "tcp-port-used": "^0.1.2",
-    "time-require": "^0.1.2",
     "trash": "^4.0.0",
     "tsify": "^2.0.2",
     "typescript": "^2.0.9",
