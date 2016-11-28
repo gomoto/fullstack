@@ -1,4 +1,3 @@
-require('time-require');
 const addSrc = require('gulp-add-src');
 const async = require('async');
 const autoprefixer = require('gulp-autoprefixer');
@@ -22,11 +21,11 @@ const revReplace = require('gulp-rev-replace');
 const sass = require('gulp-sass');
 const source = require('vinyl-source-stream');
 const sourcemaps = require('gulp-sourcemaps');
+const tcp = require('tcp-port-used');
 const trash = require('trash');
 const tsify = require('tsify');
 const typescript = require('gulp-typescript');
 const uglify = require('gulp-uglify');
-const waitOn = require('wait-on');
 
 const noop = Function.prototype;
 
@@ -689,6 +688,7 @@ function buildServer(done) {
  */
 function watchServer(callback) {
   callback = callback || noop;
+  logServer('watching all files');
   gulp.watch(paths.server.typescript, (event) => {
     logServerWatchEvent(event);
     rebuildServer(callback);
@@ -727,13 +727,18 @@ gulp.task('build:server', (done) => {
  * App
  */
 
+function build(done) {
+  done = done || noop;
+  async.parallel([buildClient, buildServer], done);
+}
+
 gulp.task('clean', (done) => {
   fsExtra.remove(paths.app.directory, done);
 });
 
 // If we use gulp subtasks, the time report for this task is not useful.
 gulp.task('build', ['clean'], (done) => {
-  async.parallel([rebuildClient, rebuildServer], done);
+  build(done);
 });
 
 
@@ -762,18 +767,13 @@ function launchProxyServer(done) {
   done = done || noop;
   const env = getEnv();
   const targetIp = env.IP || '0.0.0.0';
-  const targetPort = env.PORT || 9000;
+  const targetPort = parseInt(env.PORT) || 9000;
   const target = `http://${targetIp}:${targetPort}`;
   const host = env.DEV_HOST || 'local';
   const port = env.DEV_PORT || '7000';
   const proxyServerName = 'proxy';
-  const waitOptions = {
-    resources: [target],
-    interval: 100
-  };
-  waitOn(waitOptions, (err) => {
-    if (err) console.error(err);
-
+  tcp.waitUntilUsedOnHost(targetPort, targetIp, 100, 1000000)
+  .then(() => {
     // If browser-sync configuration is still valid, reload.
     // Otherwise, create new browser-sync server.
     if (proxy.server) {
@@ -796,6 +796,9 @@ function launchProxyServer(done) {
     proxy.target = target;
     proxy.host = host;
     proxy.port = port;
+  })
+  .catch((err) => {
+    console.error(err.message);
   });
 }
 
@@ -830,54 +833,36 @@ function launchServer(done) {
 
 
 
+/**
+ * Build and serve app.
+ * @param  {Function} done called after servers have launched
+ */
+function serve(done) {
+  done = done || noop;
+  build(() => {
+    launchServer(() => {
+      launchProxyServer(done);
+    });
+  });
+}
+
+
+
 gulp.task('dev', ['clean'], (done) => {
   serve(() => {
     gulp.watch([paths.env], (event) => {
       logEnvironmentWatchEvent(event);
       serve();
     });
+    watchClient(() => {
+      launchProxyServer();
+    });
+    watchServer(() => {
+      launchServer(launchProxyServer);
+    });
     done();
   });
-
-  // exit cleanly from npm scripts
-  process.once('SIGINT', () => {
-    process.exit(0);
-  });
 });
-
-
-
-/**
- * Build and watch client and server files.
- * @param  {Function} done called ...
- */
-function serve(done) {
-  done = done || noop;
-
-  const clientTask = (callback) => {
-    buildClient(() => {
-      watchClient(() => {
-        launchProxyServer();
-      });
-      callback();
-    });
-  };
-
-  const serverTask = (callback) => {
-    buildServer(() => {
-      watchServer(() => {
-        launchServer(launchProxyServer);
-      });
-      callback();
-    });
-  };
-
-  async.parallel([clientTask, serverTask], () => {
-    launchServer(() => {
-      launchProxyServer(done);
-    });
-  });
-}
 
 
 
