@@ -1,12 +1,11 @@
 {
   "name": "fullstack",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "",
   "scripts": {
     "build": "gulp build",
     "clean": "gulp clean",
-    "dev": "nodemon -w gulpfile.js -x gulp dev",
-    "postversion": "git push origin head && git push --tags"
+    "dev": "nodemon -w gulpfile.js -x gulp dev"
   },
   "dependencies": {
     "@types/angular": "^1.5.20",
