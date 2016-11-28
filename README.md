@@ -56,7 +56,7 @@ STORMPATH_GROUPS               |         | Comma-separated list of group names
 │   ├── src/
 │   │   ├── api/
 │   │   ├── config/
-│   │   ├── stormpath/
+│   │   ├── middleware/
 │   │   ├── app.ts
 │   │   ├── routes.ts
 │   ├── tsconfig.json
