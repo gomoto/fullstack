@@ -4,7 +4,7 @@
 
 import express = require('express');
 const stormpath = require('express-stormpath');
-import requireGroups from './stormpath/require-groups';
+import requireGroups from './middleware/require-groups';
 
 
 // Routes
