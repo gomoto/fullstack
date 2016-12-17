@@ -12,15 +12,6 @@ export default (app: express.Application) => {
     return;
   }
 
-  // Preempt stormpath handling of login route.
-  // Let frontend app handle the login view.
-  app.get(config.login, (req, res, next) => {
-    if (req.accepts('html')) {
-      return res.sendFile(app.get('application'));
-    }
-    next();
-  });
-
   app.use(stormpath.init(app, {
     expand: {
       groups: true
@@ -41,7 +32,10 @@ export default (app: express.Application) => {
           groups: true
         }
       },
-      spaRoot: app.get('application')
+      spa: {
+        enabled: true,
+        view: app.get('application')
+      }
     }
   }));
 
