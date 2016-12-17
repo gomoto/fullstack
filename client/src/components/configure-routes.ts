@@ -8,7 +8,7 @@ function configureRoutes(
   $stateProvider
   .state('home', {
     url: '/',
-    template: '<home></home>'
+    redirect: 'dashboard'
   })
   .state('login', {
     url: '/login',
@@ -21,6 +21,15 @@ function configureRoutes(
       authenticate: true
     }
   });
+}
+
+// add custom property on ui-router state
+declare module 'angular' {
+  namespace ui {
+    interface IState {
+      redirect?: string;
+    }
+  }
 }
 
 export default configureRoutes;
