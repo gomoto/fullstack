@@ -18,9 +18,9 @@ export default <ISharedEnvironment> {
   // Server IP
   ip: process.env.IP || '0.0.0.0',
 
-  login: process.env.LOGIN_URI || '/login',
+  login: '/login',
 
-  logout: process.env.LOGOUT_URI || '/logout',
+  logout: '/logout',
 
   // Should we populate the DB with sample data?
   seedDB: false,

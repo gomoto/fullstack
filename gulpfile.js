@@ -343,9 +343,7 @@ function buildJs(done) {
   // replace environment variables
   jsBundle.transform(envify({
     _: 'purge',
-    NODE_ENV: env.NODE_ENV,
-    LOGIN_URI: env.LOGIN_URI,
-    LOGOUT_URI: env.LOGOUT_URI
+    NODE_ENV: env.NODE_ENV
   }));
 
   require(`./${paths.client.vendor}`).forEach((vendor) => {
