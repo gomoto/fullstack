@@ -18,6 +18,11 @@ export default (app: express.Application) => {
     },
     website: true,
     web: {
+      idSite: {
+        enabled: true,
+        uri: '/idSiteResult',
+        nextUri: '/'
+      },
       login: {
         enabled: true,
         uri: config.login

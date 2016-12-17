@@ -4,20 +4,31 @@ export default class DashboardController {
 
   static $inject = [
     '$auth',
-    '$log',
-    '$state'
+    '$http',
+    '$state',
+    'STORMPATH_CONFIG'
   ];
 
   constructor(
     private $auth: ng.stormpath.IAuthService,
-    private $log: ILogService,
-    private $state: ng.ui.IStateService
+    private $http: ng.IHttpService,
+    private $state: ng.ui.IStateService,
+    private STORMPATH_CONFIG: ng.stormpath.IStormpathConfig
   ) {}
 
-  logout(): ng.IPromise<void> {
-    return this.$auth.endSession<void>()
+  logout(): void {
+    this.$http.post(this.STORMPATH_CONFIG.DESTROY_SESSION_ENDPOINT, null, {
+      headers: {
+        'Accept': 'text/html'
+      }
+    })
     .then(() => {
       this.$state.go('login');
     });
+
+    // this.$auth.endSession()
+    // .then(() => {
+    //   this.$state.go('login');
+    // });
   }
 }
