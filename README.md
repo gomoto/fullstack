@@ -12,19 +12,19 @@
 
 Environment variables can be specified in a single .env file at the root of the project.
 
-variable                       | default | description
------------------------------- | ------- | -------------------------------------
-ADMIN_GROUP                    |         | Admin group name
-COOKIE_SECRET                  |         | String for signing cookies
-DEV_HOST                       | local   | Development host (local | external)
-DEV_PORT                       | 7000    | Development port
-IP                             | 0.0.0.0 | Server ip address
-NODE_ENV                       |         | Node environment
-PORT                           | 9000    | Server port
-STORMPATH_APPLICATION_HREF     |         | Required by express-stormpath
-STORMPATH_CLIENT_APIKEY_ID     |         | Required by express-stormpath
-STORMPATH_CLIENT_APIKEY_SECRET |         | Required by express-stormpath
-STORMPATH_GROUPS               |         | Comma-separated list of group names
+variable                       | default | required | description
+------------------------------ | ------- | -------- | -------------------------------------
+ADMIN_GROUP                    |         |          | Admin group name
+COOKIE_SECRET                  |         |          | String for signing cookies
+DEV_HOST                       | local   |          | Development host (local &#124; external)
+DEV_PORT                       | 7000    |          | Development port
+IP                             | 0.0.0.0 |          | Server ip address
+NODE_ENV                       |         |          | Node environment
+PORT                           | 9000    |          | Server port
+STORMPATH_APPLICATION_HREF     |         | ✓        | Required by express-stormpath
+STORMPATH_CLIENT_APIKEY_ID     |         | ✓        | Required by express-stormpath
+STORMPATH_CLIENT_APIKEY_SECRET |         | ✓        | Required by express-stormpath
+STORMPATH_GROUPS               |         |          | Comma-separated list of group names
 
 
 
