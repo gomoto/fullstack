@@ -18,12 +18,10 @@ export default (app: express.Application) => {
   // Authenticated routes
   if (env === 'production' || env === 'development') {
     // API routes
+    app.use('/api', stormpath.loginRequired);
     if (process.env.API_GROUPS) {
       const groups = process.env.API_GROUPS.split(',');
-      app.use('/api', stormpath.loginRequired, stormpath.groupsRequired(groups, false));
-    }
-    else {
-      app.use('/api', stormpath.loginRequired);
+      app.use('/api', stormpath.groupsRequired(groups, false));
     }
 
     // Admin routes
