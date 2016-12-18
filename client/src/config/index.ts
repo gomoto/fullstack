@@ -11,7 +11,6 @@ function configureApp(
   $logProvider: ng.ILogProvider,
   NODE_ENV: string
 ) {
-  console.log(`woah. NODE_ENV is ${NODE_ENV}`);
   $locationProvider.html5Mode(true);
 
   $compileProvider.debugInfoEnabled(NODE_ENV === 'development');
