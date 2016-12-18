@@ -35,11 +35,11 @@ env var                        | default | required | description
 ADMIN_GROUP                    |         |          | Admin group name
 COOKIE_SECRET                  |         |          | String for signing cookies
 IP                             | 0.0.0.0 |          | Server ip address
+GROUPS                         |         |          | Comma-separated list of group names
 PORT                           | 9000    |          | Server port
 STORMPATH_APPLICATION_HREF     |         | ✓        | Required by express-stormpath
 STORMPATH_CLIENT_APIKEY_ID     |         | ✓        | Required by express-stormpath
 STORMPATH_CLIENT_APIKEY_SECRET |         | ✓        | Required by express-stormpath
-STORMPATH_GROUPS               |         |          | Comma-separated list of group names
 
 
 
