@@ -8,7 +8,7 @@ import * as express from 'express';
 declare global {
   namespace Express {
     export interface Request {
-      user: stormpath.StormpathUser;
+      user: stormpath.User;
       isAdmin: boolean;
     }
   }
@@ -24,28 +24,28 @@ declare namespace stormpath {
     loginRequired: express.RequestHandler;
   }
 
-  interface StormpathGroup {
+  interface Group {
     name: string;
   }
 
-  interface StormpathUser {
+  interface User {
     email: string;
-    getGroups(callback: (error: any, groups: StormpathGroups) => void): void;
+    getGroups(callback: (error: any, groups: Groups) => void): void;
   }
 
-  interface StormpathGroups {
-    each: StormpathGroupsIterator;
+  interface Groups {
+    each: GroupsIterator;
   }
 
-  interface StormpathGroupsIterator {
-    (each: StormpathGroupsIteratorEach, done: StormpathGroupsIteratorDone): void;
+  interface GroupsIterator {
+    (each: GroupsIteratorEach, done: GroupsIteratorDone): void;
   }
 
-  interface StormpathGroupsIteratorEach {
-    (group: StormpathGroup, nextGroup: () => void): void;
+  interface GroupsIteratorEach {
+    (group: Group, nextGroup: () => void): void;
   }
 
-  interface StormpathGroupsIteratorDone {
+  interface GroupsIteratorDone {
     (): void;
   }
 
