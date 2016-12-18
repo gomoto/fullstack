@@ -18,8 +18,8 @@ export default (app: express.Application) => {
   // Authenticated routes
   if (env === 'production' || env === 'development') {
     // require group authorization for /api endpoint
-    if (process.env.GROUPS) {
-      const groups = process.env.GROUPS.split(',');
+    if (process.env.API_GROUPS) {
+      const groups = process.env.API_GROUPS.split(',');
       app.use('/api', stormpath.loginRequired, stormpath.groupsRequired(groups, false));
     }
     else {
