@@ -36,10 +36,6 @@ export default (app: express.Application) => {
           customData: true,
           groups: true
         }
-      },
-      spa: {
-        enabled: true,
-        view: app.get('application')
       }
     }
   }));

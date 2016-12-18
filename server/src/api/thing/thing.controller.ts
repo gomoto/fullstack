@@ -11,13 +11,13 @@ import express = require('express');
 // import Thing from './thing.model';
 
 function respondWithResult(res: express.Response, statusCode: number) {
-  // statusCode = statusCode || 200;
-  // return function(entity) {
-  //   if(entity) {
-  //     return res.status(statusCode).json(entity);
-  //   }
-  //   return null;
-  // };
+  statusCode = statusCode || 200;
+  return function(entity: any) {
+    if(entity) {
+      return res.status(statusCode).json(entity);
+    }
+    return null;
+  };
 }
 
 function removeEntity(res: express.Response) {
@@ -50,6 +50,7 @@ function handleError(res: express.Response, statusCode: number) {
 
 // Gets a list of Things
 export function index(req: express.Request, res: express.Response) {
+  respondWithResult(res, 200)([1,2,3]);
   // return Thing.find().exec()
   //   .then(respondWithResult(res))
   //   .catch(handleError(res));

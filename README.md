@@ -92,7 +92,6 @@ Environment variables can be specified at the command line or in a file called
 │   ├── src/
 │   │   ├── api/
 │   │   ├── config/
-│   │   ├── middleware/
 │   │   ├── app.ts
 │   │   ├── routes.ts
 │   ├── tsconfig.json

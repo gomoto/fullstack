@@ -3,8 +3,8 @@
  */
 
 import express = require('express');
-const stormpath = require('express-stormpath');
-import requireGroups from './middleware/require-groups';
+import * as sp from './config/express-stormpath';
+const stormpath = require('express-stormpath') as sp.ExpressStormpath;
 
 
 // Routes
@@ -13,13 +13,14 @@ import thing from './api/thing';
 
 export default (app: express.Application) => {
   // const gitSha = '/app/git-sha.txt';
+  const env = app.get('env') as string;
 
   // Authenticated routes
-  if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development') {
+  if (env === 'production' || env === 'development') {
     // require group authorization for /api endpoint
     if (process.env.STORMPATH_GROUPS) {
       const groups = process.env.STORMPATH_GROUPS.split(',');
-      app.use('/api', stormpath.loginRequired, requireGroups(groups));
+      app.use('/api', stormpath.loginRequired, stormpath.groupsRequired(groups, false));
     }
     else {
       app.use('/api', stormpath.loginRequired);
