@@ -762,12 +762,11 @@ const proxy = {
  */
 function launchProxyServer(done) {
   done = done || noop;
-  const env = getEnv();
-  const targetIp = env.IP || '0.0.0.0';
-  const targetPort = parseInt(env.PORT) || 9000;
+  const targetIp = process.env.IP || '0.0.0.0';
+  const targetPort = parseInt(process.env.PORT) || 9000;
   const target = `http://${targetIp}:${targetPort}`;
-  const host = env.DEV_HOST || 'local';
-  const port = env.DEV_PORT || '7000';
+  const host = process.env.DEV_HOST || 'local';
+  const port = process.env.DEV_PORT || '7000';
   const proxyServerName = 'proxy';
   tcp.waitUntilUsedOnHost(targetPort, targetIp, 100, 1000000)
   .then(() => {

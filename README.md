@@ -12,7 +12,13 @@
 
 `npm run dev`
 
-`NODE_ENV=production npm run dev`
+Use environment variables to parameterize the development experience.
+
+env var  | default     | description
+-------- | ----------- | ----------------------------------------
+DEV_HOST | local       | Development host (local &#124; external)
+DEV_PORT | 7000        | Development port
+NODE_ENV | development | Node environment
 
 
 
@@ -20,12 +26,10 @@
 
 Environment variables can be specified in a single .env file at the root of the project.
 
-variable                       | default | required | description
+env var                        | default | required | description
 ------------------------------ | ------- | -------- | -------------------------------------
 ADMIN_GROUP                    |         |          | Admin group name
 COOKIE_SECRET                  |         |          | String for signing cookies
-DEV_HOST                       | local   |          | Development host (local &#124; external)
-DEV_PORT                       | 7000    |          | Development port
 IP                             | 0.0.0.0 |          | Server ip address
 PORT                           | 9000    |          | Server port
 STORMPATH_APPLICATION_HREF     |         | ✓        | Required by express-stormpath
