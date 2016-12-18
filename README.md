@@ -8,29 +8,30 @@
 
 
 
-## Develop
+## Build
 
-`npm run dev`
+`npm run build`
 
-Use environment variables to parameterize the development experience.
+Build application.
 
-Environment variables can be specified at the command line or in a file called
-.env at the root of the project. Command line variables take precedence.
+Use environment variables to parameterize the build.
 
 env var  | default     | description
--------- | ----------- | ----------------------------------------
-DEV_HOST | local       | Development host (local &#124; external)
-DEV_PORT | 7000        | Development port
+-------- | ----------- | ----------------
 NODE_ENV | development | Node environment
 
 
 
-## Environment variables
+## Run
 
-Environment variables can be specified in a single .env file at the root of the project.
+`node app/server/app.js`
+
+Run application after it is built.
+
+Use environment variables to parameterize the application.
 
 env var                        | default | required | description
------------------------------- | ------- | -------- | -------------------------------------
+------------------------------ | ------- | -------- | -----------------------------------
 ADMIN_GROUP                    |         |          | Admin group name
 COOKIE_SECRET                  |         |          | String for signing cookies
 IP                             | 0.0.0.0 |          | Server ip address
@@ -39,6 +40,28 @@ STORMPATH_APPLICATION_HREF     |         | ✓        | Required by express-stor
 STORMPATH_CLIENT_APIKEY_ID     |         | ✓        | Required by express-stormpath
 STORMPATH_CLIENT_APIKEY_SECRET |         | ✓        | Required by express-stormpath
 STORMPATH_GROUPS               |         |          | Comma-separated list of group names
+
+
+
+## Develop
+
+`npm run dev`
+
+Build and run application each time a file changes.
+
+Use environment variables to parameterize the development experience.
+
+env var  | default     | description
+-------- | ----------- | ----------------------------------------
+DEV_HOST | local       | Development host (local &#124; external)
+DEV_PORT | 7000        | Development port
+
+
+
+## Environment variables
+
+Environment variables can be specified at the command line or in a file called
+.env at the root of the project. Command line variables take precedence.
 
 
 
