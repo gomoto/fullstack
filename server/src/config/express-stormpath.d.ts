@@ -19,6 +19,9 @@ declare global {
 declare namespace stormpath {
 
   interface ExpressStormpath {
+    apiAuthenticationRequired: express.RequestHandler;
+    authenticationRequired: express.RequestHandler;
+    getUser: express.RequestHandler;
     groupsRequired(groups: string[], all?: boolean): express.RequestHandler;
     init(app: express.Application, options: any): express.Router;
     loginRequired: express.RequestHandler;
