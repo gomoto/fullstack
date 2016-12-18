@@ -17,7 +17,7 @@ export default (app: express.Application) => {
 
   // Authenticated routes
   if (env === 'production' || env === 'development') {
-    // require group authorization for /api endpoint
+    // API routes
     if (process.env.API_GROUPS) {
       const groups = process.env.API_GROUPS.split(',');
       app.use('/api', stormpath.loginRequired, stormpath.groupsRequired(groups, false));
@@ -25,10 +25,18 @@ export default (app: express.Application) => {
     else {
       app.use('/api', stormpath.loginRequired);
     }
+
+    // Admin routes
+    app.use('/admin', stormpath.loginRequired);
+    if (process.env.ADMIN_GROUPS) {
+      const groups = process.env.ADMIN_GROUPS.split(',');
+      app.use('/admin', stormpath.groupsRequired(groups, false));
+    }
   }
 
   // All routes
   app.use('/api/things', thing);
+  app.use('/admin/things', thing);
 
   // app.route('/version')
   // .get((req, res) => {

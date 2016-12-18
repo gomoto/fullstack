@@ -31,8 +31,8 @@ Run application after it is built.
 Use environment variables to parameterize the application.
 
 env var                        | default | required | description
------------------------------- | ------- | -------- | -----------------------------------
-ADMIN_GROUP                    |         |          | Admin group name
+------------------------------ | ------- | -------- | -----------------------------------------
+ADMIN_GROUPS                   |         |          | Comma-separated list of admin group names
 API_GROUPS                     |         |          | Comma-separated list of group names
 COOKIE_SECRET                  |         |          | String for signing cookies
 IP                             | 0.0.0.0 |          | Server ip address
