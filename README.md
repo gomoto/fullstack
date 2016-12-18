@@ -2,9 +2,17 @@
 
 
 
-## Installation
+## Install
 
 `npm i`
+
+
+
+## Develop
+
+`npm run dev`
+
+`NODE_ENV=production npm run dev`
 
 
 
@@ -19,7 +27,6 @@ COOKIE_SECRET                  |         |          | String for signing cookies
 DEV_HOST                       | local   |          | Development host (local &#124; external)
 DEV_PORT                       | 7000    |          | Development port
 IP                             | 0.0.0.0 |          | Server ip address
-NODE_ENV                       |         |          | Node environment
 PORT                           | 9000    |          | Server port
 STORMPATH_APPLICATION_HREF     |         | ✓        | Required by express-stormpath
 STORMPATH_CLIENT_APIKEY_ID     |         | ✓        | Required by express-stormpath

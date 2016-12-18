@@ -327,7 +327,6 @@ function bundleJs(done) {
 function buildJs(done) {
   done = done || noop;
   timeClient('js build');
-  const env = getEnv();
   const browserifyOptions = {
     cache: {},
     packageCache: {},
@@ -343,7 +342,7 @@ function buildJs(done) {
   // replace environment variables
   jsBundle.transform(envify({
     _: 'purge',
-    NODE_ENV: env.NODE_ENV
+    NODE_ENV: process.env.NODE_ENV || 'development'
   }));
 
   require(`./${paths.client.vendor}`).forEach((vendor) => {

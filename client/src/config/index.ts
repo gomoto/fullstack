@@ -1,23 +1,26 @@
 configureApp.$inject = [
   '$compileProvider',
   '$locationProvider',
-  '$logProvider'
+  '$logProvider',
+  'NODE_ENV'
 ];
 
 function configureApp(
   $compileProvider: ng.ICompileProvider,
   $locationProvider: ng.ILocationProvider,
-  $logProvider: ng.ILogProvider
+  $logProvider: ng.ILogProvider,
+  NODE_ENV: string
 ) {
+  console.log(`woah. NODE_ENV is ${NODE_ENV}`);
   $locationProvider.html5Mode(true);
 
-  $compileProvider.debugInfoEnabled(process.env.NODE_ENV === 'development');
+  $compileProvider.debugInfoEnabled(NODE_ENV === 'development');
 
   // available in angular 1.5.9
   // $compileProvider.commentDirectivesEnabled(false);
   // $compileProvider.cssClassDirectivesEnabled(false);
 
-  $logProvider.debugEnabled(process.env.NODE_ENV === 'development');
+  $logProvider.debugEnabled(NODE_ENV === 'development');
 }
 
 export default configureApp;
