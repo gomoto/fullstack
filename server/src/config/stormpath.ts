@@ -13,10 +13,6 @@ export default (app: express.Application) => {
   }
 
   app.use(stormpath.init(app, {
-    expand: {
-      groups: true
-    },
-    website: true,
     web: {
       idSite: {
         enabled: true,
