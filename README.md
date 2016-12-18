@@ -14,6 +14,9 @@
 
 Use environment variables to parameterize the development experience.
 
+Environment variables can be specified at the command line or in a file called
+.env at the root of the project. Command line variables take precedence.
+
 env var  | default     | description
 -------- | ----------- | ----------------------------------------
 DEV_HOST | local       | Development host (local &#124; external)

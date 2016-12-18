@@ -6,6 +6,7 @@ const browserify = require('browserify-incremental');
 const buffer = require('vinyl-buffer');
 const chalk = require('chalk');
 const child_process = require('child_process');
+const dotenv = require('dotenv');
 const envify = require('envify/custom');
 const fs = require('fs');
 const fsExtra = require('fs-extra');
@@ -845,6 +846,9 @@ function serve(done) {
 
 
 gulp.task('dev', ['clean'], (done) => {
+  // load environment variables into process.env
+  dotenv.config({ path: paths.env });
+
   serve(() => {
     gulp.watch([paths.env], (event) => {
       logEnvironmentWatchEvent(event);
