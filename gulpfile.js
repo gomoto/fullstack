@@ -809,6 +809,7 @@ function launchProxyServer(done) {
 var fork, busy = false;
 /**
  * Launch or restart app server.
+ * TODO: opt into debug mode
  * @param {Function} done called after child process spawns
  */
 function launchServer(done) {
@@ -818,8 +819,10 @@ function launchServer(done) {
 
   done = done || noop;
 
+  const debugFlags = { execArgv: ['--debug', '--debug-brk'] };
+
   function spawn() {
-    fork = child_process.fork(paths.app.server.main);
+    fork = child_process.fork(paths.app.server.main, debugFlags);
     busy = false;
     done();
   }
