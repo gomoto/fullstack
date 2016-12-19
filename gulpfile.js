@@ -39,6 +39,7 @@ const names = {
 const paths = {
   app: {
     directory: `${names.app}`,
+    gitSha: `${names.app}/git-sha.txt`,
     client: {
       directory: `${names.app}/${names.client}`,
       html: `${names.app}/${names.client}/index.html`,
@@ -722,12 +723,31 @@ gulp.task('build:server', (done) => {
 
 
 /**
+ * Git SHA
+ */
+
+function writeGitSha(done) {
+  done = done || noop;
+  const sha = child_process.execSync('git rev-parse HEAD');
+  fsExtra.outputFile(paths.app.gitSha, sha, (err) => {
+    if (err) console.log(err);
+    done();
+  });
+}
+
+gulp.task('git-sha', (done) => {
+  writeGitSha(done);
+});
+
+
+
+/**
  * App
  */
 
 function build(done) {
   done = done || noop;
-  async.parallel([buildClient, buildServer], done);
+  async.parallel([buildClient, buildServer, writeGitSha], done);
 }
 
 gulp.task('clean', (done) => {
