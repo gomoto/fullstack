@@ -649,15 +649,28 @@ const serverTypescript = typescript.createProject(paths.server.tsconfig);
 
 /**
  * Build server files.
- * @param {Function} done
+ * @param {Function} done called after files are written to disk
+ * @param {boolean} includeMaps indicates whether or not to include sourcemaps
  * @return {stream}
  */
-function buildServer(done) {
+function buildServer(done, includeMaps) {
   done = done || noop;
   logServer('building...');
   timeServer('build');
-  return gulp.src(paths.server.typescript)
-  .pipe(serverTypescript())
+
+  var stream = gulp.src(paths.server.typescript);
+
+  if (includeMaps) {
+    stream = stream.pipe(sourcemaps.init());
+  }
+
+  stream = stream.pipe(serverTypescript());
+
+  if (includeMaps) {
+    stream = stream.pipe(sourcemaps.write('.'));
+  }
+
+  return stream
   .pipe(addSrc(paths.server.html))
   .pipe(gulp.dest(paths.app.server.directory))
   .on('finish', () => {
@@ -668,14 +681,16 @@ function buildServer(done) {
 
 /**
  * Watch server files.
+ * Rebuild server files with sourcemaps.
  * @param  {Function} callback called whenever a server file changes
+ * @param {boolean} includeMaps indicates whether or not to include sourcemaps
  */
-function watchServer(callback) {
+function watchServer(callback, includeMaps) {
   callback = callback || noop;
   logServer('watching all files');
   gulp.watch(paths.server.typescript, (event) => {
     logServerWatchEvent(event);
-    rebuildServer(callback);
+    rebuildServer(callback, !!includeMaps);
   });
 }
 
@@ -690,10 +705,11 @@ function cleanServer(done) {
 /**
  * Shortcut to clean and build server files.
  * @param  {Function} done called once server files are written to disk
+ * @param {boolean} includeMaps indicates whether or not to include sourcemaps
  */
-function rebuildServer(done) {
+function rebuildServer(done, includeMaps) {
   cleanServer(() => {
-    buildServer(done);
+    buildServer(done, !!includeMaps);
   });
 }
 
@@ -730,9 +746,13 @@ gulp.task('git-sha', (done) => {
  * App
  */
 
-function build(done) {
+function build(done, includeMaps) {
   done = done || noop;
-  async.parallel([buildClient, buildServer, writeGitSha], done);
+  async.parallel([
+    buildClient,
+    (then) => buildServer(then, !!includeMaps),
+    writeGitSha
+  ], done);
 }
 
 gulp.task('clean', (done) => {
@@ -840,6 +860,7 @@ function launchServer(done) {
 
 /**
  * Build and serve app.
+ * TODO: opt into sourcemaps with debug flag.
  * @param  {Function} done called after servers have launched
  */
 function serve(done) {
@@ -848,7 +869,7 @@ function serve(done) {
     launchServer(() => {
       launchProxyServer(done);
     });
-  });
+  }, true);
 }
 
 
@@ -867,7 +888,7 @@ gulp.task('dev', ['clean'], (done) => {
     });
     watchServer(() => {
       launchServer(launchProxyServer);
-    });
+    }, true);
     done();
   });
 });
