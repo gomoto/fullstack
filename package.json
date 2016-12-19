@@ -5,7 +5,8 @@
   "scripts": {
     "build": "gulp build",
     "clean": "gulp clean",
-    "dev": "nodemon -w gulpfile.js -x gulp dev"
+    "dev": "nodemon -w gulpfile.js -x gulp dev",
+    "dev:debug": "nodemon -w gulpfile.js -x gulp dev:debug"
   },
   "dependencies": {
     "@types/angular": "~1.5.20",

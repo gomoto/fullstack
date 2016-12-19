@@ -829,17 +829,18 @@ function launchProxyServer(done) {
 var fork, busy = false;
 /**
  * Launch or restart app server.
- * TODO: opt into debug mode
  * @param {Function} done called after child process spawns
+ * @param {boolean} debug activates node debug mode
  */
-function launchServer(done) {
+function launchServer(done, debug) {
   if (busy) {
     return;
   }
 
   done = done || noop;
+  debug = !!debug;
 
-  const debugFlags = { execArgv: ['--debug', '--debug-brk'] };
+  const debugFlags = debug ? { execArgv: ['--debug', '--debug-brk'] } : {};
 
   function spawn() {
     fork = child_process.fork(paths.app.server.main, debugFlags);
@@ -860,21 +861,28 @@ function launchServer(done) {
 
 /**
  * Build and serve app.
- * TODO: opt into sourcemaps with debug flag.
- * @param  {Function} done called after servers have launched
+ * @param {Function} done called after servers have launched
+ * @param {boolean} debug activates node debug mode and sourcemaps
  */
-function serve(done) {
+function serve(done, debug) {
   done = done || noop;
+  debug = !!debug;
   build(() => {
     launchServer(() => {
       launchProxyServer(done);
-    });
-  }, true);
+    }, debug);
+  }, debug);
 }
 
+/**
+ * Serve app and watch files for changes.
+ * @param {Function} done called after servers have launched
+ * @param {boolean} debug activates node debug mode and sourcemaps
+ */
+function watch(done, debug) {
+  done = done || noop;
+  debug = !!debug;
 
-
-gulp.task('dev', ['clean'], (done) => {
   // load environment variables into process.env
   dotenv.config({ path: paths.env });
 
@@ -887,11 +895,19 @@ gulp.task('dev', ['clean'], (done) => {
       launchProxyServer();
     });
     watchServer(() => {
-      launchServer(launchProxyServer);
-    }, true);
+      launchServer(launchProxyServer, debug);
+    }, debug);
     done();
-  });
+  }, debug);
+}
+
+gulp.task('dev', ['clean'], (done) => {
+  watch(done, false);
 });
+
+gulp.task('dev:debug', ['clean'], (done) => {
+  watch(done, true);
+})
 
 
 
