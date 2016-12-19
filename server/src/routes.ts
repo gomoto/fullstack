@@ -13,7 +13,6 @@ import thing from './api/thing';
 
 
 export default (app: express.Application) => {
-  // const gitSha = '/app/git-sha.txt';
 
   // Authenticated routes
   if (config.env === 'production' || config.env === 'development') {
@@ -34,10 +33,9 @@ export default (app: express.Application) => {
   app.use('/api/things', thing);
   app.use('/admin/things', thing);
 
-  // app.route('/version')
-  // .get((req, res) => {
-  //   res.sendFile(gitSha);
-  // });
+  app.get('/version', (req, res) => {
+    res.sendFile(`${config.root}/git-sha.txt`);
+  });
 
   // Routes for api and assets should have already been served.
   // Return a 404 for all undefined asset or api routes.
