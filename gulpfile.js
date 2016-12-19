@@ -14,7 +14,6 @@ const gulp = require('gulp');
 const htmlInjector = require('html-injector');
 const htmlMinifierStream = require('html-minifier-stream');
 const imagemin = require('gulp-imagemin');
-const ini = require('ini');
 const mergeStream = require('merge-stream');
 const rename = require('gulp-rename');
 const rev = require('gulp-rev');
@@ -570,20 +569,6 @@ gulp.task('images', (done) => {
 gulp.task('images:watch', ['images'], () => {
   watchImages();
 });
-
-
-
-/**
- * Environment
- */
-
-/**
- * Return environment variables as an object, without loading them into process.env
- * @return {Object} environmentVariables
- */
-function getEnv() {
-  return ini.parse(fs.readFileSync(paths.env, 'utf-8'));
-}
 
 
 
