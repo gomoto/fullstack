@@ -33,7 +33,7 @@ export default (app: express.Application) => {
   app.use(methodOverride());
 
   // stormpath parses and signs cookies, but stormpath might not be used.
-  app.use(cookieParser(process.env.COOKIE_SECRET));
+  app.use(cookieParser(config.cookieSecret));
 
   // cross-site request forgery protection (angular)
   app.use(csurf({ cookie: true }));

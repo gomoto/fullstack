@@ -22,6 +22,12 @@ export default <ISharedEnvironment> {
 
   logout: '/logout',
 
+  apiGroups: process.env.API_GROUPS && process.env.API_GROUPS.split(',') || [],
+
+  adminGroups: process.env.ADMIN_GROUPS && process.env.ADMIN_GROUPS.split(',') || [],
+
+  cookieSecret: process.env.COOKIE_SECRET,
+
   // Should we populate the DB with sample data?
   seedDB: false,
 
@@ -36,6 +42,9 @@ export interface ISharedEnvironment {
   ip: string;
   login: string;
   logout: string;
+  apiGroups: string[];
+  adminGroups: string[];
+  cookieSecret: string;
   seedDB: boolean;
   secrets: any;
   userRoles: string[];

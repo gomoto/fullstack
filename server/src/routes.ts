@@ -19,16 +19,14 @@ export default (app: express.Application) => {
   if (config.env === 'production' || config.env === 'development') {
     // API routes
     app.use('/api', stormpath.loginRequired);
-    if (process.env.API_GROUPS) {
-      const groups = process.env.API_GROUPS.split(',');
-      app.use('/api', stormpath.groupsRequired(groups, false));
+    if (config.apiGroups.length > 0) {
+      app.use('/api', stormpath.groupsRequired(config.apiGroups, false));
     }
 
     // Admin routes
     app.use('/admin', stormpath.loginRequired);
-    if (process.env.ADMIN_GROUPS) {
-      const groups = process.env.ADMIN_GROUPS.split(',');
-      app.use('/admin', stormpath.groupsRequired(groups, false));
+    if (config.adminGroups.length > 0) {
+      app.use('/admin', stormpath.groupsRequired(config.adminGroups, false));
     }
   }
 
