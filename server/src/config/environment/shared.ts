@@ -7,7 +7,7 @@ dotenv.config();
 // All configurations will extend these options
 // ============================================
 export default <ISharedEnvironment> {
-  env: process.env.NODE_ENV,
+  env: process.env.NODE_ENV || 'development',
 
   // Root path of server
   root: path.normalize(`${__dirname}/../../..`),

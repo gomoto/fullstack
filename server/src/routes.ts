@@ -5,6 +5,7 @@
 import express = require('express');
 import * as sp from './config/express-stormpath';
 const stormpath = require('express-stormpath') as sp.ExpressStormpath;
+import config from './config/environment';
 
 
 // Routes
@@ -13,10 +14,9 @@ import thing from './api/thing';
 
 export default (app: express.Application) => {
   // const gitSha = '/app/git-sha.txt';
-  const env = app.get('env') as string;
 
   // Authenticated routes
-  if (env === 'production' || env === 'development') {
+  if (config.env === 'production' || config.env === 'development') {
     // API routes
     app.use('/api', stormpath.loginRequired);
     if (process.env.API_GROUPS) {

@@ -8,7 +8,8 @@ import test, { ITestEnvironment } from './test';
 // ==============================================
 
 let config: IDevelopmentEnvironment | IProductionEnvironment | ITestEnvironment | {};
-switch(process.env.NODE_ENV) {
+
+switch(shared.env) {
   case 'production': {
     config = production;
     break;

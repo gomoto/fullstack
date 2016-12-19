@@ -5,10 +5,9 @@ const stormpath = require('express-stormpath');
 import config from './environment';
 
 export default (app: express.Application) => {
-  const env = app.get('env');
 
   // disable stormpath in test mode
-  if (env === 'test') {
+  if (config.env === 'test') {
     return;
   }
 

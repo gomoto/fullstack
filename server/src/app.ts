@@ -26,7 +26,7 @@ configureRoutes(app);
 logger.info('Awaiting stormpath...');
 app.on('stormpath.ready', () => {
   server.listen(config.port, config.ip, () => {
-    logger.info(`Express server listening at ${config.ip}:${config.port}, in ${app.get('env')} mode`);
+    logger.info(`Express server listening at ${config.ip}:${config.port}, in ${config.env} mode`);
   });
 });
 
