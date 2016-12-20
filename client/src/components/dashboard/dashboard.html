@@ -1,5 +1,5 @@
 <div>This is the dashboard.</div>
-<form action="/logout" method="POST">
-  <input type="hidden" name="_csrf" value="{{$ctrl.xsrf}}">
+<form action="{{$ctrl.logoutUri}}" method="POST">
+  <input type="hidden" name="{{$ctrl.xsrfName}}" value="{{$ctrl.xsrf}}">
   <button>Log out</button>
 </form>
