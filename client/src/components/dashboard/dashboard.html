@@ -1,2 +1,5 @@
 <div>This is the dashboard.</div>
-<button ng-click="$ctrl.logout()">Log out</button>
+<form action="/logout" method="POST">
+  <input type="hidden" name="_csrf" value="{{$ctrl.xsrf}}">
+  <button>Log out</button>
+</form>

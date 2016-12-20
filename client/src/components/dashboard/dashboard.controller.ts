@@ -1,4 +1,5 @@
 import { ILogService } from 'angular';
+import * as jsCookie from 'js-cookie';
 
 export default class DashboardController {
 
@@ -16,19 +17,6 @@ export default class DashboardController {
     private STORMPATH_CONFIG: ng.stormpath.IStormpathConfig
   ) {}
 
-  logout(): void {
-    this.$http.post(this.STORMPATH_CONFIG.DESTROY_SESSION_ENDPOINT, null, {
-      headers: {
-        'Accept': 'text/html'
-      }
-    })
-    .then(() => {
-      this.$state.go('login');
-    });
+  private xsrf = jsCookie.get('XSRF-TOKEN');
 
-    // this.$auth.endSession()
-    // .then(() => {
-    //   this.$state.go('login');
-    // });
-  }
 }
