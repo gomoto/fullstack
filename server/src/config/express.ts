@@ -15,7 +15,7 @@ import errorHandler = require('errorhandler');
 
 import config from './environment';
 const imageManifest = require(`${config.root}/client/assets/images/manifest.json`);
-import stormpath from './stormpath';
+import stormpath from './express-stormpath';
 import stormpathOffline from './express-stormpath-offline';
 import logger from './logger';
 

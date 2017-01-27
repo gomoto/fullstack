@@ -1,7 +1,7 @@
 import express = require('express');
 // TODO: express-stormpath and its types should be imported as one
-import * as sp from './express-stormpath';
-const stormpath = require('express-stormpath') as sp.ExpressStormpath;
+import * as sp from './express-stormpath.d';
+const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
 import config from './environment';
 import logger from './logger';
 
@@ -9,7 +9,7 @@ import logger from './logger';
 // Enable stormpath middleware
 export default (app: express.Application) => {
   logger.info('Configuring stormpath');
-  return stormpath.init(app, {
+  return expressStormpath.init(app, {
     web: {
       idSite: {
         enabled: true,

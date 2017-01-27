@@ -3,8 +3,8 @@
  */
 
 import express = require('express');
-import * as sp from './config/express-stormpath';
-const stormpath = require('express-stormpath') as sp.ExpressStormpath;
+import * as sp from './config/express-stormpath.d';
+const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
 import * as expressStormpathOffline from 'express-stormpath-offline';
 import config from './config/environment';
 import logger from './config/logger';
@@ -21,8 +21,8 @@ export default (app: express.Application) => {
   let authenticationRequired: () => express.RequestHandler;
   let groupsRequired: (groups: string[], all?: boolean) => express.RequestHandler;
   if (app.enabled('stormpathOnline')) {
-    authenticationRequired = () => stormpath.authenticationRequired;
-    groupsRequired = stormpath.groupsRequired;
+    authenticationRequired = () => expressStormpath.authenticationRequired;
+    groupsRequired = expressStormpath.groupsRequired;
   } else {
     authenticationRequired = expressStormpathOffline.authenticationRequired;
     groupsRequired = expressStormpathOffline.groupsRequired;
