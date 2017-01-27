@@ -33,7 +33,7 @@ Use environment variables to parameterize the application.
 env var                        | default | required | description
 ------------------------------ | ------- | -------- | -----------------------------------------
 ADMIN_GROUPS                   |         |          | Comma-separated list of admin group names
-API_GROUPS                     |         |          | Comma-separated list of group names
+API_GROUPS                     |         |          | Comma-separated list of API group names
 COOKIE_SECRET                  |         |          | String for signing cookies
 IP                             | 0.0.0.0 |          | Server ip address
 PORT                           | 9000    |          | Server port
@@ -51,10 +51,12 @@ Build and run application each time a file changes.
 
 Use environment variables to parameterize the development experience.
 
-env var  | default     | description
--------- | ----------- | ----------------------------------------
-DEV_HOST | local       | Development host (local &#124; external)
-DEV_PORT | 7000        | Development port
+env var           | default | description
+----------------- | ------- | -----------------------------------------
+DEV_HOST          | local   | Development host (local &#124; external)
+DEV_PORT          | 7000    | Development port
+DEV_USER_GROUPS   |         | Development user's groups
+DEV_USER_USERNAME | test    | Development user's username
 
 
 

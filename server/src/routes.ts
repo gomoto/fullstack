@@ -3,9 +3,11 @@
  */
 
 import express = require('express');
-import * as sp from './config/express-stormpath';
-const stormpath = require('express-stormpath') as sp.ExpressStormpath;
+import * as sp from './config/express-stormpath.d';
+const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
+import * as expressStormpathOffline from 'express-stormpath-offline';
 import config from './config/environment';
+import logger from './config/logger';
 
 
 // Routes
@@ -13,20 +15,29 @@ import thing from './api/thing';
 
 
 export default (app: express.Application) => {
+  logger.info('Setting up routes');
 
-  // Authenticated routes
-  if (config.env === 'production' || config.env === 'development') {
-    // API routes
-    app.use('/api', stormpath.loginRequired);
-    if (config.apiGroups.length > 0) {
-      app.use('/api', stormpath.groupsRequired(config.apiGroups, false));
-    }
+  // Auth middleware
+  let authenticationRequired: () => express.RequestHandler;
+  let groupsRequired: (groups: string[], all?: boolean) => express.RequestHandler;
+  if (app.enabled('stormpathOnline')) {
+    authenticationRequired = () => expressStormpath.authenticationRequired;
+    groupsRequired = expressStormpath.groupsRequired;
+  } else {
+    authenticationRequired = expressStormpathOffline.authenticationRequired;
+    groupsRequired = expressStormpathOffline.groupsRequired;
+  }
 
-    // Admin routes
-    app.use('/admin', stormpath.loginRequired);
-    if (config.adminGroups.length > 0) {
-      app.use('/admin', stormpath.groupsRequired(config.adminGroups, false));
-    }
+  // API routes
+  app.use('/api', authenticationRequired());
+  if (config.apiGroups.length > 0) {
+    app.use('/api', groupsRequired(config.apiGroups, false));
+  }
+
+  // Admin routes
+  app.use('/admin', authenticationRequired());
+  if (config.adminGroups.length > 0) {
+    app.use('/admin', groupsRequired(config.adminGroups, false));
   }
 
   // All routes
