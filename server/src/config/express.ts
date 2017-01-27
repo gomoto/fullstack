@@ -15,10 +15,14 @@ import errorHandler = require('errorhandler');
 
 import config from './environment';
 const imageManifest = require(`${config.root}/client/assets/images/manifest.json`);
-
+import stormpath from './stormpath';
+import stormpathOffline from './express-stormpath-offline';
+import logger from './logger';
 
 
 export default (app: express.Application) => {
+  logger.info('Configuring express');
+
   // paths - where are things located?
   app.set('client', path.join(config.root, 'client'));
   app.set('application', path.join(app.get('client'), 'index.html'));
@@ -44,5 +48,12 @@ export default (app: express.Application) => {
 
   if(config.env === 'development' || config.env === 'test') {
     app.use(errorHandler()); // Error handler - has to be last
+  }
+
+  // stormpath
+  if (app.enabled('stormpathOnline')) {
+    app.use(stormpath(app));
+  } else {
+    app.use(stormpathOffline(app));
   }
 };

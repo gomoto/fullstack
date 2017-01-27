@@ -1,17 +1,15 @@
-// Enable stormpath
-
 import express = require('express');
-const stormpath = require('express-stormpath');
+// TODO: express-stormpath and its types should be imported as one
+import * as sp from './express-stormpath';
+const stormpath = require('express-stormpath') as sp.ExpressStormpath;
 import config from './environment';
+import logger from './logger';
 
+
+// Enable stormpath middleware
 export default (app: express.Application) => {
-
-  // disable stormpath in test mode
-  if (config.env === 'test') {
-    return;
-  }
-
-  app.use(stormpath.init(app, {
+  logger.info('Configuring stormpath');
+  return stormpath.init(app, {
     web: {
       idSite: {
         enabled: true,
@@ -33,6 +31,5 @@ export default (app: express.Application) => {
         }
       }
     }
-  }));
-
+  });
 }

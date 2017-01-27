@@ -3,19 +3,6 @@
 import * as express from 'express';
 
 
-
-// Add stormpath-specific properties to express request object.
-declare global {
-  namespace Express {
-    export interface Request {
-      user: stormpath.User;
-      isAdmin: boolean;
-    }
-  }
-}
-
-
-
 declare namespace stormpath {
 
   interface ExpressStormpath {
@@ -32,6 +19,7 @@ declare namespace stormpath {
   }
 
   interface User {
+    username: string;
     email: string;
     getGroups(callback: (error: any, groups: Groups) => void): void;
   }
@@ -54,6 +42,15 @@ declare namespace stormpath {
 
 }
 
+
+// Add user to express request object.
+declare global {
+  namespace Express {
+    export interface Request {
+      user: any;
+    }
+  }
+}
 
 
 export = stormpath;
