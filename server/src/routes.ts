@@ -15,7 +15,7 @@ import thing from './api/thing';
 
 
 export default (app: express.Application) => {
-  logger.info('Setting up routes');
+  logger.info('Configuring routes');
 
   // Auth middleware
   let authenticationRequired: () => express.RequestHandler;

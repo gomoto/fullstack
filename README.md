@@ -30,16 +30,18 @@ Run application after it is built.
 
 Use environment variables to parameterize the application.
 
-env var                        | default | required | description
------------------------------- | ------- | -------- | -----------------------------------------
-ADMIN_GROUPS                   |         |          | Comma-separated list of admin group names
-API_GROUPS                     |         |          | Comma-separated list of API group names
-COOKIE_SECRET                  |         |          | String for signing cookies
-IP                             | 0.0.0.0 |          | Server ip address
-PORT                           | 9000    |          | Server port
-STORMPATH_APPLICATION_HREF     |         | ✓        | Required by express-stormpath
-STORMPATH_CLIENT_APIKEY_ID     |         | ✓        | Required by express-stormpath
-STORMPATH_CLIENT_APIKEY_SECRET |         | ✓        | Required by express-stormpath
+env var                        | default         | required | description
+------------------------------ | --------------- | -------- | -----------------------------------------
+ADMIN_GROUPS                   |                 |          | Comma-separated list of admin group names
+API_GROUPS                     |                 |          | Comma-separated list of API group names
+COOKIE_SECRET                  |                 |          | String for signing cookies
+IP                             | 0.0.0.0         |          | Server ip address
+MONGO_DB                       | local           |          | MongoDB database name
+MONGO_URI                      | localhost:27017 |          | MongoDB URI
+PORT                           | 9000            |          | Server port
+STORMPATH_APPLICATION_HREF     |                 | ✓        | Required by express-stormpath
+STORMPATH_CLIENT_APIKEY_ID     |                 | ✓        | Required by express-stormpath
+STORMPATH_CLIENT_APIKEY_SECRET |                 | ✓        | Required by express-stormpath
 
 
 

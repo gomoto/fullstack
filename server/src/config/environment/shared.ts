@@ -28,6 +28,11 @@ export default <ISharedEnvironment> {
 
   cookieSecret: process.env.COOKIE_SECRET,
 
+  mongo: {
+    db: process.env.MONGO_DB || 'local',
+    uri: process.env.MONGO_URI || 'localhost:27017'
+  },
+
   // Should we populate the DB with sample data?
   seedDB: false,
 
@@ -45,6 +50,10 @@ export interface ISharedEnvironment {
   apiGroups: string[];
   adminGroups: string[];
   cookieSecret: string;
+  mongo: {
+    db: string;
+    uri: string;
+  };
   seedDB: boolean;
   secrets: any;
   userRoles: string[];
