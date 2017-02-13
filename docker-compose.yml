@@ -1,0 +1,6 @@
+version: "2.1"
+services:
+  db:
+    image: mongo
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
