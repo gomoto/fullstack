@@ -12,23 +12,13 @@ import configureRoutes from './routes';
 
 const app = express() as express.Application;
 const server = http.createServer(app);
-app.set('stormpathOnline', config.env === 'production');
 
 configureExpress(app);
 configureRoutes(app);
 
-function launchServer() {
-  server.listen(config.port, config.ip, () => {
-    logger.info(`Express server listening at ${config.ip}:${config.port}, in ${config.env} mode`);
-  });
-}
-
-if (app.enabled('stormpathOnline')) {
-  logger.info('Awaiting stormpath');
-  app.on('stormpath.ready', launchServer);
-} else {
-  launchServer();
-}
+server.listen(config.port, config.ip, () => {
+  logger.info(`Express server listening at ${config.ip}:${config.port}, in ${config.env} mode`);
+});
 
 export { app }
 

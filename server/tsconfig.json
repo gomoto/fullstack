@@ -4,7 +4,7 @@
     "noImplicitAny": true,
     "removeComments": true,
     "suppressImplicitAnyIndexErrors": true,
-    "target": "es5"
+    "target": "es6"
   },
   "compileOnSave": false,
   "buildOnSave": false

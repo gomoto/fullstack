@@ -8,7 +8,7 @@ import logger from './logger';
 
 // Enable stormpath middleware
 export default (app: express.Application) => {
-  logger.info('Configuring stormpath');
+  logger.info('Configuring express-stormpath');
   return expressStormpath.init(app, {
     web: {
       idSite: {
