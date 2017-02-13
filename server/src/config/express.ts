@@ -51,8 +51,11 @@ export default (app: express.Application) => {
   }
 
   // stormpath
+  app.set('stormpathOnline', config.env === 'production');
+
   if (app.enabled('stormpathOnline')) {
     app.use(stormpath(app));
+    app.on('stormpath.ready', () => logger.info('Stormpath is online'));
   } else {
     app.use(stormpathOffline(app));
   }
