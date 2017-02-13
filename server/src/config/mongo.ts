@@ -14,7 +14,7 @@ import config from './environment';
  */
 export default (app: express.Application) => {
   logger.info('Configuring mongodb');
-  const mongoDatabase = `mongodb://${config.mongo.uri}/${config.mongo.db}`;
+  const mongoDatabase = `mongodb://${config.mongo.host}:${config.mongo.port}/${config.mongo.db}`;
   return new Promise<mongodb.Db>((resolve, reject) => {
     mongodb.MongoClient.connect(mongoDatabase, (error, database) => {
       if(error) return reject(error);

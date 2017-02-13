@@ -30,7 +30,8 @@ export default <ISharedEnvironment> {
 
   mongo: {
     db: process.env.MONGO_DB || 'local',
-    uri: process.env.MONGO_URI || 'localhost:27017'
+    host: process.env.MONGO_HOST || 'localhost',
+    port: process.env.MONGO_PORT || '27017'
   },
 
   // Should we populate the DB with sample data?
@@ -52,7 +53,8 @@ export interface ISharedEnvironment {
   cookieSecret: string;
   mongo: {
     db: string;
-    uri: string;
+    host: string;
+    port: string;
   };
   seedDB: boolean;
   secrets: any;
