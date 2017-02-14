@@ -1,5 +1,14 @@
 version: "2.1"
 services:
+  app:
+    build: .
+    links:
+      - db
+    ports:
+      - "9000:9000"
+    environment:
+      NODE_ENV: "development"
+      MONGO_HOST: "db"
   db:
     image: mongo
     ports:
