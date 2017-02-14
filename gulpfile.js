@@ -63,8 +63,7 @@ const paths = {
       },
     },
     server: {
-      directory: `${names.app}/${names.server}`,
-      main: `${names.app}/${names.server}/app.js`
+      directory: `${names.app}/${names.server}`
     }
   },
   client: {
@@ -826,7 +825,7 @@ function launchProxyServer(done) {
 
 
 
-var fork, busy = false;
+var busy = false;
 /**
  * Launch or restart app server.
  * @param {Function} done called after child process spawns
@@ -837,24 +836,21 @@ function launchServer(done, debug) {
     return;
   }
 
+  // Stay busy until child process exits.
+  busy = true;
+
   done = done || noop;
-  debug = !!debug;
 
-  const debugFlags = debug ? { execArgv: ['--debug', '--debug-brk'] } : {};
+  // TODO: if debug is true, use flags --debug --debug-brk when running app
 
-  function spawn() {
-    fork = child_process.fork(paths.app.server.main, debugFlags);
+  // Build and run app.
+  const dockerCompose = child_process.spawn('docker-compose', ['up', '-d', '--build', '-t', '0', 'app']);
+  dockerCompose.stdout.on('data', (data) => process.stdout.write(data));
+  dockerCompose.stderr.on('data', (data) => process.stdout.write(data));
+  dockerCompose.on('exit', (code) => {
     busy = false;
     done();
-  }
-
-  if (fork) {
-    busy = true;
-    fork.once('exit', spawn);
-    fork.kill();
-  } else {
-    spawn();
-  }
+  });
 }
 
 
