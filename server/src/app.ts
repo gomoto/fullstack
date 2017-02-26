@@ -16,10 +16,14 @@ const server = http.createServer(app);
 
 configureExpress(app);
 configureRoutes(app);
-configureMongo(app).then(() => {
+configureMongo(app)
+.then(() => {
   server.listen(config.port, config.ip, () => {
     logger.info(`Express server listening at ${config.ip}:${config.port}, in ${config.env} mode`);
   });
+})
+.catch(() => {
+  logger.info('Failed to start server because database is down');
 });
 
 export { app }
