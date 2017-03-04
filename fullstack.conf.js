@@ -3,6 +3,7 @@ module.exports = function() {
   const names = {
     app: 'app',
     client: 'client',
+    static: 'static',
     server: 'server',
     resources: 'resources'
   };
@@ -18,32 +19,32 @@ module.exports = function() {
             globs: [`${names.client}/src/*/**/*.html`]
           },
           css: {
-            globs: [`${names.app}/${names.client}/index-*.css`],
-            cwd: `${names.app}/${names.client}`
+            globs: [`${names.app}/${names.client}/${names.static}/index-*.css`],
+            cwd: `${names.app}/${names.client}/${names.static}`
           },
           js: {
             globs: [
-              `${names.app}/${names.client}/vendor-*.js`,
-              `${names.app}/${names.client}/index-*.js`
+              `${names.app}/${names.client}/${names.static}/vendor-*.js`,
+              `${names.app}/${names.client}/${names.static}/index-*.js`
             ],
-            cwd: `${names.app}/${names.client}`
+            cwd: `${names.app}/${names.client}/${names.static}`
           }
         }
       },
       scss: {
         entry: `${names.client}/src/index.scss`,
-        bundle: `${names.app}/${names.client}/index.css`,
+        bundle: `${names.app}/${names.client}/${names.static}/index.css`,
         watch: `${names.client}/src/**/*.scss`
       },
       ts: {
         entry: `${names.client}/src/index.ts`,
-        bundle: `${names.app}/${names.client}/index.js`,
+        bundle: `${names.app}/${names.client}/${names.static}/index.js`,
         watch: `${names.client}/src/**/*.ts`,
         tsconfig: `${names.client}/tsconfig.json`
       },
       vendors: {
         manifest: `${names.client}/vendors.json`,
-        bundle: `${names.app}/${names.client}/vendor.js`
+        bundle: `${names.app}/${names.client}/${names.static}/vendor.js`
       }
     },
     server: {

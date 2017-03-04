@@ -24,9 +24,9 @@ export default (app: express.Application) => {
   logger.info('Configuring express');
 
   // paths - where are things located?
-  app.set('client', path.join(config.root, 'client'));
+  app.set('client', path.join(config.root, 'client', 'static'));
   app.set('resources', path.join(config.root, 'resources'));
-  app.set('application', path.join(app.get('client'), 'index.html'));
+  app.set('application', path.join(config.root, 'client', 'index.html'));
 
   app.use(favicon(path.join(config.root, 'resources/images', imageManifest['favicon.ico'])));
   app.use(express.static(app.get('client')));

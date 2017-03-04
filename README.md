@@ -75,6 +75,11 @@ Environment variables can be specified at the command line or in a file called
 ```
 ├── app/
 │   ├── client/
+│   │   ├── index.html
+│   │   ├── static/
+│   │   │   ├── index-#.css
+│   │   │   ├── index-#.js
+│   │   │   ├── vendor-#.js
 │   ├── resources/
 │   ├── server/
 │
