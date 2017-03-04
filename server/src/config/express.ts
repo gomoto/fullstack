@@ -11,6 +11,7 @@ import methodOverride = require('method-override');
 import cookieParser = require('cookie-parser');
 import csurf = require('csurf');
 import path = require('path');
+import ejs = require('ejs');
 import errorHandler = require('errorhandler');
 
 import config from './environment';
@@ -27,6 +28,13 @@ export default (app: express.Application) => {
   app.set('client', path.join(config.root, 'client', 'static'));
   app.set('resources', path.join(config.root, 'resources'));
   app.set('application', path.join(config.root, 'client', 'index.html'));
+
+  // Use EJS to render HTML files.
+  app.engine('html', ejs.renderFile);
+  app.set('view engine', 'html');
+
+  // Let express know where to look for views.
+  app.set('views', [app.get('application')]);
 
   app.use(favicon(path.join(config.root, 'resources/images', imageManifest['favicon.ico'])));
   app.use(express.static(app.get('client')));

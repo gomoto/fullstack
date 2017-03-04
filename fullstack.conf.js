@@ -15,6 +15,9 @@ module.exports = function() {
         bundle: `${names.app}/${names.client}/index.html`,
         watch: `${names.client}/src/**/*.html`,
         inject: {
+          globals: {
+            globs: [`${names.client}/src/globals.ts`]
+          },
           templates: {
             globs: [`${names.client}/src/*/**/*.html`]
           },

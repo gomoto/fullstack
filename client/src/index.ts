@@ -11,5 +11,5 @@ angular.module('app', [
   components,
   errors
 ])
-.constant('NODE_ENV', process.env.NODE_ENV)
+.constant('NODE_ENV', AppGlobals.settings.NODE_ENV)
 .config(config);

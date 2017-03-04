@@ -58,7 +58,9 @@ export default (app: express.Application) => {
   // All other routes should redirect to the index.html
   app.route('/*')
   .get((req, res) => {
-    res.sendFile(app.get('application'));
+    res.render(app.get('application'), {
+      NODE_ENV: config.env
+    });
   });
 
 }
