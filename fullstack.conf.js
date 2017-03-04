@@ -3,7 +3,8 @@ module.exports = function() {
   const names = {
     app: 'app',
     client: 'client',
-    server: 'server'
+    server: 'server',
+    resources: 'resources'
   };
 
   return {
@@ -52,9 +53,9 @@ module.exports = function() {
     },
     resources: {
       images: {
-        from: `${names.client}/assets/images`,
-        to: `${names.app}/${names.client}/assets/images`,
-        manifest: `${names.app}/${names.client}/assets/images/manifest.json`
+        from: `${names.resources}/images`,
+        to: `${names.app}/${names.resources}/images`,
+        manifest: `${names.app}/${names.resources}/images/manifest.json`
       }
     },
     gitCommit: `${names.app}/git-sha.txt`

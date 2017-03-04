@@ -75,12 +75,10 @@ Environment variables can be specified at the command line or in a file called
 ```
 ├── app/
 │   ├── client/
+│   ├── resources/
 │   ├── server/
 │
 ├── client/
-│   ├── assets/
-│   │   ├── images/
-│   │   │   ├── favicon.ico
 │   ├── src/
 │   │   ├── auth/
 │   │   ├── components/
@@ -92,6 +90,10 @@ Environment variables can be specified at the command line or in a file called
 │   │   ├── index.ts
 │   ├── tsconfig.json
 │   ├── vendors.json
+│
+├── resources/
+│   ├── images/
+│   │   ├── favicon.ico
 │
 ├── server/
 │   ├── src/
