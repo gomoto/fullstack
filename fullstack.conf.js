@@ -9,11 +9,30 @@ module.exports = function() {
   };
 
   return {
+    // Register services with fullstack container.
+    services: {
+      app: {
+        name: 'app',
+        file: './docker-compose.yml',//optional
+        project: 'fullstack'//optional
+      }
+    },
     client: {
       html: {
         entry: `${names.client}/src/index.html`,
         bundle: `${names.app}/${names.client}/index.html`,
-        watch: `${names.client}/src/**/*.html`,
+        watch: {
+          glob: `${names.client}/src/**/*.html`,
+          init: () => {
+            console.log('Watching html files');
+          },
+          pre: function(event) {
+            console.log('pre', event);
+          },
+          post: function(event) {
+            console.log('post', event);
+          }
+        },
         inject: {
           globals: {
             globs: [`${names.client}/src/globals.ts`]
@@ -37,12 +56,22 @@ module.exports = function() {
       scss: {
         entry: `${names.client}/src/index.scss`,
         bundle: `${names.app}/${names.client}/${names.static}/index.css`,
-        watch: `${names.client}/src/**/*.scss`
+        watch: {
+          glob: `${names.client}/src/**/*.scss`,
+          init: () => {
+            console.log('Watching scss files');
+          }
+        }
       },
       ts: {
         entry: `${names.client}/src/index.ts`,
         bundle: `${names.app}/${names.client}/${names.static}/index.js`,
-        watch: `${names.client}/src/**/*.ts`,
+        watch: {
+          glob: `${names.client}/src/**/*.ts`,
+          init: () => {
+            console.log('Watching ts files');
+          }
+        },
         tsconfig: `${names.client}/tsconfig.json`
       },
       vendors: {
@@ -53,7 +82,17 @@ module.exports = function() {
     server: {
       from: `${names.server}/src`,
       to: `${names.app}/${names.server}`,
-      tsconfig: `${names.server}/tsconfig.json`
+      tsconfig: `${names.server}/tsconfig.json`,
+      watch: {
+        init: (services) => {
+          console.log('Watching server files');
+          services.app.start();
+        },
+        post: (services) => {
+          console.log('Restarting app');
+          services.app.restart();
+        }
+      }
     },
     resources: {
       images: {
