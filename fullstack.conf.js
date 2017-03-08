@@ -1,7 +1,9 @@
-module.exports = function() {
+module.exports = function(config) {
+
+  console.log(`container src: ${config.src}`);
+  console.log(`container build: ${config.build}`);
 
   const names = {
-    app: 'app',
     client: 'client',
     static: 'static',
     server: 'server',
@@ -19,10 +21,10 @@ module.exports = function() {
     },
     client: {
       html: {
-        entry: `${names.client}/src/index.html`,
-        bundle: `${names.app}/${names.client}/index.html`,
+        entry: `${config.src}/${names.client}/src/index.html`,
+        bundle: `${config.build}/${names.client}/index.html`,
         watch: {
-          glob: `${names.client}/src/**/*.html`,
+          glob: `${config.src}/${names.client}/src/**/*.html`,
           init: () => {
             console.log('Watching html files');
           },
@@ -35,54 +37,56 @@ module.exports = function() {
         },
         inject: {
           globals: {
-            globs: [`${names.client}/src/globals.ts`]
+            globs: [`${config.src}/${names.client}/src/globals.ts`],
+            cwd: `${config.src}`
           },
           templates: {
-            globs: [`${names.client}/src/*/**/*.html`]
+            globs: [`${config.src}/${names.client}/src/*/**/*.html`],
+            cwd: `${config.src}`
           },
           css: {
-            globs: [`${names.app}/${names.client}/${names.static}/index-*.css`],
-            cwd: `${names.app}/${names.client}/${names.static}`
+            globs: [`${config.build}/${names.client}/${names.static}/index-*.css`],
+            cwd: `${config.build}/${names.client}/${names.static}`
           },
           js: {
             globs: [
-              `${names.app}/${names.client}/${names.static}/vendor-*.js`,
-              `${names.app}/${names.client}/${names.static}/index-*.js`
+              `${config.build}/${names.client}/${names.static}/vendor-*.js`,
+              `${config.build}/${names.client}/${names.static}/index-*.js`
             ],
-            cwd: `${names.app}/${names.client}/${names.static}`
+            cwd: `${config.build}/${names.client}/${names.static}`
           }
         }
       },
       scss: {
-        entry: `${names.client}/src/index.scss`,
-        bundle: `${names.app}/${names.client}/${names.static}/index.css`,
+        entry: `${config.src}/${names.client}/src/index.scss`,
+        bundle: `${config.build}/${names.client}/${names.static}/index.css`,
         watch: {
-          glob: `${names.client}/src/**/*.scss`,
+          glob: `${config.src}/${names.client}/src/**/*.scss`,
           init: () => {
             console.log('Watching scss files');
           }
         }
       },
       ts: {
-        entry: `${names.client}/src/index.ts`,
-        bundle: `${names.app}/${names.client}/${names.static}/index.js`,
+        entry: `${config.src}/${names.client}/src/index.ts`,
+        bundle: `${config.build}/${names.client}/${names.static}/index.js`,
         watch: {
-          glob: `${names.client}/src/**/*.ts`,
+          glob: `${config.src}/${names.client}/src/**/*.ts`,
           init: () => {
             console.log('Watching ts files');
           }
         },
-        tsconfig: `${names.client}/tsconfig.json`
+        tsconfig: `${config.src}/${names.client}/tsconfig.json`
       },
       vendors: {
-        manifest: `${names.client}/vendors.json`,
-        bundle: `${names.app}/${names.client}/${names.static}/vendor.js`
+        manifest: `${config.src}/${names.client}/vendors.json`,
+        bundle: `${config.build}/${names.client}/${names.static}/vendor.js`
       }
     },
     server: {
-      from: `${names.server}/src`,
-      to: `${names.app}/${names.server}`,
-      tsconfig: `${names.server}/tsconfig.json`,
+      from: `${config.src}/${names.server}/src`,
+      to: `${config.build}/${names.server}`,
+      tsconfig: `${config.src}/${names.server}/tsconfig.json`,
       watch: {
         init: (services) => {
           console.log('Watching server files');
@@ -96,11 +100,11 @@ module.exports = function() {
     },
     resources: {
       images: {
-        from: `${names.resources}/images`,
-        to: `${names.app}/${names.resources}/images`,
-        manifest: `${names.app}/${names.resources}/images/manifest.json`
+        from: `${config.src}/${names.resources}/images`,
+        to: `${config.build}/${names.resources}/images`,
+        manifest: `${config.build}/${names.resources}/images/manifest.json`
       }
     },
-    gitCommit: `${names.app}/git-sha.txt`
+    gitCommit: `${config.build}/git-sha.txt`
   };
 };
