@@ -63,13 +63,6 @@ DEV_USER_USERNAME | test    | Development user's username
 
 
 
-## Environment variables
-
-Environment variables can be specified at the command line or in a file called
-.env at the root of the project. Command line variables take precedence.
-
-
-
 ## Project structure
 
 ```
@@ -108,7 +101,6 @@ Environment variables can be specified at the command line or in a file called
 │   │   ├── routes.ts
 │   ├── tsconfig.json
 │
-├── .env
 ├── gulpfile.js
 ├── package.json
 ├── README.md
