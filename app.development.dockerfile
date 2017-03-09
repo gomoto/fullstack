@@ -9,6 +9,6 @@ WORKDIR /app
 
 VOLUME ["/app"]
 
-CMD cd server && npm install && node app.js
+CMD cd server && npm install --only=production && node app.js
 
 # TODO: Support debug flags --debug --debug-brk

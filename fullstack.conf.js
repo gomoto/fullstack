@@ -21,6 +21,7 @@ module.exports = function(config) {
       }
     },
     client: {
+      package: `${config.src}/${names.client}/package.json`,
       html: {
         entry: `${config.src}/${names.client}/src/index.html`,
         bundle: `${config.build}/${names.client}/index.html`,
@@ -85,7 +86,7 @@ module.exports = function(config) {
       }
     },
     server: {
-      package: `${config.src}/package.json`,
+      package: `${config.src}/${names.server}/package.json`,
       from: `${config.src}/${names.server}/src`,
       to: `${config.build}/${names.server}`,
       tsconfig: `${config.src}/${names.server}/tsconfig.json`,

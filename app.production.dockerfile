@@ -7,8 +7,8 @@ EXPOSE 9000
 
 WORKDIR /app
 
-COPY package.json ./
-RUN npm install --only=production
+COPY server/package.json ./server
+RUN cd server && npm install --only=production
 
 COPY app .
 
