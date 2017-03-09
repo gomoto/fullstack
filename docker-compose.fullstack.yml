@@ -1,0 +1,25 @@
+version: "3.1"
+services:
+  builder:
+    build: ../fullstack-build
+    command: [./build]
+    volumes:
+      - .:/src
+      - build:/build
+  cleaner:
+    build: ../fullstack-build
+    command: [./clean]
+    volumes:
+      - build:/build
+  watcher:
+    build: ../fullstack-build
+    command: [./watch]
+    volumes:
+      - .:/src
+      - build:/build
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "35729:35729"
+
+volumes:
+  build:

@@ -1,9 +1,13 @@
 version: "3.1"
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: app.development.dockerfile
     links:
       - db
+    volumes:
+      - build:/app
     ports:
       - "9000:9000"
     environment:
@@ -13,3 +17,6 @@ services:
     image: mongo
     ports:
       - "${MONGO_PORT:-27017}:27017"
+
+volumes:
+  build:
