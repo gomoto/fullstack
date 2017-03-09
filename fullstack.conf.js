@@ -85,6 +85,7 @@ module.exports = function(config) {
       }
     },
     server: {
+      package: `${config.src}/package.json`,
       from: `${config.src}/${names.server}/src`,
       to: `${config.build}/${names.server}`,
       tsconfig: `${config.src}/${names.server}/tsconfig.json`,
