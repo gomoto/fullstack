@@ -10,12 +10,13 @@ module.exports = function(config) {
     resources: 'resources'
   };
 
+  // Absolute paths.
   return {
     // Register services with fullstack container.
     services: {
       app: {
         name: 'app',
-        file: './docker-compose.yml',//optional
+        file: `${config.src}/docker-compose.yml`,//optional
         project: 'fullstack'//optional
       }
     },
