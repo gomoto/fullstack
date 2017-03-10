@@ -1,15 +1,45 @@
 version: "3.1"
+
 services:
+  # Development app.
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: app.development.dockerfile
     links:
       - db
+    volumes:
+      - build:/app
     ports:
       - "9000:9000"
     environment:
       NODE_ENV: "development"
       MONGO_HOST: "db"
+
+  # Database for development app
   db:
     image: mongo
     ports:
       - "${MONGO_PORT:-27017}:27017"
+
+  # Install server packages
+  npm-server:
+    image: node:7.5.0
+    volumes:
+      - ./server:/dir
+    working_dir: /dir
+    entrypoint: npm
+    command: install
+
+  # Install client packages
+  npm-client:
+    image: node:7.5.0
+    volumes:
+      - ./client:/dir
+    working_dir: /dir
+    entrypoint: npm
+    command: install
+
+volumes:
+  # Volume for holding built code
+  build:

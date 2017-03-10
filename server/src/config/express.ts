@@ -11,10 +11,11 @@ import methodOverride = require('method-override');
 import cookieParser = require('cookie-parser');
 import csurf = require('csurf');
 import path = require('path');
+import ejs = require('ejs');
 import errorHandler = require('errorhandler');
 
 import config from './environment';
-const imageManifest = require(`${config.root}/client/assets/images/manifest.json`);
+const imageManifest = require(`${config.root}/resources/images/manifest.json`);
 import stormpath from './express-stormpath';
 import stormpathOffline from './express-stormpath-offline';
 import logger from './logger';
@@ -24,11 +25,20 @@ export default (app: express.Application) => {
   logger.info('Configuring express');
 
   // paths - where are things located?
-  app.set('client', path.join(config.root, 'client'));
-  app.set('application', path.join(app.get('client'), 'index.html'));
+  app.set('client', path.join(config.root, 'client', 'static'));
+  app.set('resources', path.join(config.root, 'resources'));
+  app.set('application', path.join(config.root, 'client', 'index.html'));
 
-  app.use(favicon(path.join(config.root, 'client/assets/images', imageManifest['favicon.ico'])));
+  // Use EJS to render HTML files.
+  app.engine('html', ejs.renderFile);
+  app.set('view engine', 'html');
+
+  // Let express know where to look for views.
+  app.set('views', [app.get('application')]);
+
+  app.use(favicon(path.join(config.root, 'resources/images', imageManifest['favicon.ico'])));
   app.use(express.static(app.get('client')));
+  app.use(express.static(app.get('resources')));
   app.use(morgan('dev'));
 
   app.use(shrinkRay());
@@ -47,6 +57,7 @@ export default (app: express.Application) => {
   });
 
   if(config.env === 'development' || config.env === 'test') {
+    app.use(require('connect-livereload')());
     app.use(errorHandler()); // Error handler - has to be last
   }
 

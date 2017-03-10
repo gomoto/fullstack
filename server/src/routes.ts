@@ -48,9 +48,9 @@ export default (app: express.Application) => {
     res.sendFile(`${config.root}/git-sha.txt`);
   });
 
-  // Routes for api and assets should have already been served.
-  // Return a 404 for all undefined asset or api routes.
-  app.route('/:url(api|assets)/*')
+  // Routes for api and resources should have already been served.
+  // Return a 404 for all undefined resource or api routes.
+  app.route('/:url(api|resources)/*')
   .get((req, res) => {
     res.sendStatus(404);
   });
@@ -58,7 +58,9 @@ export default (app: express.Application) => {
   // All other routes should redirect to the index.html
   app.route('/*')
   .get((req, res) => {
-    res.sendFile(app.get('application'));
+    res.render(app.get('application'), {
+      NODE_ENV: config.env
+    });
   });
 
 }
