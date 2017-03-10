@@ -95,7 +95,7 @@ module.exports = function(config) {
           pre: () => {
             console.log('copying node_modules could take some time...');
           },
-          post: (services) => {
+          post: (event, services) => {
             console.log('Restarting app');
             services.app.restart();
           }
@@ -106,7 +106,7 @@ module.exports = function(config) {
         to: `${config.build}/${names.server}`,
         watch: {
           glob: `${config.src}/${names.server}/src/**/*.ts`,
-          post: (services) => {
+          post: (event, services) => {
             console.log('Restarting app');
             services.app.restart();
           }
