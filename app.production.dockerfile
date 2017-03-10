@@ -7,9 +7,6 @@ EXPOSE 9000
 
 WORKDIR /app
 
-COPY server/package.json ./server
-RUN cd server && npm install --only=production
-
 COPY app .
 
 CMD ["node", "server/app.js"]
