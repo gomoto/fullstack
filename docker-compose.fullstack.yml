@@ -22,4 +22,5 @@ services:
       - "35729:35729"
 
 volumes:
+  # Volume for holding built code
   build:
