@@ -26,10 +26,8 @@ services:
   npm-server:
     image: node:7.5.0
     volumes:
-      - ./server/package.json:/package.json
-      - ./server/node_modules:/node_modules
-    environment:
-      NODE_ENV: production
+      - ./server:/dir
+    working_dir: /dir
     entrypoint: npm
     command: install
 
@@ -37,10 +35,8 @@ services:
   npm-client:
     image: node:7.5.0
     volumes:
-      - ./client/package.json:/package.json
-      - ./client/node_modules:/node_modules
-    environment:
-      NODE_ENV: production
+      - ./client:/dir
+    working_dir: /dir
     entrypoint: npm
     command: install
 
