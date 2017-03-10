@@ -21,7 +21,7 @@ module.exports = function(config) {
       }
     },
     client: {
-      package: `${config.src}/${names.client}/package.json`,
+      node_modules: `${config.src}/${names.client}/node_modules`,
       html: {
         entry: `${config.src}/${names.client}/src/index.html`,
         bundle: `${config.build}/${names.client}/index.html`,
@@ -86,18 +86,37 @@ module.exports = function(config) {
       }
     },
     server: {
-      package: `${config.src}/${names.server}/package.json`,
-      from: `${config.src}/${names.server}/src`,
-      to: `${config.build}/${names.server}`,
-      tsconfig: `${config.src}/${names.server}/tsconfig.json`,
+      node_modules: {
+        from: `${config.src}/${names.server}/node_modules`,
+        to: `${config.build}/node_modules`,
+        watch: {
+          glob: `${config.src}/${names.server}/package.json`,
+          pre: () => {
+            console.log('copying node_modules could take some time...');
+          },
+          post: (services) => {
+            console.log('Restarting app');
+            services.app.restart();
+          }
+        }
+      },
+      ts: {
+        from: `${config.src}/${names.server}/src`,
+        to: `${config.build}/${names.server}`,
+        watch: {
+          glob: `${config.src}/${names.server}/src/**/*.ts`,
+          post: (services) => {
+            console.log('Restarting app');
+            services.app.restart();
+          }
+        },
+        tsconfig: `${config.src}/${names.server}/tsconfig.json`
+      },
       watch: {
+        // Before all server tasks
         init: (services) => {
           console.log('Watching server files');
           services.app.start();
-        },
-        post: (services) => {
-          console.log('Restarting app');
-          services.app.restart();
         }
       }
     },
