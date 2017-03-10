@@ -21,7 +21,6 @@ module.exports = function(config) {
       }
     },
     client: {
-      node_modules: `${config.src}/${names.client}/node_modules`,
       html: {
         entry: `${config.src}/${names.client}/src/index.html`,
         bundle: `${config.build}/${names.client}/index.html`,
@@ -81,8 +80,10 @@ module.exports = function(config) {
         tsconfig: `${config.src}/${names.client}/tsconfig.json`
       },
       vendors: {
-        manifest: `${config.src}/${names.client}/vendors.json`,
-        bundle: `${config.build}/${names.client}/${names.static}/vendor.js`
+        manifest: `${config.src}/${names.client}/package.json`,
+        bundle: `${config.build}/${names.client}/${names.static}/vendor.js`,
+        // Exclude types from vendor bundle.
+        test: (vendor) => !vendor.includes('@types')
       }
     },
     server: {

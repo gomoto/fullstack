@@ -67,7 +67,6 @@ DEV_USER_USERNAME | test    | Development user's username
 │   │   ├── index.ts
 │   ├── package.json
 │   ├── tsconfig.json
-│   ├── vendors.json
 │
 ├── resources/
 │   ├── fonts/
