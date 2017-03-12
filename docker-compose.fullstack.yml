@@ -8,13 +8,13 @@ services:
       - ./resources:/resources
       - ./server:/server
       - ./.git:/.git
-      - build:/build
+      - ./build:/build
       - ./fullstack.config.js:/fullstack.config.js
   cleaner:
     build: ../fullstack-build
     command: [./clean]
     volumes:
-      - build:/build
+      - ./build:/build
       - ./fullstack.config.js:/fullstack.config.js
   watcher:
     build: ../fullstack-build
@@ -24,7 +24,7 @@ services:
       - ./resources:/resources
       - ./server:/server
       - ./.git:/.git
-      - build:/build
+      - ./build:/build
       - ./fullstack.config.js:/fullstack.config.js
       # For running app in a container
       - /var/run/docker.sock:/var/run/docker.sock
@@ -32,7 +32,3 @@ services:
       - ./app.development.dockerfile:/app.development.dockerfile
     ports:
       - "35729:35729"
-
-volumes:
-  # Volume for holding built code
-  build:

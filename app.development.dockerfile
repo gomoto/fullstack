@@ -5,9 +5,9 @@ ENV PORT 9000
 
 EXPOSE 9000
 
-WORKDIR /app
+WORKDIR /build
 
-VOLUME ["/app"]
+VOLUME ["/build"]
 
 CMD node server/app.js
 

@@ -9,7 +9,7 @@ services:
     links:
       - db
     volumes:
-      - build:/app
+      - ./build:/build
     ports:
       - "9000:9000"
     environment:
@@ -39,7 +39,3 @@ services:
     working_dir: /dir
     entrypoint: npm
     command: install
-
-volumes:
-  # Volume for holding built code
-  build:
