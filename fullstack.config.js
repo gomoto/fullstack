@@ -1,7 +1,9 @@
-module.exports = function(config) {
+module.exports = function() {
 
-  console.log(`container src: ${config.src}`);
-  console.log(`container build: ${config.build}`);
+  const config = {
+    src: '/src',
+    build: '/build'
+  };
 
   const names = {
     client: 'client',
