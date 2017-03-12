@@ -130,6 +130,9 @@ module.exports = function() {
         manifest: `${config.build}/${names.resources}/images/manifest.json`
       }
     },
-    gitCommit: `${config.build}/git-sha.txt`
+    git: {
+      directory: `${config.src}/.git`,
+      commit: `${config.build}/git-sha.txt`
+    }
   };
 };
