@@ -1,31 +1,31 @@
-module.exports = function(config) {
+module.exports = function() {
 
-  console.log(`container src: ${config.src}`);
-  console.log(`container build: ${config.build}`);
-
-  const names = {
+  // Mirror project directory in container.
+  const paths = {
+    root: __dirname,
     client: 'client',
-    static: 'static',
+    resources: 'resources',
     server: 'server',
-    resources: 'resources'
+    git: '.git',
+    build: 'build'
   };
 
-  // Absolute paths.
+  // Absolute paths in the container.
   return {
     // Register services with fullstack container.
     services: {
       app: {
         name: 'app',
-        file: `${config.src}/docker-compose.yml`,//optional
+        file: `${paths.root}/docker-compose.yml`,//optional
         project: 'fullstack'//optional
       }
     },
     client: {
       html: {
-        entry: `${config.src}/${names.client}/src/index.html`,
-        bundle: `${config.build}/${names.client}/index.html`,
+        entry: `${paths.root}/${paths.client}/src/index.html`,
+        bundle: `${paths.root}/${paths.build}/${paths.client}/index.html`,
         watch: {
-          glob: `${config.src}/${names.client}/src/**/*.html`,
+          glob: `${paths.root}/${paths.client}/src/**/*.html`,
           init: () => {
             console.log('Watching html files');
           },
@@ -38,60 +38,60 @@ module.exports = function(config) {
         },
         inject: {
           globals: {
-            globs: [`${config.src}/${names.client}/src/globals.ts`],
-            cwd: `${config.src}`
+            globs: [`${paths.root}/${paths.client}/src/globals.ts`],
+            cwd: `${paths.root}`
           },
           templates: {
-            globs: [`${config.src}/${names.client}/src/*/**/*.html`],
-            cwd: `${config.src}`
+            globs: [`${paths.root}/${paths.client}/src/*/**/*.html`],
+            cwd: `${paths.root}`
           },
           css: {
-            globs: [`${config.build}/${names.client}/${names.static}/index-*.css`],
-            cwd: `${config.build}/${names.client}/${names.static}`
+            globs: [`${paths.root}/${paths.build}/${paths.client}/static/index-*.css`],
+            cwd: `${paths.root}/${paths.build}/${paths.client}/static`
           },
           js: {
             globs: [
-              `${config.build}/${names.client}/${names.static}/vendor-*.js`,
-              `${config.build}/${names.client}/${names.static}/index-*.js`
+              `${paths.root}/${paths.build}/${paths.client}/static/vendor-*.js`,
+              `${paths.root}/${paths.build}/${paths.client}/static/index-*.js`
             ],
-            cwd: `${config.build}/${names.client}/${names.static}`
+            cwd: `${paths.root}/${paths.build}/${paths.client}/static`
           }
         }
       },
       scss: {
-        entry: `${config.src}/${names.client}/src/index.scss`,
-        bundle: `${config.build}/${names.client}/${names.static}/index.css`,
+        entry: `${paths.root}/${paths.client}/src/index.scss`,
+        bundle: `${paths.root}/${paths.build}/${paths.client}/static/index.css`,
         watch: {
-          glob: `${config.src}/${names.client}/src/**/*.scss`,
+          glob: `${paths.root}/${paths.client}/src/**/*.scss`,
           init: () => {
             console.log('Watching scss files');
           }
         }
       },
       ts: {
-        entry: `${config.src}/${names.client}/src/index.ts`,
-        bundle: `${config.build}/${names.client}/${names.static}/index.js`,
+        entry: `${paths.root}/${paths.client}/src/index.ts`,
+        bundle: `${paths.root}/${paths.build}/${paths.client}/static/index.js`,
         watch: {
-          glob: `${config.src}/${names.client}/src/**/*.ts`,
+          glob: `${paths.root}/${paths.client}/src/**/*.ts`,
           init: () => {
             console.log('Watching ts files');
           }
         },
-        tsconfig: `${config.src}/${names.client}/tsconfig.json`
+        tsconfig: `${paths.root}/${paths.client}/tsconfig.json`
       },
       vendors: {
-        manifest: `${config.src}/${names.client}/package.json`,
-        bundle: `${config.build}/${names.client}/${names.static}/vendor.js`,
+        manifest: `${paths.root}/${paths.client}/package.json`,
+        bundle: `${paths.root}/${paths.build}/${paths.client}/static/vendor.js`,
         // Exclude types from vendor bundle.
         test: (vendor) => !vendor.includes('@types')
       }
     },
     server: {
       node_modules: {
-        from: `${config.src}/${names.server}/node_modules`,
-        to: `${config.build}/node_modules`,
+        from: `${paths.root}/${paths.server}/node_modules`,
+        to: `${paths.root}/${paths.build}/node_modules`,
         watch: {
-          glob: `${config.src}/${names.server}/package.json`,
+          glob: `${paths.root}/${paths.server}/package.json`,
           pre: () => {
             console.log('copying node_modules could take some time...');
           },
@@ -102,16 +102,16 @@ module.exports = function(config) {
         }
       },
       ts: {
-        from: `${config.src}/${names.server}/src`,
-        to: `${config.build}/${names.server}`,
+        from: `${paths.root}/${paths.server}/src`,
+        to: `${paths.root}/${paths.build}/${paths.server}`,
         watch: {
-          glob: `${config.src}/${names.server}/src/**/*.ts`,
+          glob: `${paths.root}/${paths.server}/src/**/*.ts`,
           post: (event, services) => {
             console.log('Restarting app');
             services.app.restart();
           }
         },
-        tsconfig: `${config.src}/${names.server}/tsconfig.json`
+        tsconfig: `${paths.root}/${paths.server}/tsconfig.json`
       },
       watch: {
         // Before all server tasks
@@ -123,11 +123,14 @@ module.exports = function(config) {
     },
     resources: {
       images: {
-        from: `${config.src}/${names.resources}/images`,
-        to: `${config.build}/${names.resources}/images`,
-        manifest: `${config.build}/${names.resources}/images/manifest.json`
+        from: `${paths.root}/${paths.resources}/images`,
+        to: `${paths.root}/${paths.build}/${paths.resources}/images`,
+        manifest: `${paths.root}/${paths.build}/${paths.resources}/images/manifest.json`
       }
     },
-    gitCommit: `${config.build}/git-sha.txt`
+    git: {
+      directory: `${paths.root}/${paths.git}`,
+      commit: `${paths.root}/${paths.build}/git-sha.txt`
+    }
   };
 };
