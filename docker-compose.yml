@@ -9,6 +9,7 @@ services:
     links:
       - db
     volumes:
+      # relative to the host or host-VM
       - ./build:/build
     ports:
       - "9000:9000"

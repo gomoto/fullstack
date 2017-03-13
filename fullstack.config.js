@@ -1,13 +1,12 @@
 module.exports = function() {
 
-  // Absolute paths.
+  // Absolute paths in the container.
   const paths = {
-    dockerCompose: '/docker-compose.yml',
     client: '/client',
     resources: '/resources',
     server: '/server',
     git: '/.git',
-    build: '/build'
+    build: `${__dirname}/build`
   };
 
   return {
@@ -15,7 +14,7 @@ module.exports = function() {
     services: {
       app: {
         name: 'app',
-        file: paths.dockerCompose,//optional
+        file: `${__dirname}/docker-compose.yml`,//optional
         project: 'fullstack'//optional
       }
     },
