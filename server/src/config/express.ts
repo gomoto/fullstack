@@ -3,7 +3,6 @@
 */
 
 import express = require('express');
-import favicon = require('serve-favicon');
 import morgan = require('morgan');
 const shrinkRay = require('shrink-ray');
 import bodyParser = require('body-parser');
@@ -15,7 +14,6 @@ import ejs = require('ejs');
 import errorHandler = require('errorhandler');
 
 import config from './environment';
-const resourceManifest = require(`${config.root}/resources/manifest.json`);
 import stormpath from './express-stormpath';
 import stormpathOffline from './express-stormpath-offline';
 import logger from './logger';
@@ -36,7 +34,6 @@ export default (app: express.Application) => {
   // Let express know where to look for views.
   app.set('views', [app.get('application')]);
 
-  app.use(favicon(path.join(config.root, 'resources', resourceManifest['favicon.ico'])));
   app.use(express.static(app.get('client')));
   app.use(express.static(app.get('resources')));
   app.use(morgan('dev'));

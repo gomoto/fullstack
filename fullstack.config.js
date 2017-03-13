@@ -37,6 +37,7 @@ module.exports = function() {
           }
         },
         inject: {
+          // pre-build
           globals: {
             globs: [`${paths.root}/${paths.client}/src/globals.ts`],
             cwd: `${paths.root}`
@@ -44,6 +45,11 @@ module.exports = function() {
           templates: {
             globs: [`${paths.root}/${paths.client}/src/*/**/*.html`],
             cwd: `${paths.root}`
+          },
+          // post-build
+          favicon: {
+            globs: [`${paths.root}/${paths.build}/${paths.resources}/images/favicon-*.ico`],
+            cwd: `${paths.root}/${paths.build}/${paths.resources}`
           },
           css: {
             globs: [`${paths.root}/${paths.build}/${paths.client}/static/index-*.css`],
