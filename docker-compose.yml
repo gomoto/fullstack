@@ -2,10 +2,9 @@ version: "3.1"
 
 services:
   # Development app.
+  # Mimic production Dockerfile.
   app:
-    build:
-      context: .
-      dockerfile: app.development.dockerfile
+    image: node:7.5.0
     links:
       - db
     volumes:
@@ -16,6 +15,10 @@ services:
     environment:
       NODE_ENV: "development"
       MONGO_HOST: "db"
+      PORT: "9000"
+    expose:
+      - "9000"
+    command: node /build/server/app.js
 
   # Database for development app
   db:
