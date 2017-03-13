@@ -3,36 +3,26 @@ services:
   builder:
     build: ../fullstack-build
     command: [./build]
+    environment:
+      FULLSTACK_CONFIG: "${PWD}/fullstack.config.js"
     volumes:
-      - ./client:/client
-      - ./resources:/resources
-      - ./server:/server
-      - ./.git:/.git
-      - ./build:/build
-      - ./fullstack.config.js:/fullstack.config.js
+      - "${PWD}:${PWD}"
   cleaner:
     build: ../fullstack-build
     command: [./clean]
+    environment:
+      FULLSTACK_CONFIG: "${PWD}/fullstack.config.js"
     volumes:
-      - ./build:/build
-      - ./fullstack.config.js:/fullstack.config.js
+      - "${PWD}:${PWD}"
   watcher:
     build: ../fullstack-build
     command: [./watch]
-    volumes:
-      - ./client:/client
-      - ./resources:/resources
-      - ./server:/server
-      - ./.git:/.git
-      # For running app in a container
-      - /var/run/docker.sock:/var/run/docker.sock
-      - "${PWD}/build:${PWD}/build"
-      - "${PWD}/fullstack.config.js:${PWD}/fullstack.config.js"
-      - "${PWD}/docker-compose.yml:${PWD}/docker-compose.yml"
-      - "${PWD}/app.development.dockerfile:${PWD}/app.development.dockerfile"
-    ports:
-      - "35729:35729"
     environment:
       # Where to find the config file in the container
       # TODO: make this a command parameter
       FULLSTACK_CONFIG: "${PWD}/fullstack.config.js"
+    volumes:
+      - "${PWD}:${PWD}"
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "35729:35729"
