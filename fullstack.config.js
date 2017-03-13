@@ -93,20 +93,6 @@ module.exports = function() {
       }
     },
     server: {
-      node_modules: {
-        from: `${paths.root}/${paths.server}/node_modules`,
-        to: `${paths.root}/${paths.build}/node_modules`,
-        watch: {
-          glob: `${paths.root}/${paths.server}/package.json`,
-          pre: () => {
-            console.log('copying node_modules could take some time...');
-          },
-          post: (event, services) => {
-            console.log('Restarting app');
-            services.app.restart();
-          }
-        }
-      },
       ts: {
         from: `${paths.root}/${paths.server}/src`,
         to: `${paths.root}/${paths.build}/${paths.server}`,

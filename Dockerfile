@@ -7,6 +7,11 @@ EXPOSE 9000
 
 WORKDIR /build
 
-COPY app .
+# Install dependencies
+COPY ./server/package.json ./package.json
+RUN ["npm", "install", "--only=production"]
+
+# Copy built app. Must build app before building this image.
+COPY ./build .
 
 CMD ["node", "server/app.js"]

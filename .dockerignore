@@ -1,4 +1,8 @@
 *
 
-# For production build
-!app/
+# Ignore everything except what is needed to build the production image.
+
+!build/
+build/server/node_modules
+
+!server/package.json

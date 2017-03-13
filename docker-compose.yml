@@ -10,6 +10,7 @@ services:
     volumes:
       # relative to the host or host-VM
       - ./build:/build
+      - ./server/node_modules:/build/server/node_modules
     ports:
       - "9000:9000"
     environment:
