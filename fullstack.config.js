@@ -123,9 +123,9 @@ module.exports = function() {
     },
     resources: {
       images: {
-        from: `${paths.root}/${paths.resources}/images`,
-        to: `${paths.root}/${paths.build}/${paths.resources}/images`,
-        manifest: `${paths.root}/${paths.build}/${paths.resources}/images/manifest.json`
+        from: `${paths.root}/${paths.resources}`,
+        to: `${paths.root}/${paths.build}/${paths.resources}`,
+        manifest: `${paths.root}/${paths.build}/${paths.resources}/manifest.json`
       }
     },
     git: {
