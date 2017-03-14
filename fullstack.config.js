@@ -117,6 +117,7 @@ module.exports = function() {
       images: {
         from: `${paths.root}/${paths.resources}`,
         to: `${paths.root}/${paths.build}/${paths.resources}`,
+        extensions: ['png', 'ico'],
         manifest: `${paths.root}/${paths.build}/${paths.resources}/manifest.json`
       }
     },
