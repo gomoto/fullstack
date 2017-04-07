@@ -7,7 +7,6 @@ import mongodb = require('mongodb');
 import * as sp from './config/express-stormpath.d';
 const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
 import * as expressStormpathOffline from 'express-stormpath-offline';
-import config from './config/environment';
 import logger from './config/logger';
 import { settings } from './config/settings';
 
@@ -32,14 +31,14 @@ export default (app: express.Application, database: mongodb.Db) => {
 
   // API routes
   app.use('/api', authenticationRequired());
-  if (config.apiGroups.length > 0) {
-    app.use('/api', groupsRequired(config.apiGroups, false));
+  if (settings.apiGroups.length > 0) {
+    app.use('/api', groupsRequired(settings.apiGroups, false));
   }
 
   // Admin routes
   app.use('/admin', authenticationRequired());
-  if (config.adminGroups.length > 0) {
-    app.use('/admin', groupsRequired(config.adminGroups, false));
+  if (settings.adminGroups.length > 0) {
+    app.use('/admin', groupsRequired(settings.adminGroups, false));
   }
 
   // All routes
@@ -47,7 +46,7 @@ export default (app: express.Application, database: mongodb.Db) => {
   app.use('/admin/things', thing);
 
   app.get('/version', (req, res) => {
-    res.sendFile(`${config.root}/git-sha.txt`);
+    res.sendFile(`${settings.root}/git-sha.txt`);
   });
 
   // Routes for api and resources should have already been served.
@@ -61,7 +60,7 @@ export default (app: express.Application, database: mongodb.Db) => {
   app.route('/*')
   .get((req, res) => {
     res.render(settings.paths.application, {
-      NODE_ENV: config.env
+      NODE_ENV: settings.env
     });
   });
 

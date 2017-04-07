@@ -2,7 +2,7 @@ import express = require('express');
 // TODO: express-stormpath and its types should be imported as one
 import * as sp from './express-stormpath.d';
 const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
-import config from './environment';
+import { settings } from './settings';
 import logger from './logger';
 
 
@@ -18,11 +18,11 @@ export default (app: express.Application) => {
       },
       login: {
         enabled: true,
-        uri: config.login
+        uri: settings.login
       },
       logout: {
         enabled: true,
-        uri: config.logout
+        uri: settings.logout
       },
       me: {
         expand: {

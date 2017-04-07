@@ -13,7 +13,6 @@ import path = require('path');
 import ejs = require('ejs');
 import errorHandler = require('errorhandler');
 
-import config from './environment';
 import { settings } from '../config/settings';
 import stormpath from './express-stormpath';
 import stormpathOffline from './express-stormpath-offline';
@@ -40,7 +39,7 @@ export default (app: express.Application) => {
   app.use(methodOverride());
 
   // stormpath parses and signs cookies, but stormpath might not be used.
-  app.use(cookieParser(config.cookieSecret));
+  app.use(cookieParser(settings.cookieSecret));
 
   // cross-site request forgery protection (angular)
   app.use(csurf({ cookie: true }));
@@ -49,7 +48,7 @@ export default (app: express.Application) => {
     next();
   });
 
-  if(config.env === 'development' || config.env === 'test') {
+  if(settings.env === 'development' || settings.env === 'test') {
     app.use(require('connect-livereload')());
     app.use(errorHandler()); // Error handler - has to be last
   }

@@ -4,7 +4,7 @@
 
 import express = require('express');
 import http = require('http');
-import config from './config/environment';
+import { settings } from './config/settings';
 import logger from './config/logger';
 import configureExpress from './config/express';
 import configureRoutes from './routes';
@@ -22,8 +22,8 @@ configureMongo(app)
   configureRoutes(app, database);
 })
 .then(() => {
-  server.listen(config.port, config.ip, () => {
-    logger.info(`Express server listening at ${config.ip}:${config.port}, in ${config.env} mode`);
+  server.listen(settings.port, settings.ip, () => {
+    logger.info(`Express server listening at ${settings.ip}:${settings.port}, in ${settings.env} mode`);
   });
 })
 .catch(() => {

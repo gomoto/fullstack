@@ -1,10 +1,10 @@
 import express = require('express');
 import mongodb = require('mongodb');
 import logger from './logger';
-import config from './environment';
+import { settings } from './settings';
 
 
-const mongoDatabase = `mongodb://${config.mongo.host}:${config.mongo.port}/${config.mongo.db}`;
+const mongoDatabase = `mongodb://${settings.mongo.host}:${settings.mongo.port}/${settings.mongo.db}`;
 const reconnectInterval = 1000;
 const reconnectTries = 30;
 let reconnectCounter = 0;
