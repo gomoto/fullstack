@@ -15,7 +15,11 @@ const settings = {
   // Server IP
   ip: process.env.IP || '0.0.0.0',
 
-  application: path.join(root, 'client', 'index.html'),
+  paths: {
+    application: path.join(root, 'client', 'index.html'),
+    client: path.join(root, 'client', 'static'),
+    resources: path.join(root, 'resources')
+  },
 
   login: '/login',
 

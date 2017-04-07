@@ -23,19 +23,15 @@ import logger from './logger';
 export default (app: express.Application) => {
   logger.info('Configuring express');
 
-  // paths - where are things located?
-  app.set('client', path.join(config.root, 'client', 'static'));
-  app.set('resources', path.join(config.root, 'resources'));
-
   // Use EJS to render HTML files.
   app.engine('html', ejs.renderFile);
   app.set('view engine', 'html');
 
   // Let express know where to look for views.
-  app.set('views', [settings.application]);
+  app.set('views', [settings.paths.application]);
 
-  app.use(express.static(app.get('client')));
-  app.use(express.static(app.get('resources')));
+  app.use(express.static(settings.paths.client));
+  app.use(express.static(settings.paths.resources));
   app.use(morgan('dev'));
 
   app.use(shrinkRay());
