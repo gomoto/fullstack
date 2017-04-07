@@ -26,14 +26,13 @@ export default (app: express.Application) => {
   // paths - where are things located?
   app.set('client', path.join(config.root, 'client', 'static'));
   app.set('resources', path.join(config.root, 'resources'));
-  app.set('application', path.join(config.root, 'client', 'index.html'));
 
   // Use EJS to render HTML files.
   app.engine('html', ejs.renderFile);
   app.set('view engine', 'html');
 
   // Let express know where to look for views.
-  app.set('views', [app.get('application')]);
+  app.set('views', [settings.application]);
 
   app.use(express.static(app.get('client')));
   app.use(express.static(app.get('resources')));

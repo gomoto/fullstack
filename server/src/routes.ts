@@ -60,7 +60,7 @@ export default (app: express.Application, database: mongodb.Db) => {
   // All other routes should redirect to the index.html
   app.route('/*')
   .get((req, res) => {
-    res.render(app.get('application'), {
+    res.render(settings.application, {
       NODE_ENV: config.env
     });
   });

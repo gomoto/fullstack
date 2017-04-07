@@ -1,18 +1,21 @@
 import path = require('path');
 
 const env = process.env.NODE_ENV || 'development';
+const root = path.normalize(`${__dirname}/../../..`);
 
 const settings = {
   env,
 
   // Root path of server
-  root: path.normalize(`${__dirname}/../../..`),
+  root,
 
   // Server port
   port: process.env.PORT || 9000,
 
   // Server IP
   ip: process.env.IP || '0.0.0.0',
+
+  application: path.join(root, 'client', 'index.html'),
 
   login: '/login',
 
