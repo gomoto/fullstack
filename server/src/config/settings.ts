@@ -1,7 +1,7 @@
 import path = require('path');
 
 const env = process.env.NODE_ENV || 'development';
-const root = path.normalize(`${__dirname}/../../..`);
+const root = path.normalize(`${__dirname}/../..`);
 
 const settings = {
   env,
