@@ -1,20 +1,19 @@
 /**
- * Main application routes
+ * Application routes
  */
 
 import express = require('express');
 import mongodb = require('mongodb');
-import * as sp from './config/express-stormpath.d';
+import * as sp from '../config/express-stormpath.d';
 const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
 import * as expressStormpathOffline from 'express-stormpath-offline';
-import logger from './config/logger';
-import { settings } from './config/settings';
-
+import logger from '../config/logger';
+import { settings } from '../config/settings';
 
 // Routes
 import thing from './api/thing';
 
-
+// Router factory
 export default (database: mongodb.Db) => {
   logger.info('Configuring routes');
 

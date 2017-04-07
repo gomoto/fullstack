@@ -7,7 +7,7 @@ import http = require('http');
 import { settings } from './config/settings';
 import logger from './config/logger';
 import configureExpress from './config/express';
-import router from './routes';
+import router from './router';
 import * as mongo from './services/mongo';
 
 const app = express() as express.Application;
@@ -18,8 +18,6 @@ const server = http.createServer(app);
 mongo.initialize(settings.mongo.url)
 .then((database) => {
   configureExpress(app);
-
-  // Application routes
   app.use(router(database));
 })
 .then(() => {
