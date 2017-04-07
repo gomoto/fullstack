@@ -8,15 +8,14 @@ import { settings } from './config/settings';
 import logger from './config/logger';
 import configureExpress from './config/express';
 import router from './routes';
-import configureMongo from './config/mongo';
-
+import * as mongo from './services/mongo';
 
 const app = express() as express.Application;
 const server = http.createServer(app);
 
 // Connect to mongodb database once and reuse the connection.
 // https://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html#mongoclient-connection-pooling
-configureMongo(app)
+mongo.initialize(settings.mongo.url)
 .then((database) => {
   configureExpress(app);
 
