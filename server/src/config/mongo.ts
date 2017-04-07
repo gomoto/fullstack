@@ -17,7 +17,7 @@ let reconnectCounter = 0;
  * express application under the 'database' setting.
  * If connection fails, reject the returned promise.
  * @param  {express.Application} app
- * @return {Promise<void>}
+ * @return {Promise<mongodb.Db>}
  */
 export default (app: express.Application) => {
   logger.info('Configuring mongodb');
@@ -40,7 +40,7 @@ export default (app: express.Application) => {
   })
   .then((database) => {
     logger.info(`Connected to ${mongoDatabase}`);
-    app.set('database', database);
+    return database;
   })
   .catch((error) => {
     logger.info(`Failed to connect to ${mongoDatabase} after ${reconnectTries} attempts`);

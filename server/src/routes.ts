@@ -3,6 +3,7 @@
  */
 
 import express = require('express');
+import mongodb = require('mongodb');
 import * as sp from './config/express-stormpath.d';
 const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
 import * as expressStormpathOffline from 'express-stormpath-offline';
@@ -14,7 +15,7 @@ import logger from './config/logger';
 import thing from './api/thing';
 
 
-export default (app: express.Application) => {
+export default (app: express.Application, database: mongodb.Db) => {
   logger.info('Configuring routes');
 
   // Auth middleware
