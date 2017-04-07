@@ -7,7 +7,7 @@ import http = require('http');
 import { settings } from './config/settings';
 import logger from './config/logger';
 import configureExpress from './config/express';
-import configureRoutes from './routes';
+import router from './routes';
 import configureMongo from './config/mongo';
 
 
@@ -19,7 +19,9 @@ const server = http.createServer(app);
 configureMongo(app)
 .then((database) => {
   configureExpress(app);
-  configureRoutes(app, database);
+
+  // Application routes
+  app.use(router(database));
 })
 .then(() => {
   server.listen(settings.port, settings.ip, () => {

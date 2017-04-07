@@ -15,8 +15,10 @@ import { settings } from './config/settings';
 import thing from './api/thing';
 
 
-export default (app: express.Application, database: mongodb.Db) => {
+export default (database: mongodb.Db) => {
   logger.info('Configuring routes');
+
+  const router = express.Router();
 
   // Auth middleware
   let authenticationRequired: () => express.RequestHandler;
@@ -30,38 +32,39 @@ export default (app: express.Application, database: mongodb.Db) => {
   }
 
   // API routes
-  app.use('/api', authenticationRequired());
+  router.use('/api', authenticationRequired());
   if (settings.apiGroups.length > 0) {
-    app.use('/api', groupsRequired(settings.apiGroups, false));
+    router.use('/api', groupsRequired(settings.apiGroups, false));
   }
 
   // Admin routes
-  app.use('/admin', authenticationRequired());
+  router.use('/admin', authenticationRequired());
   if (settings.adminGroups.length > 0) {
-    app.use('/admin', groupsRequired(settings.adminGroups, false));
+    router.use('/admin', groupsRequired(settings.adminGroups, false));
   }
 
   // All routes
-  app.use('/api/things', thing);
-  app.use('/admin/things', thing);
+  router.use('/api/things', thing);
+  router.use('/admin/things', thing);
 
-  app.get('/version', (req, res) => {
+  router.get('/version', (req, res) => {
     res.sendFile(`${settings.root}/git-sha.txt`);
   });
 
   // Routes for api and resources should have already been served.
   // Return a 404 for all undefined resource or api routes.
-  app.route('/:url(api|resources)/*')
+  router.route('/:url(api|resources)/*')
   .get((req, res) => {
     res.sendStatus(404);
   });
 
   // All other routes should redirect to the index.html
-  app.route('/*')
+  router.route('/*')
   .get((req, res) => {
     res.render(settings.paths.application, {
       NODE_ENV: settings.env
     });
   });
 
+  return router;
 }
