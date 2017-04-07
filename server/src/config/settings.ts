@@ -1,7 +1,9 @@
 import path = require('path');
 
+const env = process.env.NODE_ENV || 'development';
+
 const settings = {
-  env: process.env.NODE_ENV || 'development',
+  env,
 
   // Root path of server
   root: path.normalize(`${__dirname}/../../..`),
@@ -27,6 +29,8 @@ const settings = {
     host: process.env.MONGO_HOST || 'localhost',
     port: process.env.MONGO_PORT || '27017'
   },
+
+  stormpathOnline: env === 'production',
 
   // Should we populate the DB with sample data?
   seedDB: false,

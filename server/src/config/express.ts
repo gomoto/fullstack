@@ -14,6 +14,7 @@ import ejs = require('ejs');
 import errorHandler = require('errorhandler');
 
 import config from './environment';
+import { settings } from '../config/settings';
 import stormpath from './express-stormpath';
 import stormpathOffline from './express-stormpath-offline';
 import logger from './logger';
@@ -59,9 +60,7 @@ export default (app: express.Application) => {
   }
 
   // stormpath
-  app.set('stormpathOnline', config.env === 'production');
-
-  if (app.enabled('stormpathOnline')) {
+  if (settings.stormpathOnline) {
     app.use(stormpath(app));
     app.on('stormpath.ready', () => logger.info('Stormpath is online'));
   } else {
