@@ -4,18 +4,14 @@
 
 ## Install
 
-`docker-compose run npm-client`
+`docker-compose run --rm npm-client`
 
-`docker-compose run npm-server`
+`docker-compose run --rm npm-server`
 
-Default entrypoint is `npm`.
-Default command is `install`, but any valid npm command works, too:
+Default entrypoint is `npm` and default command is `install`,
+but any valid npm command works:
 
 `docker-compose run npm-client prune`
-
-Use `--rm` to clean up after yourself:
-
-`docker-compose run --rm npm-client`
 
 
 
