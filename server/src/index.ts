@@ -29,7 +29,7 @@ configureMongo(app)
   });
 })
 .catch(() => {
-  logger.info('Failed to start server because database is down');
+  logger.info('Failed to start server');
 });
 
 export { app }
