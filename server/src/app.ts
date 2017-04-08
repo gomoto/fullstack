@@ -9,9 +9,11 @@ import path = require('path');
 import ejs = require('ejs');
 import errorHandler = require('errorhandler');
 
+// TODO: express-stormpath and its types should be imported as one
+import * as sp from './express-stormpath.d';
+const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
+import * as expressStormpathOffline from 'express-stormpath-offline';
 import { settings } from './config/settings';
-import stormpath from './config/express-stormpath';
-import stormpathOffline from './config/express-stormpath-offline';
 import logger from './config/logger';
 
 /**
@@ -53,11 +55,15 @@ if(settings.env === 'development' || settings.env === 'test') {
 }
 
 // stormpath
-if (settings.stormpathOnline) {
-  app.use(stormpath(app));
+if (settings.stormpath.enabled) {
+  logger.info('Using express-stormpath');
+  // Enable express-stormpath middleware
+  app.use(expressStormpath.init(app, settings.stormpath.online));
   app.on('stormpath.ready', () => logger.info('Stormpath is online'));
 } else {
-  app.use(stormpathOffline(app));
+  logger.info('Using express-stormpath-offline');
+  // Enable express-stormpath-offline middleware
+  app.use(expressStormpathOffline.init(app, settings.stormpath.offline));
 }
 
 export { app }

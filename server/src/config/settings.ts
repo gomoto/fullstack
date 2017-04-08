@@ -7,6 +7,8 @@ const mongo = {
   host: process.env.MONGO_HOST || 'localhost',
   port: process.env.MONGO_PORT || '27017'
 };
+const login = '/login';
+const logout = '/logout';
 
 const settings = {
   env,
@@ -26,9 +28,9 @@ const settings = {
     resources: path.join(root, 'resources')
   },
 
-  login: '/login',
+  login,
 
-  logout: '/logout',
+  logout,
 
   apiGroups: process.env.API_GROUPS && process.env.API_GROUPS.split(',') || [],
 
@@ -43,7 +45,38 @@ const settings = {
     url: `mongodb://${mongo.host}:${mongo.port}/${mongo.db}`
   },
 
-  stormpathOnline: env === 'production',
+  stormpath: {
+    enabled: env === 'production',
+    online: {
+      web: {
+        idSite: {
+          enabled: true,
+          uri: '/idSiteResult',
+          nextUri: '/'
+        },
+        login: {
+          enabled: true,
+          uri: login
+        },
+        logout: {
+          enabled: true,
+          uri: logout
+        },
+        me: {
+          expand: {
+            customData: true,
+            groups: true
+          }
+        }
+      }
+    },
+    offline: {
+      environment: {
+        username: 'DEV_USER_USERNAME',
+        groups: 'DEV_USER_GROUPS'
+      }
+    }
+  },
 
   // Should we populate the DB with sample data?
   seedDB: false,

@@ -4,7 +4,7 @@
 
 import express = require('express');
 import mongodb = require('mongodb');
-import * as sp from '../config/express-stormpath.d';
+import * as sp from '../express-stormpath.d';
 const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
 import * as expressStormpathOffline from 'express-stormpath-offline';
 import logger from '../config/logger';
@@ -22,7 +22,7 @@ export default (database: mongodb.Db) => {
   // Auth middleware
   let authenticationRequired: () => express.RequestHandler;
   let groupsRequired: (groups: string[], all?: boolean) => express.RequestHandler;
-  if (settings.stormpathOnline) {
+  if (settings.stormpath.enabled) {
     authenticationRequired = () => expressStormpath.authenticationRequired;
     groupsRequired = expressStormpath.groupsRequired;
   } else {
