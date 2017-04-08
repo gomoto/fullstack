@@ -1,23 +1,16 @@
-/**
- * Main application file
- */
-
-import express = require('express');
 import http = require('http');
 import { settings } from './config/settings';
 import logger from './config/logger';
-import configureExpress from './config/express';
 import router from './router';
 import * as mongo from './services/mongo';
 
-const app = express() as express.Application;
+import { app } from './app';
 const server = http.createServer(app);
 
 // Connect to mongodb database once and reuse the connection.
 // https://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html#mongoclient-connection-pooling
 mongo.initialize(settings.mongo.url)
 .then((database) => {
-  configureExpress(app);
   app.use(router(database));
 })
 .then(() => {
@@ -28,15 +21,3 @@ mongo.initialize(settings.mongo.url)
 .catch(() => {
   logger.info('Failed to start server');
 });
-
-export { app }
-
-
-// Fix type error: "Property 'on' does not exist on type Application"
-declare global {
-  namespace Express {
-    export interface Application {
-      on(event: string, callback: Function): void;
-    }
-  }
-}
