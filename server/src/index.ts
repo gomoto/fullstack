@@ -1,6 +1,6 @@
 import http = require('http');
 import { settings } from './config/settings';
-import logger from './config/logger';
+import logger from './components/logger';
 import router from './router';
 import * as mongo from './services/mongo';
 

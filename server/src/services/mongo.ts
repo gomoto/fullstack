@@ -1,7 +1,7 @@
 import * as mongodb from 'mongodb';
 import * as deepExtend from 'deep-extend';
 
-import logger from '../config/logger';
+import logger from '../components/logger';
 const logPrefix = `[mongo]`;
 
 /**

@@ -7,7 +7,7 @@ import mongodb = require('mongodb');
 import * as sp from '../express-stormpath.d';
 const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
 import * as expressStormpathOffline from 'express-stormpath-offline';
-import logger from '../config/logger';
+import logger from '../components/logger';
 import { settings } from '../config/settings';
 
 // Routes

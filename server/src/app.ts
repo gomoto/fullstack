@@ -14,7 +14,7 @@ import * as sp from './express-stormpath.d';
 const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
 import * as expressStormpathOffline from 'express-stormpath-offline';
 import { settings } from './config/settings';
-import logger from './config/logger';
+import logger from './components/logger';
 
 /**
  * Express application.
