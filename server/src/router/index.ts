@@ -8,7 +8,7 @@ import * as sp from '../express-stormpath.d';
 const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
 import * as expressStormpathOffline from 'express-stormpath-offline';
 import logger from '../components/logger';
-import { settings } from '../config/settings';
+import { settings } from '../settings';
 
 // Routes
 import thing from './api/thing';

@@ -13,7 +13,7 @@ import errorHandler = require('errorhandler');
 import * as sp from './express-stormpath.d';
 const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
 import * as expressStormpathOffline from 'express-stormpath-offline';
-import { settings } from './config/settings';
+import { settings } from './settings';
 import logger from './components/logger';
 
 /**

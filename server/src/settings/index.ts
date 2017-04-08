@@ -1,12 +1,8 @@
 import path = require('path');
+import * as mongo from './mongo';
 
 const env = process.env.NODE_ENV || 'development';
 const root = path.normalize(`${__dirname}/../..`);
-const mongo = {
-  db: process.env.MONGO_DB || 'local',
-  host: process.env.MONGO_HOST || 'localhost',
-  port: process.env.MONGO_PORT || '27017'
-};
 const login = '/login';
 const logout = '/logout';
 
@@ -38,12 +34,7 @@ const settings = {
 
   cookieSecret: process.env.COOKIE_SECRET,
 
-  mongo: {
-    db: mongo.db,
-    host: mongo.host,
-    port: mongo.port,
-    url: `mongodb://${mongo.host}:${mongo.port}/${mongo.db}`
-  },
+  mongo: mongo.settings,
 
   stormpath: {
     enabled: env === 'production',
