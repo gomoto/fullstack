@@ -19,7 +19,7 @@ services:
       PORT: "9000"
     expose:
       - "9000"
-    command: node /build/server/app.js
+    command: node /build/server
 
   # Database for development app
   db:

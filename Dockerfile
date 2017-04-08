@@ -14,4 +14,4 @@ RUN ["npm", "install", "--only=production"]
 # Copy built app. Must build app before building this image.
 COPY ./build .
 
-CMD ["node", "server/app.js"]
+CMD ["node", "server"]

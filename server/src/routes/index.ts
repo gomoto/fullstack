@@ -1,26 +1,28 @@
 /**
- * Main application routes
+ * Application routes
  */
 
 import express = require('express');
-import * as sp from './config/express-stormpath.d';
+import mongodb = require('mongodb');
+import * as sp from '../express-stormpath.d';
 const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
 import * as expressStormpathOffline from 'express-stormpath-offline';
-import config from './config/environment';
-import logger from './config/logger';
-
+import logger from '../components/logger';
+import { settings } from '../settings';
 
 // Routes
 import thing from './api/thing';
 
-
-export default (app: express.Application) => {
+// Router factory
+export default (database: mongodb.Db) => {
   logger.info('Configuring routes');
+
+  const router = express.Router();
 
   // Auth middleware
   let authenticationRequired: () => express.RequestHandler;
   let groupsRequired: (groups: string[], all?: boolean) => express.RequestHandler;
-  if (app.enabled('stormpathOnline')) {
+  if (settings.stormpath.enabled) {
     authenticationRequired = () => expressStormpath.authenticationRequired;
     groupsRequired = expressStormpath.groupsRequired;
   } else {
@@ -29,38 +31,39 @@ export default (app: express.Application) => {
   }
 
   // API routes
-  app.use('/api', authenticationRequired());
-  if (config.apiGroups.length > 0) {
-    app.use('/api', groupsRequired(config.apiGroups, false));
+  router.use('/api', authenticationRequired());
+  if (settings.apiGroups.length > 0) {
+    router.use('/api', groupsRequired(settings.apiGroups, false));
   }
 
   // Admin routes
-  app.use('/admin', authenticationRequired());
-  if (config.adminGroups.length > 0) {
-    app.use('/admin', groupsRequired(config.adminGroups, false));
+  router.use('/admin', authenticationRequired());
+  if (settings.adminGroups.length > 0) {
+    router.use('/admin', groupsRequired(settings.adminGroups, false));
   }
 
   // All routes
-  app.use('/api/things', thing);
-  app.use('/admin/things', thing);
+  router.use('/api/things', thing);
+  router.use('/admin/things', thing);
 
-  app.get('/version', (req, res) => {
-    res.sendFile(`${config.root}/git-sha.txt`);
+  router.get('/version', (req, res) => {
+    res.sendFile(`${settings.root}/git-sha.txt`);
   });
 
   // Routes for api and resources should have already been served.
   // Return a 404 for all undefined resource or api routes.
-  app.route('/:url(api|resources)/*')
+  router.route('/:url(api|resources)/*')
   .get((req, res) => {
     res.sendStatus(404);
   });
 
   // All other routes should redirect to the index.html
-  app.route('/*')
+  router.route('/*')
   .get((req, res) => {
-    res.render(app.get('application'), {
-      NODE_ENV: config.env
+    res.render(settings.paths.application, {
+      NODE_ENV: settings.env
     });
   });
 
+  return router;
 }

@@ -43,14 +43,16 @@ declare namespace stormpath {
 }
 
 
-// Add user to express request object.
 declare global {
   namespace Express {
+    export interface Application {
+      on(event: string, callback: Function): void;
+    }
+    // Add stormpath user to express request object.
     export interface Request {
       user: any;
     }
   }
 }
-
 
 export = stormpath;
