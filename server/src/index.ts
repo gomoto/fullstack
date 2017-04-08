@@ -1,7 +1,7 @@
 import http = require('http');
 import { settings } from './settings';
 import logger from './components/logger';
-import router from './router';
+import routes from './routes';
 import * as mongo from './services/mongo';
 
 import { app } from './app';
@@ -11,7 +11,7 @@ const server = http.createServer(app);
 // https://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html#mongoclient-connection-pooling
 mongo.initialize(settings.mongo.url)
 .then((database) => {
-  app.use(router(database));
+  app.use(routes(database));
 })
 .then(() => {
   server.listen(settings.port, settings.ip, () => {
