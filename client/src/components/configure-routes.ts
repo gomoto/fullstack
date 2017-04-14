@@ -1,27 +1,22 @@
 configureRoutes.$inject = [
-  '$stateProvider',
-  'STORMPATH_CONFIG'
+  '$stateProvider'
 ];
 
 function configureRoutes(
-  $stateProvider: ng.ui.IStateProvider,
-  STORMPATH_CONFIG: ng.stormpath.IStormpathConfig
+  $stateProvider: ng.ui.IStateProvider
 ) {
   $stateProvider
   .state('home', {
     url: '/',
     redirect: 'dashboard'
   })
-  .state('login', {
-    url: STORMPATH_CONFIG.AUTHENTICATION_ENDPOINT,
-    external: true
-  })
+  // .state('login', {
+  //   url: '/login',
+  //   external: true
+  // })
   .state('dashboard', {
     url: '/dashboard',
-    template: '<dashboard></dashboard>',
-    sp: {
-      authenticate: true
-    }
+    template: '<dashboard></dashboard>'
   });
 }
 

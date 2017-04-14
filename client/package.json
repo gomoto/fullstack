@@ -11,7 +11,6 @@
     "angular-auth0": "^1.0.6",
     "angular-jwt": "^0.1.9",
     "angular-ui-router": "^0.3.2",
-    "auth0-js": "^7.6.1",
-    "stormpath-sdk-angularjs": "git+https://git@github.com/gomoto/stormpath-sdk-angularjs.git#65dd5dec7724b272fe8f539f0e5b1bb40e37e311"
+    "auth0-js": "^7.6.1"
   }
 }
