@@ -44,6 +44,13 @@ STORMPATH_CLIENT_APIKEY_SECRET |             | ✓        | Required by express-
 
 `docker-compose up watcher`
 
+```
+AUTH0_DOMAIN=xxx.auth0.com \
+AUTH0_CLIENT_ID=xxx \
+AUTH0_CLIENT_SECRET=xxx \
+docker-compose -f docker-compose.fullstack.yml up --build watcher
+```
+
 Build and run application.
 Each time a client file changes, browser reloads.
 Each time a server file changes, app container restarts.
@@ -110,3 +117,10 @@ DEV_USER_USERNAME | test    | Development user's username
 │   ├── resources/
 │   ├── server/
 ```
+
+
+
+## AngularJS
+
+AngularJS version must be 1.6+ to avoid Auth0 issue where hash symbol is
+excluded from callback URL.

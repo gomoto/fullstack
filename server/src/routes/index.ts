@@ -61,6 +61,8 @@ export default (database: mongodb.Db) => {
   router.route('/*')
   .get((req, res) => {
     res.render(settings.paths.application, {
+      AUTH0_CLIENT_ID: settings.auth0.clientId,
+      AUTH0_DOMAIN: settings.auth0.domain,
       NODE_ENV: settings.env
     });
   });

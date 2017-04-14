@@ -1,6 +1,3 @@
 <div>This is the dashboard.</div>
-<form action="{{$ctrl.logoutUri}}" method="POST">
-  <input type="hidden" name="{{$ctrl.xsrfName}}" value="{{$ctrl.xsrf}}">
-  <button>Log out</button>
-  <img class="whale" src="images/whale.png">
-</form>
+<button ng-click="$ctrl.logout()">Log out</button>
+<img class="whale" src="images/whale.png">

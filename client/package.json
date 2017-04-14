@@ -7,9 +7,11 @@
     "@types/jquery": "^2.0.34",
     "@types/js-cookie": "^2.0.28",
     "@types/node": "^6.0.49",
-    "angular": "~1.5.9",
+    "angular": "~1.6.4",
+    "angular-auth0": "^1.0.6",
+    "angular-jwt": "^0.1.9",
     "angular-ui-router": "^0.3.2",
-    "js-cookie": "^2.1.3",
+    "auth0-js": "^7.6.1",
     "stormpath-sdk-angularjs": "git+https://git@github.com/gomoto/stormpath-sdk-angularjs.git#65dd5dec7724b272fe8f539f0e5b1bb40e37e311"
   }
 }

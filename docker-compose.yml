@@ -17,6 +17,9 @@ services:
       NODE_ENV: "development"
       MONGO_HOST: "db"
       PORT: "9000"
+      AUTH0_DOMAIN: "${AUTH0_DOMAIN}"
+      AUTH0_CLIENT_ID: "${AUTH0_CLIENT_ID}"
+      AUTH0_CLIENT_SECRET: "${AUTH0_CLIENT_SECRET}"
     expose:
       - "9000"
     command: node /build/server
