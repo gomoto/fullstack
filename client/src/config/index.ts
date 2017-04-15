@@ -1,25 +1,14 @@
-configureApp.$inject = [
-  '$compileProvider',
-  '$locationProvider',
-  '$logProvider',
-  'NODE_ENV'
-];
+import * as angular from 'angular';
+import 'angular-ui-router';
+import { config as configureRoutes } from './routes.config';
+import { config as configureProduction } from './production.config';
+import { redirect as redirectRoutes } from './routes.redirect';
 
-function configureApp(
-  $compileProvider: ng.ICompileProvider,
-  $locationProvider: ng.ILocationProvider,
-  $logProvider: ng.ILogProvider,
-  NODE_ENV: string
-) {
-  $locationProvider.html5Mode(true);
-
-  $compileProvider.debugInfoEnabled(NODE_ENV === 'development');
-
-  // available in angular 1.5.9
-  // $compileProvider.commentDirectivesEnabled(false);
-  // $compileProvider.cssClassDirectivesEnabled(false);
-
-  $logProvider.debugEnabled(NODE_ENV === 'development');
-}
-
-export default configureApp;
+export default angular.module('app.config', [
+  'ui.router'
+])
+.constant('NODE_ENV', AppGlobals.settings.NODE_ENV)
+.config(configureProduction)
+.config(configureRoutes)
+.run(redirectRoutes)
+.name;

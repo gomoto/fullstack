@@ -1,8 +1,8 @@
-configureRoutes.$inject = [
+config.$inject = [
   '$stateProvider'
 ];
 
-function configureRoutes(
+function config(
   $stateProvider: ng.ui.IStateProvider
 ) {
   $stateProvider
@@ -20,6 +20,8 @@ function configureRoutes(
   });
 }
 
+export { config }
+
 // add custom property on ui-router state
 declare module 'angular' {
   namespace ui {
@@ -29,5 +31,3 @@ declare module 'angular' {
     }
   }
 }
-
-export default configureRoutes;

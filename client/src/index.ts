@@ -1,15 +1,12 @@
 import * as angular from 'angular';
-import 'angular-ui-router';
 import auth from './auth';
 import components from './components';
 import errors from './errors';
 import config from './config';
 
 angular.module('app', [
-  'ui.router',
+  config,
   auth,
   components,
   errors
-])
-.constant('NODE_ENV', AppGlobals.settings.NODE_ENV)
-.config(config);
+]);
