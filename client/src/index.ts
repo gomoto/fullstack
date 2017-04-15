@@ -10,3 +10,10 @@ angular.module('app', [
   components,
   errors
 ]);
+
+/**
+ * Manually bootstrap application.
+ * This lets us assume user is authenticated throughout app.
+ * This also prevents flashes of app loading during auth flow.
+ */
+angular.bootstrap(document, ['app'], { strictDi: true });
