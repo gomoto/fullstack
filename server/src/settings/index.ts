@@ -1,6 +1,7 @@
 import path = require('path');
 import * as mongo from './mongo';
 import * as auth0 from './auth0';
+import * as jwt from './jwt';
 
 const env = process.env.NODE_ENV || 'development';
 const root = path.normalize(`${__dirname}/../..`);
@@ -34,6 +35,8 @@ const settings = {
   logout,
 
   auth0: auth0.settings,
+
+  jwt: jwt.settings,
 
   apiGroups: process.env.API_GROUPS && process.env.API_GROUPS.split(',') || [],
 

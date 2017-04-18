@@ -9,6 +9,7 @@ const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
 import * as expressStormpathOffline from 'express-stormpath-offline';
 import logger from '../components/logger';
 import { settings } from '../settings';
+import * as jwt from 'express-jwt';
 
 // Routes
 import thing from './api/thing';
@@ -32,6 +33,7 @@ export default (database: mongodb.Db) => {
 
   // API routes
   router.use('/api', authenticationRequired());
+  router.use('/api', jwt(settings.jwt));
   if (settings.apiGroups.length > 0) {
     router.use('/api', groupsRequired(settings.apiGroups, false));
   }
