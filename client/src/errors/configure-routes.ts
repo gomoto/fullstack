@@ -24,7 +24,7 @@ function configureRoutes(
   ) => {
     const $state =  $injector.get<ng.ui.IStateService>('$state');
     $state.go('404');
-    return $location.path();
+    return $location.url();
   });
 
 }
