@@ -53,9 +53,6 @@ export default (database: mongodb.Db) => {
   // API routes
   router.use('/api', authenticationRequired());
   router.use('/api', jwt(settings.jwt));
-  if (settings.apiGroups.length > 0) {
-    router.use('/api', groupsRequired(settings.apiGroups, false));
-  }
 
   // Admin routes
   router.use('/admin', authenticationRequired());

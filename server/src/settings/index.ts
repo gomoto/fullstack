@@ -38,8 +38,6 @@ const settings = {
 
   jwt: jwt.settings,
 
-  apiGroups: process.env.API_GROUPS && process.env.API_GROUPS.split(',') || [],
-
   adminGroups: process.env.ADMIN_GROUPS && process.env.ADMIN_GROUPS.split(',') || [],
 
   cookieSecret: process.env.COOKIE_SECRET,

@@ -26,7 +26,6 @@ Use environment variables to parameterize the application.
 env var                        | default     | required | description
 ------------------------------ | ----------- | -------- | -----------------------------------------
 ADMIN_GROUPS                   |             |          | Comma-separated list of admin group names
-API_GROUPS                     |             |          | Comma-separated list of API group names
 COOKIE_SECRET                  |             |          | String for signing cookies
 IP                             | 0.0.0.0     |          | Server ip address
 MONGO_DB                       | local       |          | MongoDB database name
@@ -45,7 +44,6 @@ STORMPATH_CLIENT_APIKEY_SECRET |             | ✓        | Required by express-
 `docker-compose up watcher`
 
 ```
-API_GROUPS=xxx \
 APP_DOMAIN=http://localhost:9000 \
 AUTH0_API_ID=xxx \
 AUTH0_DOMAIN=xxx.auth0.com \
