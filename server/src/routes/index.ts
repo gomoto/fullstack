@@ -56,9 +56,6 @@ export default (database: mongodb.Db) => {
 
   // Admin routes
   router.use('/admin', authenticationRequired());
-  if (settings.adminGroups.length > 0) {
-    router.use('/admin', groupsRequired(settings.adminGroups, false));
-  }
 
   // All routes
   router.use('/api/things', thing);

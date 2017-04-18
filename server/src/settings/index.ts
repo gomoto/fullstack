@@ -38,8 +38,6 @@ const settings = {
 
   jwt: jwt.settings,
 
-  adminGroups: process.env.ADMIN_GROUPS && process.env.ADMIN_GROUPS.split(',') || [],
-
   cookieSecret: process.env.COOKIE_SECRET,
 
   mongo: mongo.settings,

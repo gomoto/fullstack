@@ -25,7 +25,6 @@ Use environment variables to parameterize the application.
 
 env var                        | default     | required | description
 ------------------------------ | ----------- | -------- | -----------------------------------------
-ADMIN_GROUPS                   |             |          | Comma-separated list of admin group names
 COOKIE_SECRET                  |             |          | String for signing cookies
 IP                             | 0.0.0.0     |          | Server ip address
 MONGO_DB                       | local       |          | MongoDB database name
