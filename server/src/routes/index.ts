@@ -53,13 +53,7 @@ export default (database: mongodb.Db) => {
   // API routes
   router.use('/api', authenticationRequired());
   router.use('/api', jwt(settings.jwt));
-
-  // Admin routes
-  router.use('/admin', authenticationRequired());
-
-  // All routes
   router.use('/api/things', thing);
-  router.use('/admin/things', thing);
 
   router.get('/version', (req, res) => {
     res.sendFile(`${settings.root}/git-sha.txt`);
