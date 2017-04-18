@@ -17,13 +17,13 @@ const webAuth = new auth0.WebAuth({
  *
  * @param {Function} callback
  */
-function authenticate(callback: (err: string) => void): void {
+function authenticate(callback: (err: auth0.Auth0Error) => void): void {
   // After Auth0 authenticates user, it redirects to callback URL with tokens in the URL hash.
   if (window.location.pathname === callbackPath) {
     // Set tokens
     webAuth.parseHash(null, (error, parsedHash) => {
       if (error) {
-        callback('Parse hash error');
+        callback(error);
         return;
       }
       if (!parsedHash) {
@@ -62,7 +62,7 @@ function isIdTokenValid(token: string): boolean {
  * Callback will not be called if user gets redirected to auth0.com.
  * @param {Function} callback
  */
-function reauthenticate(callback: (err: string) => void): void {
+function reauthenticate(callback: (err: auth0.Auth0Error) => void): void {
   webAuth.renewAuth({
     clientID: AppGlobals.settings.AUTH0_CLIENT_ID,
     redirectUri: 'http://localhost:9000/silent-callback',
