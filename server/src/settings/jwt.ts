@@ -16,7 +16,8 @@ const settings = {
   }),
 
   // Validate the audience and the issuer.
-  audience: apiId,
+  // FIXME: Invalid audience
+  audience: '', //apiId,
   issuer: `https://${domain}/`,
   algorithms: ['RS256']
 };

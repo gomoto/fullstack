@@ -73,7 +73,7 @@ function reauthenticate(callback: (err: string) => void): void {
       // Starting auth flow from the beginning.
       // Redirect to auth0.com.
       webAuth.authorize({
-        scope: 'openid name picture',
+        scope: 'openid user_id app_metadata',
         responseType: 'id_token',
         redirectUri: 'http://localhost:9000/callback'
       });

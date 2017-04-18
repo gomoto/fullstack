@@ -31,6 +31,25 @@ export default (database: mongodb.Db) => {
     groupsRequired = expressStormpathOffline.groupsRequired;
   }
 
+  groupsRequired = (groups: string[]) => {
+    return (req, res, next) => {
+      const metadata = req.user.app_metadata;
+      if (!metadata || !metadata.authorization || !metadata.authorization.groups) {
+        return res.sendStatus(401);
+      }
+      // User must have all groups.
+      for (let i = 0; i < groups.length; i++) {
+        const group = groups[i];
+        // User does not have this group.
+        if (metadata.authorization.groups.indexOf(group) === -1) {
+          return res.sendStatus(401);
+        }
+      }
+      // User has all groups. Success.
+      next();
+    };
+  };
+
   // API routes
   router.use('/api', authenticationRequired());
   router.use('/api', jwt(settings.jwt));
