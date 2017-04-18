@@ -28,7 +28,10 @@ app.engine('html', ejs.renderFile);
 app.set('view engine', 'html');
 
 // Let express know where to look for views.
-app.set('views', [settings.paths.application]);
+app.set('views', [
+  settings.paths.application,
+  settings.paths.views
+]);
 
 app.use(express.static(settings.paths.client));
 app.use(express.static(settings.paths.resources));

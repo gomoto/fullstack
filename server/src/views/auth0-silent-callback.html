@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="http://cdn.auth0.com/js/auth0/8.5.0/auth0.min.js"></script>
+    <script type="text/javascript">
+      var auth0 = new auth0.WebAuth({
+        clientID: '<%= AUTH0_CLIENT_ID %>',
+        domain: '<%= AUTH0_DOMAIN %>'
+      });
+      auth0.parseHash(window.location.hash, function (err, result) {
+        parent.postMessage(err || result, '<%= APP_DOMAIN %>');
+      });
+    </script>
+  </head>
+  <body></body>
+</html>

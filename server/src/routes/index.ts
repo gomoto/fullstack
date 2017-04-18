@@ -57,6 +57,15 @@ export default (database: mongodb.Db) => {
     res.sendStatus(404);
   });
 
+  // Auth0 silent-callback view.
+  router.get('/silent-callback', (req, res) => {
+    res.render(`${settings.paths.views}/auth0-silent-callback.html`, {
+      AUTH0_CLIENT_ID: settings.auth0.clientId,
+      AUTH0_DOMAIN: settings.auth0.domain,
+      APP_DOMAIN: settings.domain
+    });
+  });
+
   // All other routes should redirect to the index.html
   router.route('/*')
   .get((req, res) => {

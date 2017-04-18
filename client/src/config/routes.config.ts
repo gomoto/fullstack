@@ -10,6 +10,10 @@ function config(
     url: '/',
     redirect: 'dashboard'
   })
+  .state('callback', {
+    url: '/callback',
+    redirect: 'dashboard'
+  })
   // .state('login', {
   //   url: '/login',
   //   external: true

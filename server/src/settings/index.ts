@@ -19,10 +19,14 @@ const settings = {
   // Server IP
   ip: process.env.IP || '0.0.0.0',
 
+  // Public-facing app origin
+  domain: process.env.APP_DOMAIN || 'http://localhost:9000',
+
   paths: {
     application: path.join(root, 'client', 'index.html'),
     client: path.join(root, 'client', 'static'),
-    resources: path.join(root, 'resources')
+    resources: path.join(root, 'resources'),
+    views: path.join(root, 'server', 'views')
   },
 
   login,

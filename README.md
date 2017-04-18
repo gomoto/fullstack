@@ -45,6 +45,7 @@ STORMPATH_CLIENT_APIKEY_SECRET |             | ✓        | Required by express-
 `docker-compose up watcher`
 
 ```
+APP_DOMAIN=http://localhost:9000 \
 AUTH0_DOMAIN=xxx.auth0.com \
 AUTH0_CLIENT_ID=xxx \
 AUTH0_CLIENT_SECRET=xxx \
