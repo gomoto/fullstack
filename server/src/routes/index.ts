@@ -6,7 +6,7 @@ import express = require('express');
 import mongodb = require('mongodb');
 import logger from '../components/logger';
 import { settings } from '../settings';
-import * as jwt from 'express-jwt';
+import { authenticationRequired } from '../middleware';
 
 // Routes
 import thing from './api/thing';
@@ -18,7 +18,7 @@ export default (database: mongodb.Db) => {
   const router = express.Router();
 
   // API routes
-  router.use('/api', jwt(settings.jwt));
+  router.use('/api', authenticationRequired());
   router.use('/api/things', thing(database));
 
   router.get('/version', (req, res) => {
