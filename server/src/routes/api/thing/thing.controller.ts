@@ -11,16 +11,6 @@ import express = require('express');
 import * as mongodb from 'mongodb';
 import { ThingModel, ThingModelFactory } from './thing.model';
 
-function doesUserHavePermission(user: any, permission: string): boolean {
-  return (
-    user &&
-    user.app_metadata &&
-    user.app_metadata.authorization &&
-    user.app_metadata.authorization.permissions &&
-    user.app_metadata.authorization.permissions.indexOf(permission) !== -1
-  );
-}
-
 class ThingController {
   private model: ThingModel;
 
@@ -30,10 +20,6 @@ class ThingController {
 
   // Gets a list of Things
   public index(req: express.Request, res: express.Response) {
-    if (!doesUserHavePermission(req.user, 'read:thing')) {
-      this.respondWithResult(res, 401)({message: 'Not allowed to read things!'});
-      return;
-    }
     const user_id = (req.user && req.user.user_id) || null;
     this.model.findAllForUser(user_id)
     .then(this.respondWithResult(res, 200))
@@ -53,10 +39,6 @@ class ThingController {
 
   // Creates a new Thing in the DB
   public create(req: express.Request, res: express.Response) {
-    if (!doesUserHavePermission(req.user, 'create:thing')) {
-      this.respondWithResult(res, 401)({message: 'Not allowed to create things!'});
-      return;
-    }
     const user_id = (req.user && req.user.user_id) || null;
     if (!user_id) {
       this.handleError(res, 400);
