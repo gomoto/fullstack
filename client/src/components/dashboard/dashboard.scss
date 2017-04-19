@@ -1,7 +1,15 @@
 dashboard {
   display: block;
+  padding: 8px;
 
   .whale {
     display: block;
+    margin: 8px;
+  }
+
+  button {
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 1px;
+    padding: 2px 4px;
   }
 }
