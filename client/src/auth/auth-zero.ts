@@ -19,7 +19,7 @@ const webAuth = new auth0.WebAuth({
  */
 function authenticate(callback: (err: auth0.Auth0Error) => void): void {
   // Skip authentication if using offline user.
-  if (AppGlobals.settings.OFFLINE_USER) {
+  if (AppGlobals.settings.OFFLINE_USER === 'true') {
     callback(null);
     return;
   }
