@@ -2,7 +2,10 @@ import * as auth0 from 'auth0-js';
 
 const callbackPath = '/callback';
 const idTokenName = 'id_token';
-const accessTokenName = 'access_token';
+const authOptions = {
+  scope: 'openid user_id app_metadata',
+  responseType: 'id_token'
+};
 
 /**
  * Configure Auth0 WebAuth client.
@@ -39,7 +42,6 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
       }
       console.log(parsedHash);
       saveIdToken(parsedHash.idToken);
-      saveAccessToken(parsedHash.accessToken);
       callback(null);
     });
   } else {
@@ -48,6 +50,8 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
      * If user is signed into another app via SSO, tokens should get renewed.
      */
     webAuth.renewAuth({
+      scope: authOptions.scope,
+      responseType: authOptions.responseType,
       clientID: AppGlobals.settings.AUTH0_CLIENT_ID,
       redirectUri: 'http://localhost:9000/silent-callback',
       usePostMessage: true
@@ -58,14 +62,13 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
        */
       if (err) {
         webAuth.authorize({
-          scope: 'openid user_id app_metadata',
-          responseType: 'id_token',
+          scope: authOptions.scope,
+          responseType: authOptions.responseType,
           redirectUri: 'http://localhost:9000/callback'
         });
         return;
       }
       saveIdToken(response.idToken);
-      saveAccessToken(response.accessToken);
       callback(null);
     });
   }
@@ -81,28 +84,11 @@ function saveIdToken(idToken: string): void {
 }
 
 /**
- * Synchronously save access token.
- * @param {string} accessToken
- */
-function saveAccessToken(accessToken: string): void {
-  console.log('Saving access token', accessToken);
-  localStorage.setItem(accessTokenName, accessToken);
-}
-
-/**
  * Get id token.
  * @return {string}
  */
 function getIdToken(): string {
   return localStorage.getItem(idTokenName);
-}
-
-/**
- * Get access token.
- * @return {string}
- */
-function getAccessToken(): string {
-  return localStorage.getItem(accessTokenName);
 }
 
 export {
