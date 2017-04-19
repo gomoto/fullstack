@@ -38,6 +38,9 @@ export default class DashboardController {
       this.isCreatingThing = false;
       console.log('Created thing', response);
       this.getAllThings();
+    })
+    .catch((err) => {
+      console.log(err);
     });
     this.thingName = '';
   }
@@ -55,6 +58,10 @@ export default class DashboardController {
     .then<Thing[]>((response) => {
       this.things = response.data;
       return this.things;
+    })
+    .catch((err) => {
+      console.log(err);
+      return [];
     });
   }
 

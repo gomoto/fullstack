@@ -47,7 +47,8 @@ export default (database: mongodb.Db) => {
     res.render(settings.paths.application, {
       AUTH0_CLIENT_ID: settings.auth0.clientId,
       AUTH0_DOMAIN: settings.auth0.domain,
-      NODE_ENV: settings.env
+      NODE_ENV: settings.env,
+      OFFLINE_USER: settings.offlineUser.enabled
     });
   });
 

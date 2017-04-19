@@ -18,6 +18,11 @@ const webAuth = new auth0.WebAuth({
  * @param {Function} callback
  */
 function authenticate(callback: (err: auth0.Auth0Error) => void): void {
+  // Skip authentication if using offline user.
+  if (AppGlobals.settings.OFFLINE_USER) {
+    callback(null);
+    return;
+  }
   // After Auth0 authenticates user, it redirects to callback URL with tokens in the URL hash.
   if (window.location.pathname === callbackPath) {
     // Set tokens

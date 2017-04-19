@@ -45,6 +45,10 @@ AUTH0_API_ID=xxx \
 AUTH0_DOMAIN=xxx.auth0.com \
 AUTH0_CLIENT_ID=xxx \
 AUTH0_CLIENT_SECRET=xxx \
+OFFLINE_USER=true \
+OFFLINE_USER_ID=test \
+OFFLINE_USER_NAME=Test \
+OFFLINE_USER_PERMISSIONS=read:thing,create:thing \
 docker-compose -f docker-compose.fullstack.yml up --build watcher
 ```
 
@@ -54,10 +58,12 @@ Each time a server file changes, app container restarts.
 
 Use environment variables to parameterize the development experience.
 
-env var           | default | description
------------------ | ------- | -----------------------------------------
-DEV_USER_GROUPS   |         | Development user's groups
-DEV_USER_USERNAME | test    | Development user's username
+env var                  | default | description
+------------------------ | ------- | ------------------------------------------------------
+OFFLINE_USER             | ''      | Offline user? Set to 'true' to enable offline user.
+OFFLINE_USER_ID          | test    | Offline user's id.
+OFFLINE_USER_NAME        | Test    | Offline user's name.
+OFFLINE_USER_PERMISSIONS | ''      | Offline user's permissions, as a comma-separated list.
 
 
 

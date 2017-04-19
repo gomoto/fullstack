@@ -2,6 +2,7 @@ import path = require('path');
 import * as mongo from './mongo';
 import * as auth0 from './auth0';
 import * as jwt from './jwt';
+import * as offlineUser from './offline-user';
 
 const env = process.env.NODE_ENV || 'development';
 const root = path.normalize(`${__dirname}/../..`);
@@ -37,6 +38,8 @@ const settings = {
   auth0: auth0.settings,
 
   jwt: jwt.settings,
+
+  offlineUser: offlineUser.settings,
 
   cookieSecret: process.env.COOKIE_SECRET,
 
