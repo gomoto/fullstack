@@ -42,39 +42,6 @@ const settings = {
 
   mongo: mongo.settings,
 
-  stormpath: {
-    enabled: env === 'production',
-    online: {
-      web: {
-        idSite: {
-          enabled: true,
-          uri: '/idSiteResult',
-          nextUri: '/'
-        },
-        login: {
-          enabled: true,
-          uri: login
-        },
-        logout: {
-          enabled: true,
-          uri: logout
-        },
-        me: {
-          expand: {
-            customData: true,
-            groups: true
-          }
-        }
-      }
-    },
-    offline: {
-      environment: {
-        username: 'DEV_USER_USERNAME',
-        groups: 'DEV_USER_GROUPS'
-      }
-    }
-  },
-
   // Should we populate the DB with sample data?
   seedDB: false,
 

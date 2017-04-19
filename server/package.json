@@ -27,8 +27,6 @@
     "errorhandler": "^1.4.3",
     "express": "^4.14.0",
     "express-jwt": "^5.3.0",
-    "express-stormpath": "^3.1.6",
-    "express-stormpath-offline": "git+https://git@github.com/CyrusBiotechnology/express-stormpath-offline.git#v0.0.2",
     "jwks-rsa": "^1.1.1",
     "lodash": "^4.17.0",
     "method-override": "^2.3.6",

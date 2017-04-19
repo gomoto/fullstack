@@ -4,9 +4,6 @@
 
 import express = require('express');
 import mongodb = require('mongodb');
-import * as sp from '../express-stormpath.d';
-const expressStormpath = require('express-stormpath') as sp.ExpressStormpath;
-import * as expressStormpathOffline from 'express-stormpath-offline';
 import logger from '../components/logger';
 import { settings } from '../settings';
 import * as jwt from 'express-jwt';
@@ -20,38 +17,7 @@ export default (database: mongodb.Db) => {
 
   const router = express.Router();
 
-  // Auth middleware
-  let authenticationRequired: () => express.RequestHandler;
-  let groupsRequired: (groups: string[], all?: boolean) => express.RequestHandler;
-  if (settings.stormpath.enabled) {
-    authenticationRequired = () => expressStormpath.authenticationRequired;
-    groupsRequired = expressStormpath.groupsRequired;
-  } else {
-    authenticationRequired = expressStormpathOffline.authenticationRequired;
-    groupsRequired = expressStormpathOffline.groupsRequired;
-  }
-
-  groupsRequired = (groups: string[]) => {
-    return (req, res, next) => {
-      const metadata = req.user.app_metadata;
-      if (!metadata || !metadata.authorization || !metadata.authorization.groups) {
-        return res.sendStatus(401);
-      }
-      // User must have all groups.
-      for (let i = 0; i < groups.length; i++) {
-        const group = groups[i];
-        // User does not have this group.
-        if (metadata.authorization.groups.indexOf(group) === -1) {
-          return res.sendStatus(401);
-        }
-      }
-      // User has all groups. Success.
-      next();
-    };
-  };
-
   // API routes
-  router.use('/api', authenticationRequired());
   router.use('/api', jwt(settings.jwt));
   router.use('/api/things', thing(database));
 

@@ -32,9 +32,6 @@ MONGO_HOST                     | localhost   |          | MongoDB host
 MONGO_PORT                     | 27017       |          | MongoDB port
 NODE_ENV                       | development |          | Node environment
 PORT                           | 9000        |          | Server port
-STORMPATH_APPLICATION_HREF     |             | ✓        | Required by express-stormpath
-STORMPATH_CLIENT_APIKEY_ID     |             | ✓        | Required by express-stormpath
-STORMPATH_CLIENT_APIKEY_SECRET |             | ✓        | Required by express-stormpath
 
 
 
