@@ -1,7 +1,6 @@
 import * as auth0 from './auth0';
 const jwksRsa = require('jwks-rsa');
 
-const apiId = auth0.settings.apiId;
 const domain = auth0.settings.domain;
 
 const settings = {
@@ -17,7 +16,7 @@ const settings = {
 
   // Validate the audience and the issuer.
   // FIXME: Invalid audience
-  audience: '', //apiId,
+  audience: '',
   issuer: `https://${domain}/`,
   algorithms: ['RS256']
 };

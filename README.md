@@ -41,7 +41,6 @@ PORT                           | 9000        |          | Server port
 
 ```
 APP_DOMAIN=http://localhost:9000 \
-AUTH0_API_ID=xxx \
 AUTH0_DOMAIN=xxx.auth0.com \
 AUTH0_CLIENT_ID=xxx \
 AUTH0_CLIENT_SECRET=xxx \
