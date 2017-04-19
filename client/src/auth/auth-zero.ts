@@ -23,9 +23,11 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
     callback(null);
     return;
   }
-  // After Auth0 authenticates user, it redirects to callback URL with tokens in the URL hash.
   if (window.location.pathname === callbackPath) {
-    // Set tokens
+    /**
+     * Set tokens from URL hash. After Auth0 authenticates user, it redirects to
+     * callback URL with tokens in the URL hash.
+     */
     webAuth.parseHash(null, (error, parsedHash) => {
       if (error) {
         callback(error);
@@ -41,53 +43,32 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
       callback(null);
     });
   } else {
-    const idToken = localStorage.getItem(idTokenName);
-    if (!idToken) {
-      return reauthenticate(callback);
-    }
-    if (!isIdTokenValid(idToken)){
-      return reauthenticate(callback);
-    }
-    callback(null);
+    /**
+     * Renew tokens or redirect to Auth0 to start auth flow.
+     * If user is signed into another app via SSO, tokens should get renewed.
+     */
+    webAuth.renewAuth({
+      clientID: AppGlobals.settings.AUTH0_CLIENT_ID,
+      redirectUri: 'http://localhost:9000/silent-callback',
+      usePostMessage: true
+    }, (err, response: auth0.Auth0DecodedHash) => {
+      /**
+       * If unable to renew tokens, start auth flow from the beginning by
+       * redirecting to auth0.com
+       */
+      if (err) {
+        webAuth.authorize({
+          scope: 'openid user_id app_metadata',
+          responseType: 'id_token',
+          redirectUri: 'http://localhost:9000/callback'
+        });
+        return;
+      }
+      saveIdToken(response.idToken);
+      saveAccessToken(response.accessToken);
+      callback(null);
+    });
   }
-}
-
-/**
- * Is token valid?
- * @param {string} token
- * @return {boolean}
- */
-function isIdTokenValid(token: string): boolean {
-  return true;
-}
-
-/**
- * Renew tokens or redirect to Auth0 to start auth flow.
- * If user is signed into another app via SSO, tokens should get renewed.
- * Callback will not be called if user gets redirected to auth0.com.
- * @param {Function} callback
- */
-function reauthenticate(callback: (err: auth0.Auth0Error) => void): void {
-  webAuth.renewAuth({
-    clientID: AppGlobals.settings.AUTH0_CLIENT_ID,
-    redirectUri: 'http://localhost:9000/silent-callback',
-    usePostMessage: true
-  }, (err, response: auth0.Auth0DecodedHash) => {
-    if (err) {
-      // Unable to renew tokens.
-      // Starting auth flow from the beginning.
-      // Redirect to auth0.com.
-      webAuth.authorize({
-        scope: 'openid user_id app_metadata',
-        responseType: 'id_token',
-        redirectUri: 'http://localhost:9000/callback'
-      });
-      return;
-    }
-    saveIdToken(response.idToken);
-    saveAccessToken(response.accessToken);
-    callback(null);
-  });
 }
 
 /**
@@ -122,11 +103,6 @@ function getIdToken(): string {
  */
 function getAccessToken(): string {
   return localStorage.getItem(accessTokenName);
-}
-
-interface Tokens {
-  idToken: string;
-  accessToken: string;
 }
 
 export {
