@@ -11,8 +11,7 @@ const authOptions = {
  */
 const webAuth = new auth0.WebAuth({
   clientID: AppGlobals.settings.AUTH0_CLIENT_ID,
-  domain: AppGlobals.settings.AUTH0_DOMAIN,
-  // redirectUri: `${window.location.protocol}//${window.location.host}`
+  domain: AppGlobals.settings.AUTH0_DOMAIN
 });
 
 /**
@@ -53,7 +52,7 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
       scope: authOptions.scope,
       responseType: authOptions.responseType,
       clientID: AppGlobals.settings.AUTH0_CLIENT_ID,
-      redirectUri: 'http://localhost:9000' + AppGlobals.settings.SILENT_CALLBACK_PATH,
+      redirectUri: `${window.location.protocol}//${window.location.host}${AppGlobals.settings.SILENT_CALLBACK_PATH}`,
       usePostMessage: true
     }, (err, response: auth0.Auth0DecodedHash) => {
       /**
@@ -64,7 +63,7 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
         webAuth.authorize({
           scope: authOptions.scope,
           responseType: authOptions.responseType,
-          redirectUri: 'http://localhost:9000' + AppGlobals.settings.CALLBACK_PATH
+          redirectUri: `${window.location.protocol}//${window.location.host}${AppGlobals.settings.CALLBACK_PATH}`
         });
         return;
       }
