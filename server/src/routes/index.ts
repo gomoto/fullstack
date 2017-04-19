@@ -33,7 +33,7 @@ export default (database: mongodb.Db) => {
   });
 
   // Auth0 silent-callback view.
-  router.get('/silent-callback', (req, res) => {
+  router.get(settings.auth0.silentCallbackPath, (req, res) => {
     res.render(`${settings.paths.views}/auth0-silent-callback.html`, {
       AUTH0_CLIENT_ID: settings.auth0.clientId,
       AUTH0_DOMAIN: settings.auth0.domain,
@@ -48,7 +48,9 @@ export default (database: mongodb.Db) => {
       AUTH0_CLIENT_ID: settings.auth0.clientId,
       AUTH0_DOMAIN: settings.auth0.domain,
       NODE_ENV: settings.env,
-      OFFLINE_USER: settings.offlineUser.enabled
+      OFFLINE_USER: settings.offlineUser.enabled,
+      CALLBACK_PATH: settings.auth0.callbackPath,
+      SILENT_CALLBACK_PATH: settings.auth0.silentCallbackPath
     });
   });
 

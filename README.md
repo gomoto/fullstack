@@ -57,12 +57,14 @@ Each time a server file changes, app container restarts.
 
 Use environment variables to parameterize the development experience.
 
-env var                  | default | description
------------------------- | ------- | ------------------------------------------------------
-OFFLINE_USER             | ''      | Offline user? Set to 'true' to enable offline user.
-OFFLINE_USER_ID          | test    | Offline user's id.
-OFFLINE_USER_NAME        | Test    | Offline user's name.
-OFFLINE_USER_PERMISSIONS | ''      | Offline user's permissions, as a comma-separated list.
+environment variable       | default          | description
+-------------------------- | ---------------- | ------------------------------------------------------
+AUTH0_CALLBACK_PATH        | /callback        | Path to Auth0 callback.
+AUTH0_SILENT_CALLBACK_PATH | /silent-callback | Path to Auth0 silent-callback.
+OFFLINE_USER               |                  | Offline user? Set to 'true' to enable offline user.
+OFFLINE_USER_ID            | test             | Offline user's id.
+OFFLINE_USER_NAME          | Test             | Offline user's name.
+OFFLINE_USER_PERMISSIONS   |                  | Offline user's permissions, as a comma-separated list.
 
 
 

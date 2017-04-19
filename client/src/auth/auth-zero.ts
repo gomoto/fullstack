@@ -1,6 +1,5 @@
 import * as auth0 from 'auth0-js';
 
-const callbackPath = '/callback';
 const idTokenName = 'id_token';
 const authOptions = {
   scope: 'openid user_id app_metadata',
@@ -17,7 +16,8 @@ const webAuth = new auth0.WebAuth({
 });
 
 /**
- *
+ * Authenticate user based on URL hash or silent token renewal.
+ * If cannot authenticate user, redirect to auth0.com.
  * @param {Function} callback
  */
 function authenticate(callback: (err: auth0.Auth0Error) => void): void {
@@ -26,7 +26,7 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
     callback(null);
     return;
   }
-  if (window.location.pathname === callbackPath) {
+  if (window.location.pathname === AppGlobals.settings.CALLBACK_PATH) {
     /**
      * Set tokens from URL hash. After Auth0 authenticates user, it redirects to
      * callback URL with tokens in the URL hash.
@@ -53,7 +53,7 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
       scope: authOptions.scope,
       responseType: authOptions.responseType,
       clientID: AppGlobals.settings.AUTH0_CLIENT_ID,
-      redirectUri: 'http://localhost:9000/silent-callback',
+      redirectUri: 'http://localhost:9000' + AppGlobals.settings.SILENT_CALLBACK_PATH,
       usePostMessage: true
     }, (err, response: auth0.Auth0DecodedHash) => {
       /**
@@ -64,7 +64,7 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
         webAuth.authorize({
           scope: authOptions.scope,
           responseType: authOptions.responseType,
-          redirectUri: 'http://localhost:9000/callback'
+          redirectUri: 'http://localhost:9000' + AppGlobals.settings.CALLBACK_PATH
         });
         return;
       }

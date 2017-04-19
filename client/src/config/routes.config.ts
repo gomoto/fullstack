@@ -11,7 +11,7 @@ function config(
     redirect: 'dashboard'
   })
   .state('callback', {
-    url: '/callback',
+    url: AppGlobals.settings.CALLBACK_PATH,
     redirect: 'dashboard'
   })
   // .state('login', {
