@@ -15,8 +15,7 @@ const settings = {
   }),
 
   // Validate the audience and the issuer.
-  // FIXME: Invalid audience
-  audience: '',
+  audience: auth0.settings.clientId,
   issuer: `https://${domain}/`,
   algorithms: ['RS256']
 };
