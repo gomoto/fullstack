@@ -8,6 +8,9 @@ var AppGlobals = {
     NODE_ENV: '<%= NODE_ENV %>',
     OFFLINE_USER: '<%= OFFLINE_USER %>',
     CALLBACK_PATH: '<%= CALLBACK_PATH %>',
-    SILENT_CALLBACK_PATH: '<%= SILENT_CALLBACK_PATH %>'
+    SILENT_CALLBACK_PATH: '<%= SILENT_CALLBACK_PATH %>',
+    // App should redirect to path held by CALLBACK_REDIRECT query parameter,
+    // if it is defined at callback path.
+    CALLBACK_REDIRECT: 'redirect'
   }
 };

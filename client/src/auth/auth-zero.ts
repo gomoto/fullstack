@@ -1,5 +1,6 @@
 import * as auth0 from 'auth0-js';
 
+const host = `${window.location.protocol}//${window.location.host}`;
 const idTokenName = 'id_token';
 const authOptions = {
   scope: 'openid user_id app_metadata',
@@ -52,7 +53,7 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
       scope: authOptions.scope,
       responseType: authOptions.responseType,
       clientID: AppGlobals.settings.AUTH0_CLIENT_ID,
-      redirectUri: `${window.location.protocol}//${window.location.host}${AppGlobals.settings.SILENT_CALLBACK_PATH}`,
+      redirectUri: `${host}${AppGlobals.settings.SILENT_CALLBACK_PATH}`,
       usePostMessage: true
     }, (err, response: auth0.Auth0DecodedHash) => {
       /**
@@ -60,10 +61,12 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
        * redirecting to auth0.com
        */
       if (err) {
+        // Redirect to this path after reaching callback URL.
+        const redirect = window.location.pathname;
         webAuth.authorize({
           scope: authOptions.scope,
           responseType: authOptions.responseType,
-          redirectUri: `${window.location.protocol}//${window.location.host}${AppGlobals.settings.CALLBACK_PATH}`
+          redirectUri: `${host}${AppGlobals.settings.CALLBACK_PATH}?${AppGlobals.settings.CALLBACK_REDIRECT}=${redirect}`
         });
         return;
       }
@@ -81,7 +84,7 @@ function unauthenticate(): void {
   removeIdToken();
   webAuth.logout({
     client_id: AppGlobals.settings.AUTH0_CLIENT_ID,
-    returnTo: `${window.location.protocol}//${window.location.host}`
+    returnTo: `${host}`
   });
 }
 

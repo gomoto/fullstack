@@ -11,7 +11,9 @@ function config(
     redirect: 'dashboard'
   })
   .state('callback', {
-    url: AppGlobals.settings.CALLBACK_PATH,
+    // If the query parameter exists, redirect to the path it holds.
+    url: `${AppGlobals.settings.CALLBACK_PATH}?${AppGlobals.settings.CALLBACK_REDIRECT}`,
+    // Otherwise redirect to dashboard state.
     redirect: 'dashboard'
   })
   // .state('login', {
