@@ -73,6 +73,17 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
 }
 
 /**
+ * Log out user.
+ */
+function unauthenticate(): void {
+  removeIdToken();
+  webAuth.logout({
+    client_id: AppGlobals.settings.AUTH0_CLIENT_ID,
+    returnTo: `${window.location.protocol}//${window.location.host}`
+  });
+}
+
+/**
  * Save id token.
  * @param {string} idToken
  */
@@ -97,7 +108,6 @@ function removeIdToken(): void {
 
 export {
   authenticate,
-  webAuth,
-  getIdToken,
-  removeIdToken
+  unauthenticate,
+  getIdToken
 }
