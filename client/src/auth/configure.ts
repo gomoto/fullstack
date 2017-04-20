@@ -1,3 +1,5 @@
+import { getIdToken } from './auth-zero';
+
 /**
  * Inject providers into config block.
  */
@@ -18,7 +20,7 @@ function configure(
   // Configuration for angular-jwt
   jwtOptionsProvider.config({
     tokenGetter: () => {
-      return localStorage.getItem('id_token');
+      return getIdToken();
     }
   });
 

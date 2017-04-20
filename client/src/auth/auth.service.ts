@@ -1,4 +1,7 @@
-import { webAuth } from './auth-zero';
+import {
+  removeIdToken,
+  webAuth
+} from './auth-zero';
 
 class AuthService {
   public static $inject = [
@@ -24,7 +27,7 @@ class AuthService {
 
   // Redirects to auth0.com
   public logout() {
-    localStorage.removeItem('id_token');
+    removeIdToken();
     webAuth.logout({
       client_id: AppGlobals.settings.AUTH0_CLIENT_ID,
       returnTo: `${window.location.protocol}//${window.location.host}`

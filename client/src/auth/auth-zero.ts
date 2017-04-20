@@ -40,7 +40,7 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
         return;
       }
       console.log(parsedHash);
-      saveIdToken(parsedHash.idToken);
+      setIdToken(parsedHash.idToken);
       callback(null);
     });
   } else {
@@ -67,18 +67,17 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
         });
         return;
       }
-      saveIdToken(response.idToken);
+      setIdToken(response.idToken);
       callback(null);
     });
   }
 }
 
 /**
- * Synchronously save id token.
+ * Save id token.
  * @param {string} idToken
  */
-function saveIdToken(idToken: string): void {
-  console.log('Saving id token', idToken);
+function setIdToken(idToken: string): void {
   localStorage.setItem(idTokenName, idToken);
 }
 
@@ -90,7 +89,16 @@ function getIdToken(): string {
   return localStorage.getItem(idTokenName);
 }
 
+/**
+ * Remove id token.
+ */
+function removeIdToken(): void {
+  localStorage.removeItem(idTokenName);
+}
+
 export {
   authenticate,
-  webAuth
+  webAuth,
+  getIdToken,
+  removeIdToken
 }
