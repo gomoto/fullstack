@@ -17,6 +17,7 @@ const webAuth = new auth0.WebAuth({
 /**
  * Authenticate user based on URL hash or silent token renewal.
  * If cannot authenticate user, redirect to auth0.com.
+ * @public
  * @param {Function} callback
  */
 function authenticate(callback: (err: auth0.Auth0Error) => void): void {
@@ -74,6 +75,7 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
 
 /**
  * Log out user.
+ * @public
  */
 function unauthenticate(): void {
   removeIdToken();
@@ -84,15 +86,8 @@ function unauthenticate(): void {
 }
 
 /**
- * Save id token.
- * @param {string} idToken
- */
-function setIdToken(idToken: string): void {
-  localStorage.setItem(idTokenName, idToken);
-}
-
-/**
  * Get id token.
+ * @public
  * @return {string}
  */
 function getIdToken(): string {
@@ -100,7 +95,17 @@ function getIdToken(): string {
 }
 
 /**
+ * Save id token.
+ * @private
+ * @param {string} idToken
+ */
+function setIdToken(idToken: string): void {
+  localStorage.setItem(idTokenName, idToken);
+}
+
+/**
  * Remove id token.
+ * @private
  */
 function removeIdToken(): void {
   localStorage.removeItem(idTokenName);
@@ -108,6 +113,6 @@ function removeIdToken(): void {
 
 export {
   authenticate,
-  unauthenticate,
-  getIdToken
+  getIdToken,
+  unauthenticate
 }
