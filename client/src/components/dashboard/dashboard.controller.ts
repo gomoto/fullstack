@@ -4,7 +4,8 @@ export default class DashboardController {
 
   static $inject = [
     'AuthService',
-    '$http'
+    '$http',
+    '$log'
   ];
 
   public isCreatingThing: boolean;
@@ -13,7 +14,8 @@ export default class DashboardController {
 
   constructor(
     private AuthService: AuthService,
-    private $http: ng.IHttpService
+    private $http: ng.IHttpService,
+    private $log: ng.ILogService
   ) {
     this.isCreatingThing = false;
     this.things = [];
@@ -36,11 +38,11 @@ export default class DashboardController {
     })
     .then((response) => {
       this.isCreatingThing = false;
-      console.log('Created thing', response);
+      this.$log.debug('Created thing', response);
       this.getAllThings();
     })
     .catch((err) => {
-      console.log(err);
+      this.$log.debug(err);
     });
     this.thingName = '';
   }
@@ -50,7 +52,7 @@ export default class DashboardController {
    * @return {ng.IPromise<Thing[]>}
    */
   private getAllThings(): ng.IPromise<Thing[]> {
-    console.log('Getting all things from database');
+    this.$log.debug('Getting all things from database');
     return this.$http<Thing[]>({
       method: 'GET',
       url: '/api/things'
@@ -60,7 +62,7 @@ export default class DashboardController {
       return this.things;
     })
     .catch((err) => {
-      console.log(err);
+      this.$log.debug(err);
       return [];
     });
   }
