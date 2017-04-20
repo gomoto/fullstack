@@ -34,10 +34,23 @@ export default (database: mongodb.Db) => {
 
   // Auth0 silent-callback view.
   router.get(settings.auth0.silentCallbackPath, (req, res) => {
+    /**
+     * Get host from 'Host' header or from 'X-Forwarded-Host' header if the
+     * application has been configured to trust upstream proxies via
+     * app.set('trust proxy', true).
+     *
+     * This function exists because in Express < 5, req.host is unreliable
+     * beacuse it strips the port.
+     *
+     * See https://github.com/expressjs/express/issues/2179
+     */
+    var hostHeader = req.headers.host;
+    var xForwardedHostHeader = req.headers['x-forwarded-host'];
+    const host = req.app.get('trust proxy') ? (xForwardedHostHeader || hostHeader) : hostHeader;
     res.render(`${settings.paths.views}/auth0-silent-callback.html`, {
       AUTH0_CLIENT_ID: settings.auth0.clientId,
       AUTH0_DOMAIN: settings.auth0.domain,
-      APP_DOMAIN: settings.domain
+      TARGET_ORIGIN: `${req.protocol}://${host}`
     });
   });
 

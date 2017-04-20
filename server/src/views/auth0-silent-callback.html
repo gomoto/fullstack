@@ -8,7 +8,7 @@
         domain: '<%= AUTH0_DOMAIN %>'
       });
       auth0.parseHash(window.location.hash, function (err, result) {
-        parent.postMessage(err || result, '<%= APP_DOMAIN %>');
+        parent.postMessage(err || result, '<%= TARGET_ORIGIN %>');
       });
     </script>
   </head>
