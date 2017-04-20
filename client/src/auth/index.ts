@@ -4,15 +4,14 @@
 
 import * as angular from 'angular';
 import 'angular-ui-router';
-import * as stormpath from 'stormpath-sdk-angularjs';
-import configureStormpath from './configure-stormpath';
-import enableStormpath from './enable-stormpath';
+import 'angular-jwt';
+import { AuthService } from './auth.service';
+import { configure } from './configure';
 
 export default angular.module('auth', [
   'ui.router',
-  stormpath,
-  'stormpath.templates'
+  'angular-jwt'
 ])
-.config(configureStormpath)
-.run(enableStormpath)
+.service('AuthService', AuthService)
+.config(configure)
 .name;

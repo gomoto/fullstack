@@ -1,11 +1,11 @@
-redirectRoutes.$inject = [
+redirect.$inject = [
   '$log',
   '$rootScope',
   '$state',
   '$window'
 ];
 
-function redirectRoutes(
+function redirect(
   $log: ng.ILogService,
   $rootScope: ng.IRootScopeService,
   $state: ng.ui.IStateService,
@@ -28,4 +28,4 @@ function redirectRoutes(
   });
 }
 
-export default redirectRoutes;
+export { redirect }

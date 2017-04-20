@@ -25,8 +25,6 @@ Use environment variables to parameterize the application.
 
 env var                        | default     | required | description
 ------------------------------ | ----------- | -------- | -----------------------------------------
-ADMIN_GROUPS                   |             |          | Comma-separated list of admin group names
-API_GROUPS                     |             |          | Comma-separated list of API group names
 COOKIE_SECRET                  |             |          | String for signing cookies
 IP                             | 0.0.0.0     |          | Server ip address
 MONGO_DB                       | local       |          | MongoDB database name
@@ -34,9 +32,6 @@ MONGO_HOST                     | localhost   |          | MongoDB host
 MONGO_PORT                     | 27017       |          | MongoDB port
 NODE_ENV                       | development |          | Node environment
 PORT                           | 9000        |          | Server port
-STORMPATH_APPLICATION_HREF     |             | ✓        | Required by express-stormpath
-STORMPATH_CLIENT_APIKEY_ID     |             | ✓        | Required by express-stormpath
-STORMPATH_CLIENT_APIKEY_SECRET |             | ✓        | Required by express-stormpath
 
 
 
@@ -44,16 +39,34 @@ STORMPATH_CLIENT_APIKEY_SECRET |             | ✓        | Required by express-
 
 `docker-compose up watcher`
 
+```
+AUTH0_DOMAIN=xxx.auth0.com \
+AUTH0_CLIENT_ID=xxx \
+AUTH0_CLIENT_SECRET=xxx \
+OFFLINE_USER=true \
+OFFLINE_USER_ID=test \
+OFFLINE_USER_NAME=Test \
+OFFLINE_USER_PERMISSIONS=read:thing,create:thing \
+docker-compose -f docker-compose.fullstack.yml up --build watcher
+```
+
 Build and run application.
 Each time a client file changes, browser reloads.
 Each time a server file changes, app container restarts.
 
 Use environment variables to parameterize the development experience.
 
-env var           | default | description
------------------ | ------- | -----------------------------------------
-DEV_USER_GROUPS   |         | Development user's groups
-DEV_USER_USERNAME | test    | Development user's username
+environment variable       | default          | description
+-------------------------- | ---------------- | ---------------------------------------------------------------
+AUTH0_DOMAIN               |                  | Auth0 tenant. Required when not using offline-user.
+AUTH0_CLIENT_ID            |                  | Auth0 application id. Required when not using offline-user.
+AUTH0_CLIENT_SECRET        |                  | Auth0 application secret. Required when not using offline-user.
+AUTH0_CALLBACK_PATH        | /callback        | Path to Auth0 callback.
+AUTH0_SILENT_CALLBACK_PATH | /silent-callback | Path to Auth0 silent-callback.
+OFFLINE_USER               |                  | Offline user? Set to 'true' to enable offline user.
+OFFLINE_USER_ID            | test             | Offline user's id.
+OFFLINE_USER_NAME          | Test             | Offline user's name.
+OFFLINE_USER_PERMISSIONS   |                  | Offline user's permissions, as a comma-separated list.
 
 
 
@@ -110,3 +123,10 @@ DEV_USER_USERNAME | test    | Development user's username
 │   ├── resources/
 │   ├── server/
 ```
+
+
+
+## AngularJS
+
+AngularJS version must be 1.6+ to avoid Auth0 issue where hash symbol is
+excluded from callback URL.

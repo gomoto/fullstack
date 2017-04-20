@@ -1,6 +1,10 @@
 <div>This is the dashboard.</div>
-<form action="{{$ctrl.logoutUri}}" method="POST">
-  <input type="hidden" name="{{$ctrl.xsrfName}}" value="{{$ctrl.xsrf}}">
-  <button>Log out</button>
-  <img class="whale" src="images/whale.png">
+<button ng-click="$ctrl.logout()">Log out</button>
+<img class="whale" src="images/whale.png">
+<form ng-submit="$ctrl.createThing($ctrl.thingName)">
+  <input type="text" ng-model="$ctrl.thingName">
+  <button type="submit">Create thing</button>
 </form>
+<ul ng-repeat="thing in $ctrl.things">
+  <li ng-bind="thing.name"></li>
+</ul>
