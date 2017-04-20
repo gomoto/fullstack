@@ -60,10 +60,12 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
        * redirecting to auth0.com
        */
       if (err) {
+        // Redirect to this path after reaching callback URL.
+        const redirect = window.location.pathname;
         webAuth.authorize({
           scope: authOptions.scope,
           responseType: authOptions.responseType,
-          redirectUri: `${window.location.protocol}//${window.location.host}${AppGlobals.settings.CALLBACK_PATH}`
+          redirectUri: `${window.location.protocol}//${window.location.host}${AppGlobals.settings.CALLBACK_PATH}?${AppGlobals.settings.CALLBACK_REDIRECT}=${redirect}`
         });
         return;
       }
