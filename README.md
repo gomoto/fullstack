@@ -57,7 +57,10 @@ Each time a server file changes, app container restarts.
 Use environment variables to parameterize the development experience.
 
 environment variable       | default          | description
--------------------------- | ---------------- | ------------------------------------------------------
+-------------------------- | ---------------- | ---------------------------------------------------------------
+AUTH0_DOMAIN               |                  | Auth0 tenant. Required when not using offline-user.
+AUTH0_CLIENT_ID            |                  | Auth0 application id. Required when not using offline-user.
+AUTH0_CLIENT_SECRET        |                  | Auth0 application secret. Required when not using offline-user.
 AUTH0_CALLBACK_PATH        | /callback        | Path to Auth0 callback.
 AUTH0_SILENT_CALLBACK_PATH | /silent-callback | Path to Auth0 silent-callback.
 OFFLINE_USER               |                  | Offline user? Set to 'true' to enable offline user.
