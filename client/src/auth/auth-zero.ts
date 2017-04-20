@@ -39,7 +39,6 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
         callback(null);
         return;
       }
-      console.log(parsedHash);
       setIdToken(parsedHash.idToken);
       callback(null);
     });
