@@ -1,4 +1,4 @@
-<div>This is the dashboard.</div>
+<h1 ng-bind="'Hello, ' + $ctrl.getUserFullName()"></h1>
 <button ng-click="$ctrl.logout()">Log out</button>
 <img class="whale" src="images/whale.png">
 <form ng-submit="$ctrl.createThing($ctrl.thingName)">

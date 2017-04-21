@@ -54,6 +54,13 @@ export default (database: mongodb.Db) => {
     });
   });
 
+  // Route for getting fake user object; only enabled when offline.
+  if (settings.offlineUser.enabled) {
+    router.get('/me', (req, res, next) => {
+      res.status(200).json(settings.offlineUser.user);
+    });
+  }
+
   // All other routes should redirect to the index.html
   router.route('/*')
   .get((req, res) => {

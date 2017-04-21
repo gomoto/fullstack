@@ -1,4 +1,9 @@
 import { AuthService } from '../../auth/auth.service';
+import {
+  getUserFullName,
+  User
+} from '../../../../shared';
+import { getUser } from '../../auth/auth-zero';
 
 export default class DashboardController {
 
@@ -24,6 +29,10 @@ export default class DashboardController {
 
   public $onInit() {
     this.getAllThings();
+  }
+
+  public getUserFullName(): string {
+    return getUserFullName(getUser());
   }
 
   public createThing(name: string) {
