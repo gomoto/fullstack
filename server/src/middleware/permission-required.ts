@@ -1,5 +1,4 @@
 import * as express from 'express';
-import { settings } from '../settings';
 
 /**
  * Middleware that requires a single Auth0 permission.
@@ -7,16 +6,6 @@ import { settings } from '../settings';
  * @return {express.RequestHandler}
  */
 function permissionRequired(permission: string): express.RequestHandler {
-  if (settings.offlineUser.enabled) {
-    return (req, res, next) => {
-      if (settings.offlineUser.permissions.indexOf(permission) !== -1) {
-        next();
-        return;
-      }
-      res.sendStatus(403);
-    };
-  }
-
   // Check Auth0 permissions.
   return (req, res, next) => {
     if (
