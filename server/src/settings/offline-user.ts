@@ -7,7 +7,7 @@ const settings = {
 
   // This should have the same shape as an Auth0 user.
   user: <User> {
-    user_id: env.OFFLINE_USER_ID || 'test',
+    user_id: 'auth0|123abc',
     email: env.OFFLINE_USER_EMAIL || 'test@test.com',
     app_metadata: {
       authorization: {
