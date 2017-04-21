@@ -44,8 +44,6 @@ AUTH0_DOMAIN=xxx.auth0.com \
 AUTH0_CLIENT_ID=xxx \
 AUTH0_CLIENT_SECRET=xxx \
 OFFLINE_USER=true \
-OFFLINE_USER_ID=test \
-OFFLINE_USER_NAME=Test \
 OFFLINE_USER_PERMISSIONS=read:thing,create:thing \
 docker-compose -f docker-compose.fullstack.yml up --build watcher
 ```
@@ -64,8 +62,11 @@ AUTH0_CLIENT_SECRET        |                  | Auth0 application secret. Requir
 AUTH0_CALLBACK_PATH        | /callback        | Path to Auth0 callback.
 AUTH0_SILENT_CALLBACK_PATH | /silent-callback | Path to Auth0 silent-callback.
 OFFLINE_USER               |                  | Offline user? Set to 'true' to enable offline user.
-OFFLINE_USER_ID            | test             | Offline user's id.
-OFFLINE_USER_NAME          | Test             | Offline user's name.
+OFFLINE_USER_EMAIL         | test@test.com    | Offline user's email.
+OFFLINE_USER_FIRST_NAME    | First            | Offline user's first name.
+OFFLINE_USER_LAST_NAME     | Last             | Offline user's last name.
+OFFLINE_USER_GROUPS        |                  | Offline user's groups, as a comma-separated list.
+OFFLINE_USER_ROLES         |                  | Offline user's roles, as a comma-separated list.
 OFFLINE_USER_PERMISSIONS   |                  | Offline user's permissions, as a comma-separated list.
 
 

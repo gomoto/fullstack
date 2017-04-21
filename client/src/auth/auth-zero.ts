@@ -1,9 +1,10 @@
 import * as auth0 from 'auth0-js';
+import { User } from '../../../shared';
 
 const host = `${window.location.protocol}//${window.location.host}`;
 const idTokenName = 'id_token';
 const authOptions = {
-  scope: 'openid user_id app_metadata',
+  scope: 'openid user_id app_metadata user_metadata',
   responseType: 'id_token'
 };
 
@@ -16,6 +17,30 @@ const webAuth = new auth0.WebAuth({
 });
 
 /**
+ * User object.
+ * @private
+ */
+let _user: User = null;
+
+/**
+ * Get user object.
+ * @public
+ * @return {User}
+ */
+function getUser(): User {
+  return _user;
+}
+
+/**
+ * Set user object.
+ * @private
+ * @param {User} user
+ */
+function setUser(user: User): void {
+  _user = user;
+}
+
+/**
  * Authenticate user based on URL hash or silent token renewal.
  * If cannot authenticate user, redirect to auth0.com.
  * @public
@@ -24,9 +49,23 @@ const webAuth = new auth0.WebAuth({
 function authenticate(callback: (err: auth0.Auth0Error) => void): void {
   // Skip authentication if using offline user.
   if (AppGlobals.settings.OFFLINE_USER === 'true') {
-    callback(null);
-    return;
+    authenticateOffline(callback);
+  } else {
+    authenticateOnline(callback);
   }
+}
+
+function authenticateOffline(callback: (err: auth0.Auth0Error) => void): void {
+  const userRequest = new XMLHttpRequest();
+  userRequest.addEventListener('load', () => {
+    setUser(JSON.parse(userRequest.responseText));
+    callback(null);
+  });
+  userRequest.open('GET', `${host}/me`);
+  userRequest.send();
+}
+
+function authenticateOnline(callback: (err: auth0.Auth0Error) => void): void {
   if (window.location.pathname === AppGlobals.settings.CALLBACK_PATH) {
     /**
      * Set tokens from URL hash. After Auth0 authenticates user, it redirects to
@@ -42,6 +81,7 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
         return;
       }
       setIdToken(parsedHash.idToken);
+      setUser(parsedHash.idTokenPayload);
       callback(null);
     });
   } else {
@@ -71,6 +111,7 @@ function authenticate(callback: (err: auth0.Auth0Error) => void): void {
         return;
       }
       setIdToken(response.idToken);
+      setUser(response.idTokenPayload);
       callback(null);
     });
   }
@@ -117,5 +158,6 @@ function removeIdToken(): void {
 export {
   authenticate,
   getIdToken,
+  getUser,
   unauthenticate
 }
