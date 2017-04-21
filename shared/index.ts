@@ -6,26 +6,12 @@ interface User {
       groups: string[];
       roles: string[];
       permissions: string[];
-    }
-  },
+    };
+  };
   user_metadata: {
     first_name: string;
     last_name: string;
-    username: string;
-  }
-}
-
-/**
- * Get username from user object.
- * @param {User} user
- * @return {string}
- */
-function getUserUsername(user: User): string {
-  return (
-    user &&
-    user.user_metadata &&
-    user.user_metadata.username
-  ) || '';
+  };
 }
 
 /**

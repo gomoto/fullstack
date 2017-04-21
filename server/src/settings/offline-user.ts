@@ -21,8 +21,7 @@ const settings = {
     },
     user_metadata: {
       first_name: env.OFFLINE_USER_FIRST_NAME || 'First',
-      last_name: env.OFFLINE_USER_LAST_NAME || 'Last',
-      username: env.OFFLINE_USER_USERNAME || 'test'
+      last_name: env.OFFLINE_USER_LAST_NAME || 'Last'
     }
   }
 };

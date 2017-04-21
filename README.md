@@ -68,7 +68,6 @@ OFFLINE_USER_ID            | test             | Offline user's id.
 OFFLINE_USER_EMAIL         | test@test.com    | Offline user's email.
 OFFLINE_USER_FIRST_NAME    | First            | Offline user's first name.
 OFFLINE_USER_LAST_NAME     | Last             | Offline user's last name.
-OFFLINE_USER_USERNAME      | test             | Offline user's username.
 OFFLINE_USER_GROUPS        |                  | Offline user's groups, as a comma-separated list.
 OFFLINE_USER_ROLES         |                  | Offline user's roles, as a comma-separated list.
 OFFLINE_USER_PERMISSIONS   |                  | Offline user's permissions, as a comma-separated list.
