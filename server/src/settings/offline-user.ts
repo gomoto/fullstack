@@ -1,4 +1,4 @@
-import { User } from '../../../shared';
+import { Auth0User } from '../../../shared';
 
 const env = process.env;
 
@@ -6,7 +6,7 @@ const settings = {
   enabled: env.OFFLINE_USER === 'true',
 
   // This should have the same shape as an Auth0 user.
-  user: <User> {
+  user: <Auth0User> {
     user_id: 'auth0|123abc',
     email: env.OFFLINE_USER_EMAIL || 'test@test.com',
     app_metadata: {

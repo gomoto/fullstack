@@ -1,5 +1,5 @@
 import * as auth0 from 'auth0-js';
-import { User } from '../../../shared';
+import { Auth0User } from '../../../shared';
 
 const host = `${window.location.protocol}//${window.location.host}`;
 const idTokenName = 'id_token';
@@ -20,23 +20,23 @@ const webAuth = new auth0.WebAuth({
  * User object.
  * @private
  */
-let _user: User = null;
+let _user: Auth0User = null;
 
 /**
  * Get user object.
  * @public
- * @return {User}
+ * @return {Auth0User}
  */
-function getUser(): User {
+function getUser(): Auth0User {
   return _user;
 }
 
 /**
  * Set user object.
  * @private
- * @param {User} user
+ * @param {Auth0User} user
  */
-function setUser(user: User): void {
+function setUser(user: Auth0User): void {
   _user = user;
 }
 
