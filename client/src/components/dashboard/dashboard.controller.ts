@@ -1,8 +1,4 @@
 import { AuthService } from '../../auth/auth.service';
-import {
-  getUserFullName,
-  User
-} from '../../../../shared';
 import { getUser } from '../../auth/auth-zero';
 
 export default class DashboardController {
@@ -32,7 +28,8 @@ export default class DashboardController {
   }
 
   public getUserFullName(): string {
-    return getUserFullName(getUser());
+    const user = this.AuthService.user;
+    return `${user.firstName} ${user.lastName}`;
   }
 
   public createThing(name: string) {
