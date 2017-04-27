@@ -42,7 +42,6 @@ PORT                           | 9000        |          | Server port
 ```
 AUTH0_DOMAIN=xxx.auth0.com \
 AUTH0_CLIENT_ID=xxx \
-AUTH0_CLIENT_SECRET=xxx \
 OFFLINE_USER=true \
 OFFLINE_USER_PERMISSIONS=read:thing,create:thing \
 docker-compose -f docker-compose.fullstack.yml up --build watcher
@@ -58,7 +57,6 @@ environment variable       | default          | description
 -------------------------- | ---------------- | ---------------------------------------------------------------
 AUTH0_DOMAIN               |                  | Auth0 tenant. Required when not using offline-user.
 AUTH0_CLIENT_ID            |                  | Auth0 application id. Required when not using offline-user.
-AUTH0_CLIENT_SECRET        |                  | Auth0 application secret. Required when not using offline-user.
 AUTH0_CALLBACK_PATH        | /callback        | Path to Auth0 callback.
 AUTH0_SILENT_CALLBACK_PATH | /silent-callback | Path to Auth0 silent-callback.
 OFFLINE_USER               |                  | Offline user? Set to 'true' to enable offline user.
