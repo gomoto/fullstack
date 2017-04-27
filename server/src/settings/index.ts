@@ -23,8 +23,9 @@ const settings = {
 
   paths: {
     application: path.join(root, 'client', 'index.html'),
-    client: path.join(root, 'client', 'static'),
+    client: path.join(root, 'client'),
     resources: path.join(root, 'resources'),
+    static: path.join(root, 'client', 'static'),
     views: path.join(root, 'server', 'views')
   },
 
