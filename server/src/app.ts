@@ -24,11 +24,11 @@ app.set('view engine', 'html');
 
 // Let express know where to look for views.
 app.set('views', [
-  settings.paths.application,
+  settings.paths.client,
   settings.paths.views
 ]);
 
-app.use(express.static(settings.paths.client));
+app.use(express.static(settings.paths.static));
 app.use(express.static(settings.paths.resources));
 app.use(morgan('dev'));
 
