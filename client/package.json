@@ -10,6 +10,6 @@
     "angular": "~1.6.4",
     "angular-jwt": "^0.1.9",
     "angular-ui-router": "^0.3.2",
-    "auth0-js": "^8.5.0"
+    "auth0-js": "~8.5.0"
   }
 }
