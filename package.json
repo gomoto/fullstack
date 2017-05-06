@@ -1,0 +1,10 @@
+{
+  "name": "",
+  "version": "0.0.0",
+  "scripts": {
+    "postversion": "git push && git push --tags"
+  },
+  "devDependencies": {
+    "ido": "git+https://git@github.com/gomoto/ido.git#9738e5351d1eccad05018d381b936d0bc88f42f1"
+  }
+}
