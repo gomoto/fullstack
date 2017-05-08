@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "chokidar": "^1.6.1",
-    "ido": "git+https://git@github.com/gomoto/ido.git#9554886370ece8cc4945b8a741aa742c08b88821",
+    "ido": "git+https://git@github.com/gomoto/ido.git#aa68b0a64c86ffbd3fe5a79aaef28f703cc58bb4",
     "shelljs": "^0.7.7"
   }
 }
