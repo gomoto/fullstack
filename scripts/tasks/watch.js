@@ -10,10 +10,32 @@ const ido = {
   vendor: require('ido/npm')
 }
 
+/**
+ * Watch files matching given glob.
+ * @param {string} glob
+ * @param {() => Promise} callback
+ */
 function _watch(glob, callback) {
   chokidar.watch(glob, {ignoreInitial: true}).on('all', (event, path) => {
-    console.log(`[${event}] ${path}`)
-    callback()
+    const key = `[${event}] ${path}`
+    console.log(key)
+    console.time(key)
+    callback().then(() => {
+      console.timeEnd(key)
+    })
+  })
+}
+
+/**
+ * Remove files matching given glob and return a promise.
+ * @param {string} glob
+ * @return {Promise}
+ */
+function _remove(glob) {
+  return new Promise((resolve, reject) => {
+    rimraf(glob, (error) => {
+      error ? reject(error) : resolve()
+    })
   })
 }
 
@@ -22,24 +44,28 @@ module.exports = function watch(config) {
    * Client
    */
   _watch(config.client.scss.watch, () => {
-    ido.scss.bundle(config.client.scss.entry, config.client.scss.bundle, config.client.scss.options)
+    return ido.scss.bundle(config.client.scss.entry, config.client.scss.bundle, config.client.scss.options)
   })
-  _watch(config.client.typescript.watch, () => {
-    ido.typescript.bundle(config.client.typescript.entry, config.client.typescript.bundle, config.client.typescript.options)
+  _watch(config.client.typescript.watch, (done) => {
+    return ido.typescript.bundle(config.client.typescript.entry, config.client.typescript.bundle, config.client.typescript.options)
   })
   _watch(config.client.vendor.watch, () => {
-    ido.vendor.bundle(config.client.vendor.entry, config.client.vendor.bundle, config.client.vendor.options)
+    return ido.vendor.bundle(config.client.vendor.entry, config.client.vendor.bundle, config.client.vendor.options)
   })
   _watch(config.client.html.watch, () => {
-    ido.html.bundle(config.client.html.entry, config.client.html.bundle, config.client.html.options)
+    return ido.html.bundle(config.client.html.entry, config.client.html.bundle, config.client.html.options)
   })
   _watch(config.client.globals.watch, () => {
-    ido.html.bundle(config.client.html.entry, config.client.html.bundle, config.client.html.options)
+    return ido.html.bundle(config.client.html.entry, config.client.html.bundle, config.client.html.options)
   })
+
+  /**
+   * Resources
+   */
   _watch(config.resources.images.watch, () => {
-    // Remove image directory then rebuild.
-    rimraf(config.resources.images.destDir, () => {
-      ido.image.copy(config.resources.images.srcGlob, config.resources.images.destDir, config.resources.images.options)
+    return _remove(config.resources.images.destDir)
+    .then(() => {
+      return ido.image.copy(config.resources.images.srcGlob, config.resources.images.destDir, config.resources.images.options)
     })
   })
 
@@ -47,19 +73,21 @@ module.exports = function watch(config) {
    * Server
    */
   _watch(config.server.typescript.watch, () => {
-    rimraf(`${config.server.typescript.destDir}/**/*.js`, () => {
-      ido.typescript.transpile(config.server.typescript.srcGlob, config.server.typescript.destDir, config.server.typescript.options)
-      .then(() => {
-        shelljs.exec('echo TODO: restart server', () => {})
-      })
+    return _remove(`${config.server.typescript.destDir}/**/*.js`)
+    .then(() => {
+      return ido.typescript.transpile(config.server.typescript.srcGlob, config.server.typescript.destDir, config.server.typescript.options)
+    })
+    .then(() => {
+      shelljs.exec('echo TODO: restart server', () => {})
     })
   })
   _watch(config.server.html.watch, () => {
-    rimraf(`${config.server.html.destDir}/**/*.html`, () => {
-      ido.file.copy(config.server.html.srcGlob, config.server.html.destDir)
-      .then(() => {
-        shelljs.exec('echo TODO: restart server', () => {})
-      })
+    return _remove(`${config.server.html.destDir}/**/*.html`)
+    .then(() => {
+      return ido.file.copy(config.server.html.srcGlob, config.server.html.destDir)
+    })
+    .then(() => {
+      shelljs.exec('echo TODO: restart server', () => {})
     })
   })
 
