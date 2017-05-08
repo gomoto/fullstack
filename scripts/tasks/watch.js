@@ -1,4 +1,5 @@
 const chokidar = require('chokidar')
+const rimraf = require('rimraf')
 const shelljs = require('shelljs')
 const ido = {
   file: require('ido/file'),
@@ -36,22 +37,29 @@ module.exports = function watch(config) {
     ido.html.bundle(config.client.html.entry, config.client.html.bundle, config.client.html.options)
   })
   _watch(config.resources.images.watch, () => {
-    ido.image.copy(config.resources.images.srcGlob, config.resources.images.destDir, config.resources.images.options)
+    // Remove image directory then rebuild.
+    rimraf(config.resources.images.destDir, () => {
+      ido.image.copy(config.resources.images.srcGlob, config.resources.images.destDir, config.resources.images.options)
+    })
   })
 
   /**
    * Server
    */
   _watch(config.server.typescript.watch, () => {
-    ido.typescript.transpile(config.server.typescript.srcGlob, config.server.typescript.destDir, config.server.typescript.options)
-    .then(() => {
-      shelljs.exec('echo TODO: restart server')
+    rimraf(`${config.server.typescript.destDir}/**/*.js`, () => {
+      ido.typescript.transpile(config.server.typescript.srcGlob, config.server.typescript.destDir, config.server.typescript.options)
+      .then(() => {
+        shelljs.exec('echo TODO: restart server', () => {})
+      })
     })
   })
   _watch(config.server.html.watch, () => {
-    ido.file.copy(config.server.html.srcGlob, config.server.html.destDir)
-    .then(() => {
-      shelljs.exec('echo TODO: restart server')
+    rimraf(`${config.server.html.destDir}/**/*.html`, () => {
+      ido.file.copy(config.server.html.srcGlob, config.server.html.destDir)
+      .then(() => {
+        shelljs.exec('echo TODO: restart server', () => {})
+      })
     })
   })
 
