@@ -1,3 +1,4 @@
+const child_process = require('child_process')
 const chokidar = require('chokidar')
 const rimraf = require('rimraf')
 const shelljs = require('shelljs')
@@ -39,6 +40,15 @@ function _remove(glob) {
   })
 }
 
+/**
+ * Restart app container. Linked containers will not be stopped.
+ */
+function _restartAppContainer() {
+  shelljs.exec('docker-compose stop -t 0 app')
+  shelljs.exec('docker-compose start app')
+  console.log('app restarted')
+}
+
 module.exports = function watch(config) {
   /**
    * Client
@@ -78,7 +88,7 @@ module.exports = function watch(config) {
       return ido.typescript.transpile(config.server.typescript.srcGlob, config.server.typescript.destDir, config.server.typescript.options)
     })
     .then(() => {
-      shelljs.exec('echo TODO: restart server', () => {})
+      _restartAppContainer()
     })
   })
   _watch(config.server.html.watch, () => {
@@ -87,7 +97,18 @@ module.exports = function watch(config) {
       return ido.file.copy(config.server.html.srcGlob, config.server.html.destDir)
     })
     .then(() => {
-      shelljs.exec('echo TODO: restart server', () => {})
+      _restartAppContainer()
+    })
+  })
+
+  // Up app container and linked containers.
+  shelljs.exec('docker-compose up -d --build app', () => {
+    console.log('up and running')
+  })
+
+  process.on('SIGINT', () => {
+    shelljs.exec('docker-compose stop -t 0 app', () => {
+      process.exit(0)
     })
   })
 
