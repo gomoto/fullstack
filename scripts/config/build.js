@@ -17,6 +17,8 @@ module.exports = {
       entry: `${root}/client/src/index.ts`,
       bundle: `${root}/build/client/static/index.js`,
       options: {
+        // Relative-path require(./[...]) is relative to __dirname
+        external: Object.keys(require(`../../client/package.json`).dependencies),
         minify: true,
         rev: true,
         sourcemaps: false,
