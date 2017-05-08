@@ -51,15 +51,8 @@ module.exports = {
     }
   },
   resources: {
-    favicon: {
-      srcGlob: `${root}/resources/images/favicon.ico`,
-      destDir: `${root}/build/resources/images`,
-      options: {
-        rev: true
-      }
-    },
     images: {
-      srcGlob: `${root}/resources/images/*.png`,
+      srcGlob: `${root}/resources/images/*.{ico,png}`,
       destDir: `${root}/build/resources/images`,
       options: {
         minify: true,

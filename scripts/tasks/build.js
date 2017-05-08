@@ -16,8 +16,7 @@ module.exports = function build(config) {
     ido.scss.bundle(config.client.scss.entry, config.client.scss.bundle, config.client.scss.options),
     ido.typescript.bundle(config.client.typescript.entry, config.client.typescript.bundle, config.client.typescript.options),
     ido.vendor.bundle(config.client.vendor.entry, config.client.vendor.bundle, config.client.vendor.options),
-    ido.image.copy(config.resources.images.srcGlob, config.resources.images.destDir, config.resources.images.options),
-    ido.image.copy(config.resources.favicon.srcGlob, config.resources.favicon.destDir, config.resources.favicon.options)
+    ido.image.copy(config.resources.images.srcGlob, config.resources.images.destDir, config.resources.images.options)
   ])
   .then((manifests) => {
     const htmlOptions = Object.assign({}, config.client.html.options, { manifests })

@@ -28,11 +28,6 @@ module.exports = deepExtend({}, buildConfig, {
     }
   },
   resources: {
-    favicon: {
-      options: {
-        rev: false
-      }
-    },
     images: {
       options: {
         rev: false

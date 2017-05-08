@@ -38,14 +38,8 @@ module.exports = deepExtend({}, devBuildConfig, {
     }
   },
   resources: {
-    favicon: {
-      watch: `${root}/resources/images/favicon.ico`,
-      options: {
-        livereload: 'index.html'
-      }
-    },
     images: {
-      watch: `${root}/resources/images/*.png`,
+      watch: `${root}/resources/images/*.{ico,png}`,
       options: {
         livereload: 'index.html'
       }

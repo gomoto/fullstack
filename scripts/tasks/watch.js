@@ -38,9 +38,6 @@ module.exports = function watch(config) {
   _watch(config.resources.images.watch, () => {
     ido.image.copy(config.resources.images.srcGlob, config.resources.images.destDir, config.resources.images.options)
   })
-  _watch(config.resources.favicon.watch, () => {
-    ido.image.copy(config.resources.favicon.srcGlob, config.resources.favicon.destDir, config.resources.favicon.options)
-  })
 
   /**
    * Server
