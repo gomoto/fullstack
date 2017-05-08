@@ -26,6 +26,7 @@ module.exports = function build(config) {
   })
   .catch((error) => {
     console.log('client error', error, error.stack)
+    throw new Error('build: client')
   })
 
   /**
@@ -40,6 +41,7 @@ module.exports = function build(config) {
   })
   .catch((error) => {
     console.log('server error', error, error.stack)
+    throw new Error('build: server')
   })
 
   return Promise.all([client, server])

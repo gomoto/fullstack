@@ -1,5 +1,5 @@
-const config = require('./build.config')
 const build = require('./tasks/build')
+const config = require('./build.config')
 build(config)
 .then(() => {
   console.log('Build is done')
