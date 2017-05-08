@@ -36,7 +36,7 @@ module.exports = {
       entry: `${root}/client/src/index.html`,
       bundle: `${root}/build/client/index.html`,
       options: {
-        minify: false,
+        minify: true,
         inject: {
           templates: {
             globs: [`${root}/client/src/*/**/*.html`],
