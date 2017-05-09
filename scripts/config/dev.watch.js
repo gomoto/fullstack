@@ -10,39 +10,29 @@ module.exports = deepExtend({}, devBuildConfig, {
   client: {
     scss: {
       watch: `${root}/client/src/**/*.scss`,
-      options: {
-        livereload: 'index.css'
-      }
+      livereload: 'index.css'
     },
     typescript: {
       // Ignore globals.ts and spec files.
       watch: `${root}/client/src/**/!(globals|*.spec).ts`,
-      options: {
-        livereload: 'index.js'
-      }
+      livereload: 'index.js'
     },
     globals: {
       watch: `${root}/client/src/globals.ts`
     },
     vendor: {
       watch: `${root}/client/package.json`,
-      options: {
-        livereload: 'vendor.js'
-      }
+      livereload: 'vendor.js'
     },
     html: {
       watch: `${root}/client/src/**/*.html`,
-      options: {
-        livereload: 'index.html'
-      }
+      livereload: 'index.html'
     }
   },
   resources: {
     images: {
       watch: `${root}/resources/images/*.{ico,png}`,
-      options: {
-        livereload: 'index.html'
-      }
+      livereload: 'index.html'
     }
   },
   server: {

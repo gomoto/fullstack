@@ -1,4 +1,5 @@
 const chokidar = require('chokidar')
+const livereload = require('gulp-livereload')
 const rimraf = require('rimraf')
 const shelljs = require('shelljs')
 const ido = {
@@ -11,20 +12,34 @@ const ido = {
 }
 
 module.exports = function watch(config) {
+  livereload.listen()
+
   /**
    * Client
    */
   _watch(config.client.scss.watch, () => {
     return ido.scss.bundle(config.client.scss.entry, config.client.scss.bundle, config.client.scss.options)
+    .then(() => {
+      livereload.changed(config.client.scss.livereload)
+    })
   })
   _watch(config.client.typescript.watch, (done) => {
     return ido.typescript.bundle(config.client.typescript.entry, config.client.typescript.bundle, config.client.typescript.options)
+    .then(() => {
+      livereload.changed(config.client.typescript.livereload)
+    })
   })
   _watch(config.client.vendor.watch, () => {
     return ido.vendor.bundle(config.client.vendor.entry, config.client.vendor.bundle, config.client.vendor.options)
+    .then(() => {
+      livereload.changed(config.client.vendor.livereload)
+    })
   })
   _watch(config.client.html.watch, () => {
     return ido.html.bundle(config.client.html.entry, config.client.html.bundle, config.client.html.options)
+    .then(() => {
+      livereload.changed(config.client.html.livereload)
+    })
   })
   _watch(config.client.globals.watch, () => {
     return ido.html.bundle(config.client.html.entry, config.client.html.bundle, config.client.html.options)
@@ -37,6 +52,9 @@ module.exports = function watch(config) {
     return _remove(config.resources.images.destDir)
     .then(() => {
       return ido.image.copy(config.resources.images.srcGlob, config.resources.images.destDir, config.resources.images.options)
+    })
+    .then(() => {
+      livereload.changed(config.client.html.livereload)
     })
   })
 
