@@ -1,4 +1,3 @@
-const child_process = require('child_process')
 const chokidar = require('chokidar')
 const rimraf = require('rimraf')
 const shelljs = require('shelljs')
@@ -41,12 +40,41 @@ function _remove(glob) {
 }
 
 /**
- * Restart app container. Linked containers will not be stopped.
+ * Up app container and linked containers.
+ */
+function _startAppContainer(callback) {
+  shelljs.exec('docker-compose up -d app', () => {
+    callback()
+  })
+}
+
+/**
+ * Restart app container. Linked containers are not affected.
  */
 function _restartAppContainer() {
-  shelljs.exec('docker-compose stop -t 0 app')
-  shelljs.exec('docker-compose start app')
-  console.log('app restarted')
+  _removeAppContainer(() => {
+    shelljs.exec('docker-compose create app', () => {
+      shelljs.exec('docker-compose start app', () => {
+        _followLogs()
+      })
+    })
+  })
+}
+
+/**
+ * Remove app container. Linked containers are not affected.
+ * If logs are being followed, this will cause them to stop being followed.
+ */
+function _removeAppContainer(callback) {
+  shelljs.exec('docker-compose stop --timeout 0 app', () => {
+    shelljs.exec('docker-compose rm --force app', () => {
+      callback()
+    })
+  })
+}
+
+function _followLogs() {
+  shelljs.exec('docker-compose logs --follow --timestamps app', { async: true })
 }
 
 module.exports = function watch(config) {
@@ -101,13 +129,12 @@ module.exports = function watch(config) {
     })
   })
 
-  // Up app container and linked containers.
-  shelljs.exec('docker-compose up -d --build app', () => {
-    console.log('up and running')
+  _startAppContainer(() => {
+    _followLogs()
   })
 
   process.on('SIGINT', () => {
-    shelljs.exec('docker-compose stop -t 0 app', () => {
+    _removeAppContainer(() => {
       process.exit(0)
     })
   })
