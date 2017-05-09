@@ -58,7 +58,6 @@ AUTH0_DOMAIN               |                  | Auth0 tenant. Required when not 
 AUTH0_CLIENT_ID            |                  | Auth0 application id. Required when not using offline-user.
 AUTH0_CALLBACK_PATH        | /callback        | Path to Auth0 callback.
 AUTH0_SILENT_CALLBACK_PATH | /silent-callback | Path to Auth0 silent-callback.
-COOKIE_SECRET              |                  | String for signing cookies
 IP                         | 0.0.0.0          | Server ip address
 MONGO_DB                   | local            | MongoDB database name
 MONGO_HOST                 | localhost        | MongoDB host
