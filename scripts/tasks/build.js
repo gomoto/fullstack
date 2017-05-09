@@ -8,6 +8,8 @@ const ido = {
   vendor: require('ido/npm')
 }
 
+const buildPrefix = '[build]'
+
 module.exports = function build(config) {
   /**
    * Client
@@ -23,11 +25,11 @@ module.exports = function build(config) {
     return ido.html.bundle(config.client.html.entry, config.client.html.bundle, htmlOptions)
   })
   .then(() => {
-    console.log('client is done')
+    console.log(`${buildPrefix} client is done`)
   })
   .catch((error) => {
-    console.log('client error', error, error.stack)
-    throw new Error('build: client')
+    console.log(`${buildPrefix} client error`, error.stack)
+    return Promise.reject(error)
   })
 
   /**
@@ -38,11 +40,11 @@ module.exports = function build(config) {
     ido.file.copy(config.server.html.srcGlob, config.server.html.destDir)
   ])
   .then(() => {
-    console.log('server is done')
+    console.log(`${buildPrefix} server is done`)
   })
   .catch((error) => {
-    console.log('server error', error, error.stack)
-    throw new Error('build: server')
+    console.log(`${buildPrefix} server error`, error.stack)
+    return Promise.reject(error)
   })
 
   return Promise.all([client, server])

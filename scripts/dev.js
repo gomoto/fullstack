@@ -5,7 +5,7 @@ const watchConfig = require('./config/dev.watch')
 
 build(buildConfig).then(() => {
   watch(watchConfig).then(() => {
-    console.log('Ready')
+    console.log('Watching files')
   })
 })
 .catch(() => {
