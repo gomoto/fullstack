@@ -4,3 +4,7 @@ build(config)
 .then(() => {
   console.log('Build is done')
 })
+.catch((error) => {
+  console.error(error, error.stack)
+  process.exit(1)
+})

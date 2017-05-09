@@ -1,4 +1,7 @@
+const child_process = require('child_process')
 const fs = require('fs')
+const path = require('path')
+const write = require('write')
 const ido = {
   file: require('ido/file'),
   html: require('ido/html'),
@@ -47,5 +50,16 @@ module.exports = function build(config) {
     return Promise.reject(error)
   })
 
-  return Promise.all([client, server])
+  /**
+   * Git commit
+   */
+  const git = new Promise((resolve, reject) => {
+    const commit = child_process.execSync('git rev-parse HEAD')
+    const gitPath = path.join(process.cwd(), config.git)
+    write(gitPath, commit, (err) => {
+      err ? reject(err) : resolve()
+    })
+  })
+
+  return Promise.all([client, server, git])
 }

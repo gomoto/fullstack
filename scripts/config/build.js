@@ -74,5 +74,6 @@ module.exports = {
         tsconfig: `${root}/server/tsconfig.json`
       }
     }
-  }
+  },
+  git: `${root}/build/git-sha.txt`
 }

@@ -8,6 +8,7 @@ build(buildConfig).then(() => {
     console.log('Watching files')
   })
 })
-.catch(() => {
+.catch((error) => {
+  console.error(error, error.stack)
   process.exit(1)
 })
