@@ -1,12 +1,11 @@
 const chokidar = require('chokidar')
 const livereload = require('gulp-livereload')
-const rimraf = require('rimraf')
-const shelljs = require('shelljs')
 const ido = {
   file: require('ido/file'),
   html: require('ido/html'),
   image: require('ido/image'),
   scss: require('ido/scss'),
+  process: require('ido/process'),
   typescript: require('ido/typescript'),
   vendor: require('ido/npm')
 }
@@ -49,7 +48,7 @@ module.exports = function watch(config) {
    * Resources
    */
   _watch(config.resources.images.watch, () => {
-    return _remove(config.resources.images.destDir)
+    return ido.file.remove(config.resources.images.destDir)
     .then(() => {
       return ido.image.copy(config.resources.images.srcGlob, config.resources.images.destDir, config.resources.images.options)
     })
@@ -62,7 +61,7 @@ module.exports = function watch(config) {
    * Server
    */
   _watch(config.server.typescript.watch, () => {
-    return _remove(`${config.server.typescript.destDir}/**/*.js`)
+    return ido.file.remove(`${config.server.typescript.destDir}/**/*.js`)
     .then(() => {
       return ido.typescript.transpile(config.server.typescript.srcGlob, config.server.typescript.destDir, config.server.typescript.options)
     })
@@ -71,7 +70,7 @@ module.exports = function watch(config) {
     })
   })
   _watch(config.server.html.watch, () => {
-    return _remove(`${config.server.html.destDir}/**/*.html`)
+    return ido.file.remove(`${config.server.html.destDir}/**/*.html`)
     .then(() => {
       return ido.file.copy(config.server.html.srcGlob, config.server.html.destDir)
     })
@@ -80,17 +79,15 @@ module.exports = function watch(config) {
     })
   })
 
-  _startAppContainer(() => {
+  return _startAppContainer().then(() => {
+    // Gracefully remove app container on ctrl-c signal.
+    process.on('SIGINT', () => {
+      _removeAppContainer().then(() => {
+        process.exit(0)
+      })
+    })
     _followLogs()
   })
-
-  process.on('SIGINT', () => {
-    _removeAppContainer(() => {
-      process.exit(0)
-    })
-  })
-
-  return Promise.resolve()
 }
 
 /**
@@ -110,54 +107,49 @@ function _watch(glob, callback) {
 }
 
 /**
- * Remove files matching given glob and return a promise.
- * @param {string} glob
+ * Up app container and linked containers.
  * @return {Promise}
  */
-function _remove(glob) {
-  return new Promise((resolve, reject) => {
-    rimraf(glob, (error) => {
-      error ? reject(error) : resolve()
-    })
-  })
-}
-
-/**
- * Up app container and linked containers.
- */
-function _startAppContainer(callback) {
-  shelljs.exec('docker-compose pull', () => {
-    shelljs.exec('docker-compose up -d app', () => {
-      callback()
-    })
+function _startAppContainer() {
+  return ido.process.spawn('docker-compose pull').then(() => {
+    return ido.process.spawn('docker-compose up -d app')
   })
 }
 
 /**
  * Restart app container. Linked containers are not affected.
+ * @return {Promise}
  */
 function _restartAppContainer() {
-  _removeAppContainer(() => {
-    shelljs.exec('docker-compose create app', () => {
-      shelljs.exec('docker-compose start app', () => {
-        _followLogs()
-      })
-    })
+  _removeAppContainer().then(() => {
+    return ido.process.spawn('docker-compose create app')
+  }).then(() => {
+    return ido.process.spawn('docker-compose start app')
+  }).then(() => {
+    // Intentionally not returning this promise.
+    _followLogs()
   })
 }
 
 /**
  * Remove app container. Linked containers are not affected.
  * If logs are being followed, this will cause them to stop being followed.
+ * @return {Promise}
  */
 function _removeAppContainer(callback) {
-  shelljs.exec('docker-compose stop --timeout 0 app', () => {
-    shelljs.exec('docker-compose rm --force app', () => {
-      callback()
-    })
+  return ido.process.spawn('docker-compose stop --timeout 0 app').then(() => {
+    return ido.process.spawn('docker-compose rm --force app')
   })
 }
 
+/**
+ * Follow app container logs. Exclude the returned promise from a promise chain
+ * when you don't want to wait for the logs process to exit.
+ * @return {Promise}
+ */
 function _followLogs() {
-  shelljs.exec('docker-compose logs --follow --timestamps app', { async: true })
+  return ido.process.spawn('docker-compose logs --follow --timestamps app')
+  .catch((code) => {
+    console.error(`Logs exiting with code ${code}`)
+  })
 }
