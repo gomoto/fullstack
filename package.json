@@ -5,7 +5,6 @@
     "postinstall": "docker-compose run --rm npm-client && docker-compose run --rm npm-server",
     "build": "node scripts/build",
     "clean": "rimraf build",
-    "dev": "node scripts/dev",
     "postversion": "git push && git push --tags"
   },
   "devDependencies": {

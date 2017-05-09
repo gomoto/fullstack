@@ -25,6 +25,9 @@ Builds code and runs application in a container.
 Client file changes trigger livereloads.
 Server file changes trigger app container restarts.
 
+Note: Running this script inside npm scripts interferes with graceful removal of
+app container.
+
 Online
 
 ```
