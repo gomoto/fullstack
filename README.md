@@ -6,11 +6,8 @@
 
 `npm i`
 
-`docker-compose run --rm npm-client`
-
-`docker-compose run --rm npm-server`
-
-Client and server directories each have their own node_modules.
+Client and server directories each have their own node_modules, which
+automatically get installed during `npm i`
 
 
 
