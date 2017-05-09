@@ -10,6 +10,71 @@ const ido = {
   vendor: require('ido/npm')
 }
 
+module.exports = function watch(config) {
+  /**
+   * Client
+   */
+  _watch(config.client.scss.watch, () => {
+    return ido.scss.bundle(config.client.scss.entry, config.client.scss.bundle, config.client.scss.options)
+  })
+  _watch(config.client.typescript.watch, (done) => {
+    return ido.typescript.bundle(config.client.typescript.entry, config.client.typescript.bundle, config.client.typescript.options)
+  })
+  _watch(config.client.vendor.watch, () => {
+    return ido.vendor.bundle(config.client.vendor.entry, config.client.vendor.bundle, config.client.vendor.options)
+  })
+  _watch(config.client.html.watch, () => {
+    return ido.html.bundle(config.client.html.entry, config.client.html.bundle, config.client.html.options)
+  })
+  _watch(config.client.globals.watch, () => {
+    return ido.html.bundle(config.client.html.entry, config.client.html.bundle, config.client.html.options)
+  })
+
+  /**
+   * Resources
+   */
+  _watch(config.resources.images.watch, () => {
+    return _remove(config.resources.images.destDir)
+    .then(() => {
+      return ido.image.copy(config.resources.images.srcGlob, config.resources.images.destDir, config.resources.images.options)
+    })
+  })
+
+  /**
+   * Server
+   */
+  _watch(config.server.typescript.watch, () => {
+    return _remove(`${config.server.typescript.destDir}/**/*.js`)
+    .then(() => {
+      return ido.typescript.transpile(config.server.typescript.srcGlob, config.server.typescript.destDir, config.server.typescript.options)
+    })
+    .then(() => {
+      _restartAppContainer()
+    })
+  })
+  _watch(config.server.html.watch, () => {
+    return _remove(`${config.server.html.destDir}/**/*.html`)
+    .then(() => {
+      return ido.file.copy(config.server.html.srcGlob, config.server.html.destDir)
+    })
+    .then(() => {
+      _restartAppContainer()
+    })
+  })
+
+  _startAppContainer(() => {
+    _followLogs()
+  })
+
+  process.on('SIGINT', () => {
+    _removeAppContainer(() => {
+      process.exit(0)
+    })
+  })
+
+  return Promise.resolve()
+}
+
 /**
  * Watch files matching given glob.
  * @param {string} glob
@@ -75,69 +140,4 @@ function _removeAppContainer(callback) {
 
 function _followLogs() {
   shelljs.exec('docker-compose logs --follow --timestamps app', { async: true })
-}
-
-module.exports = function watch(config) {
-  /**
-   * Client
-   */
-  _watch(config.client.scss.watch, () => {
-    return ido.scss.bundle(config.client.scss.entry, config.client.scss.bundle, config.client.scss.options)
-  })
-  _watch(config.client.typescript.watch, (done) => {
-    return ido.typescript.bundle(config.client.typescript.entry, config.client.typescript.bundle, config.client.typescript.options)
-  })
-  _watch(config.client.vendor.watch, () => {
-    return ido.vendor.bundle(config.client.vendor.entry, config.client.vendor.bundle, config.client.vendor.options)
-  })
-  _watch(config.client.html.watch, () => {
-    return ido.html.bundle(config.client.html.entry, config.client.html.bundle, config.client.html.options)
-  })
-  _watch(config.client.globals.watch, () => {
-    return ido.html.bundle(config.client.html.entry, config.client.html.bundle, config.client.html.options)
-  })
-
-  /**
-   * Resources
-   */
-  _watch(config.resources.images.watch, () => {
-    return _remove(config.resources.images.destDir)
-    .then(() => {
-      return ido.image.copy(config.resources.images.srcGlob, config.resources.images.destDir, config.resources.images.options)
-    })
-  })
-
-  /**
-   * Server
-   */
-  _watch(config.server.typescript.watch, () => {
-    return _remove(`${config.server.typescript.destDir}/**/*.js`)
-    .then(() => {
-      return ido.typescript.transpile(config.server.typescript.srcGlob, config.server.typescript.destDir, config.server.typescript.options)
-    })
-    .then(() => {
-      _restartAppContainer()
-    })
-  })
-  _watch(config.server.html.watch, () => {
-    return _remove(`${config.server.html.destDir}/**/*.html`)
-    .then(() => {
-      return ido.file.copy(config.server.html.srcGlob, config.server.html.destDir)
-    })
-    .then(() => {
-      _restartAppContainer()
-    })
-  })
-
-  _startAppContainer(() => {
-    _followLogs()
-  })
-
-  process.on('SIGINT', () => {
-    _removeAppContainer(() => {
-      process.exit(0)
-    })
-  })
-
-  return Promise.resolve()
 }
