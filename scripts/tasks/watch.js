@@ -126,8 +126,10 @@ function _remove(glob) {
  * Up app container and linked containers.
  */
 function _startAppContainer(callback) {
-  shelljs.exec('docker-compose up -d app', () => {
-    callback()
+  shelljs.exec('docker-compose pull', () => {
+    shelljs.exec('docker-compose up -d app', () => {
+      callback()
+    })
   })
 }
 
