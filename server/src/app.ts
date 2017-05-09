@@ -36,12 +36,12 @@ app.use(shrinkRay());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(methodOverride());
-app.use(cookieParser(settings.cookieSecret));
+app.use(cookieParser());
 
 // cross-site request forgery protection (angular)
 app.use(csurf({ cookie: true }));
 app.use((req, res, next) => {
-  res.cookie('XSRF-TOKEN', req.csrfToken() /*, { signed: true }*/);
+  res.cookie('XSRF-TOKEN', req.csrfToken());
   next();
 });
 

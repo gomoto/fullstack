@@ -39,8 +39,6 @@ const settings = {
 
   offlineUser: offlineUser.settings,
 
-  cookieSecret: process.env.COOKIE_SECRET,
-
   mongo: mongo.settings,
 
   // Should we populate the DB with sample data?
