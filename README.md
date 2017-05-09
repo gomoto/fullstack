@@ -74,50 +74,10 @@ PORT                       | 9000             | Server port
 
 
 
-## Project structure
+## Project build
 
 ```
-├── client/
-│   ├── src/
-│   │   ├── auth/
-│   │   ├── components/
-│   │   ├── config/
-│   │   ├── errors/
-│   │   ├── styles/
-│   │   ├── index.html
-│   │   ├── index.scss
-│   │   ├── index.ts
-│   ├── package.json
-│   ├── tsconfig.json
-│
-├── resources/
-│   ├── fonts/
-│   │   ├── font.otf
-│   │   ├── font.ttf
-│   │   ├── font.woff
-│   ├── images/
-│   │   ├── favicon.ico
-│   │   ├── image.png
-│
-├── server/
-│   ├── src/
-│   │   ├── routes/
-│   │   ├── settings/
-│   │   ├── app.ts
-│   │   ├── index.ts
-│   ├── package.json
-│   ├── tsconfig.json
-│
-├── README.md
-
-```
-
-
-
-## Project structure (built)
-
-```
-├── app/
+├── build/
 │   ├── client/
 │   │   ├── index.html
 │   │   ├── static/
