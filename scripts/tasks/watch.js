@@ -1,6 +1,5 @@
 const chokidar = require('chokidar')
 const livereload = require('gulp-livereload')
-const rimraf = require('rimraf')
 const ido = {
   file: require('ido/file'),
   html: require('ido/html'),
@@ -49,7 +48,7 @@ module.exports = function watch(config) {
    * Resources
    */
   _watch(config.resources.images.watch, () => {
-    return _remove(config.resources.images.destDir)
+    return ido.file.remove(config.resources.images.destDir)
     .then(() => {
       return ido.image.copy(config.resources.images.srcGlob, config.resources.images.destDir, config.resources.images.options)
     })
@@ -62,7 +61,7 @@ module.exports = function watch(config) {
    * Server
    */
   _watch(config.server.typescript.watch, () => {
-    return _remove(`${config.server.typescript.destDir}/**/*.js`)
+    return ido.file.remove(`${config.server.typescript.destDir}/**/*.js`)
     .then(() => {
       return ido.typescript.transpile(config.server.typescript.srcGlob, config.server.typescript.destDir, config.server.typescript.options)
     })
@@ -71,7 +70,7 @@ module.exports = function watch(config) {
     })
   })
   _watch(config.server.html.watch, () => {
-    return _remove(`${config.server.html.destDir}/**/*.html`)
+    return ido.file.remove(`${config.server.html.destDir}/**/*.html`)
     .then(() => {
       return ido.file.copy(config.server.html.srcGlob, config.server.html.destDir)
     })
@@ -103,19 +102,6 @@ function _watch(glob, callback) {
     console.time(key)
     callback().then(() => {
       console.timeEnd(key)
-    })
-  })
-}
-
-/**
- * Remove files matching given glob and return a promise.
- * @param {string} glob
- * @return {Promise}
- */
-function _remove(glob) {
-  return new Promise((resolve, reject) => {
-    rimraf(glob, (error) => {
-      error ? reject(error) : resolve()
     })
   })
 }

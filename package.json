@@ -8,7 +8,7 @@
   "devDependencies": {
     "chokidar": "^1.6.1",
     "gulp-livereload": "^3.8.1",
-    "ido": "git+https://git@github.com/gomoto/ido.git#ab72e5045f084f156a42327eb52047345924bd5d",
+    "ido": "git+https://git@github.com/gomoto/ido.git#2028123850a1daf26f324b89099cd2ecd1e4bb05",
     "write": "^0.3.3"
   }
 }
