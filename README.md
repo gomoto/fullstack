@@ -17,6 +17,12 @@ automatically get installed during `npm i`
 
 
 
+## Clean
+
+`rm -rf build`
+
+
+
 ## Development
 
 `node scripts/dev`

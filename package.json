@@ -3,8 +3,6 @@
   "version": "0.0.0",
   "scripts": {
     "postinstall": "docker-compose run --rm npm-client && docker-compose run --rm npm-server",
-    "build": "node scripts/build",
-    "clean": "rimraf build",
     "postversion": "git push && git push --tags"
   },
   "devDependencies": {
