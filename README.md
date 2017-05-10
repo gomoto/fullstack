@@ -84,12 +84,12 @@ scripts/dev.sh
 
 environment variable       | default          | description
 -------------------------- | ---------------- | -----------------------------------------------------------
-API_ROLE                   |                  | Role required for a user to access /api endpoints.
+API_ROLE                   | api              | Role required for a user to access /api endpoints.
 AUTH0_DOMAIN               |                  | Auth0 tenant. Required when not using offline-user.
 AUTH0_CLIENT_ID            |                  | Auth0 application id. Required when not using offline-user.
 AUTH0_CALLBACK_PATH        | /callback        | Path to Auth0 callback.
 AUTH0_SILENT_CALLBACK_PATH | /silent-callback | Path to Auth0 silent-callback.
-IP                         | 0.0.0.0          | Server ip address
+IP                         | 0.0.0.0          | Server ip address in container
 MONGO_DB                   | local            | MongoDB database name
 MONGO_HOST                 | localhost        | MongoDB host
 MONGO_PORT                 | 27017            | MongoDB port
@@ -101,7 +101,8 @@ OFFLINE_USER_LAST_NAME     | Last             | Offline user's last name.
 OFFLINE_USER_GROUPS        |                  | Offline user's groups, as a comma-separated list.
 OFFLINE_USER_ROLES         |                  | Offline user's roles, as a comma-separated list.
 OFFLINE_USER_PERMISSIONS   |                  | Offline user's permissions, as a comma-separated list.
-PORT                       | 9000             | Server port
+PORT                       | 9000             | Server port in container
+DEV_PORT (development only)| 9000             | Port on host machine
 
 Each environment variable should appear in `scripts/dev.sh` and `docker-compose.yml`.
 
