@@ -42,6 +42,9 @@ module.exports = function watch(config) {
   })
   _watch(config.client.globals.watch, () => {
     return ido.html.bundle(config.client.html.entry, config.client.html.bundle, config.client.html.options)
+    .then(() => {
+      livereload.changed(config.client.html.livereload)
+    })
   })
 
   /**

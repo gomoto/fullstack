@@ -2,6 +2,8 @@
 
 docker pull gomoto/node-docker-compose
 
+# Port 35729 is for LiveReload
+
 docker run \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v $(pwd):$(pwd) \
@@ -9,6 +11,8 @@ docker run \
   --interactive \
   --tty \
   --rm \
+  --expose 35729 \
+  -p 35729:35729 \
   -e AUTH0_DOMAIN=$AUTH0_DOMAIN \
   -e AUTH0_CLIENT_ID=$AUTH0_CLIENT_ID \
   -e OFFLINE_USER=$OFFLINE_USER \
