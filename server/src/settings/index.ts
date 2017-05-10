@@ -43,8 +43,7 @@ const settings = {
   // Should we populate the DB with sample data?
   seedDB: false,
 
-  // List of user roles
-  userRoles: ['guest', 'user', 'admin']
+  apiRole: process.env.API_ROLE || 'api',
 }
 
 export { settings }

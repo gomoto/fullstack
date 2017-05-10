@@ -6,7 +6,10 @@ import express = require('express');
 import mongodb = require('mongodb');
 import logger from '../components/logger';
 import { settings } from '../settings';
-import { authenticationRequired } from '../middleware';
+import {
+  authenticationRequired,
+  rolesRequired
+} from '../middleware';
 
 // Routes
 import thing from './api/thing';
@@ -18,7 +21,7 @@ export default (database: mongodb.Db) => {
   const router = express.Router();
 
   // API routes
-  router.use('/api', authenticationRequired());
+  router.use('/api', authenticationRequired(), rolesRequired([settings.apiRole]));
   router.use('/api/things', thing(database));
 
   router.get('/version', (req, res) => {
