@@ -12,7 +12,7 @@ services:
       - ./build:/build
       - ./server/node_modules:/build/server/node_modules
     ports:
-      - "9000:9000"
+      - "${DEV_PORT:-9000}:9000"
     environment:
       API_ROLE: "${API_ROLE:-api}"
       AUTH0_DOMAIN: "${AUTH0_DOMAIN}"
