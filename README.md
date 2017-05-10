@@ -103,6 +103,8 @@ OFFLINE_USER_ROLES         |                  | Offline user's roles, as a comma
 OFFLINE_USER_PERMISSIONS   |                  | Offline user's permissions, as a comma-separated list.
 PORT                       | 9000             | Server port
 
+Each environment variable should appear in `scripts/dev.sh` and `docker-compose.yml`.
+
 
 
 ## AngularJS

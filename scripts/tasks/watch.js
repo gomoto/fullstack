@@ -114,6 +114,7 @@ function _watch(glob, callback) {
  * @return {Promise}
  */
 function _startAppContainer() {
+  // TODO: Only pull app container and its links
   return ido.process.spawn('docker-compose pull').then(() => {
     return ido.process.spawn('docker-compose up -d app')
   })
