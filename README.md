@@ -84,7 +84,7 @@ scripts/dev.sh
 
 environment variable       | default          | description
 -------------------------- | ---------------- | -----------------------------------------------------------
-API_ROLE                   |                  | Role required for a user to access /api endpoints.
+API_ROLE                   | api              | Role required for a user to access /api endpoints.
 AUTH0_DOMAIN               |                  | Auth0 tenant. Required when not using offline-user.
 AUTH0_CLIENT_ID            |                  | Auth0 application id. Required when not using offline-user.
 AUTH0_CALLBACK_PATH        | /callback        | Path to Auth0 callback.
