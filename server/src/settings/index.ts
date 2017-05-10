@@ -22,7 +22,6 @@ const settings = {
   ip: process.env.IP || '0.0.0.0',
 
   paths: {
-    application: path.join(root, 'client', 'index.html'),
     client: path.join(root, 'client'),
     resources: path.join(root, 'resources'),
     static: path.join(root, 'client', 'static'),
@@ -44,8 +43,7 @@ const settings = {
   // Should we populate the DB with sample data?
   seedDB: false,
 
-  // List of user roles
-  userRoles: ['guest', 'user', 'admin']
+  apiRole: process.env.API_ROLE || 'api',
 }
 
 export { settings }

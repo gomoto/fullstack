@@ -84,6 +84,7 @@ scripts/dev.sh
 
 environment variable       | default          | description
 -------------------------- | ---------------- | -----------------------------------------------------------
+API_ROLE                   |                  | Role required for a user to access /api endpoints.
 AUTH0_DOMAIN               |                  | Auth0 tenant. Required when not using offline-user.
 AUTH0_CLIENT_ID            |                  | Auth0 application id. Required when not using offline-user.
 AUTH0_CALLBACK_PATH        | /callback        | Path to Auth0 callback.
@@ -101,6 +102,8 @@ OFFLINE_USER_GROUPS        |                  | Offline user's groups, as a comm
 OFFLINE_USER_ROLES         |                  | Offline user's roles, as a comma-separated list.
 OFFLINE_USER_PERMISSIONS   |                  | Offline user's permissions, as a comma-separated list.
 PORT                       | 9000             | Server port
+
+Each environment variable should appear in `scripts/dev.sh` and `docker-compose.yml`.
 
 
 

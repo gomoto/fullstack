@@ -6,7 +6,10 @@ import express = require('express');
 import mongodb = require('mongodb');
 import logger from '../components/logger';
 import { settings } from '../settings';
-import { authenticationRequired } from '../middleware';
+import {
+  authenticationRequired,
+  rolesRequired
+} from '../middleware';
 
 // Routes
 import thing from './api/thing';
@@ -18,7 +21,7 @@ export default (database: mongodb.Db) => {
   const router = express.Router();
 
   // API routes
-  router.use('/api', authenticationRequired());
+  router.use('/api', authenticationRequired(), rolesRequired([settings.apiRole]));
   router.use('/api/things', thing(database));
 
   router.get('/version', (req, res) => {
@@ -47,7 +50,7 @@ export default (database: mongodb.Db) => {
     var hostHeader = req.headers.host;
     var xForwardedHostHeader = req.headers['x-forwarded-host'];
     const host = req.app.get('trust proxy') ? (xForwardedHostHeader || hostHeader) : hostHeader;
-    res.render(`${settings.paths.views}/auth0-silent-callback.html`, {
+    res.render('auth0-silent-callback.html', {
       AUTH0_CLIENT_ID: settings.auth0.clientId,
       AUTH0_DOMAIN: settings.auth0.domain,
       TARGET_ORIGIN: `${req.protocol}://${host}`
@@ -64,7 +67,7 @@ export default (database: mongodb.Db) => {
   // All other routes should redirect to the index.html
   router.route('/*')
   .get((req, res) => {
-    res.render(settings.paths.application, {
+    res.render('index.html', {
       AUTH0_CLIENT_ID: settings.auth0.clientId,
       AUTH0_DOMAIN: settings.auth0.domain,
       NODE_ENV: settings.env,
