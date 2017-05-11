@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
 
+# Node image should match Dockerfile base image.
+docker pull node:7.5.0
+
 # NPM for server modules.
-docker-compose run --rm npm-server "$@"
+# Running npm as root sets unsafe-perm to false; set it back to true.
+docker run \
+  -v $(pwd):$(pwd) \
+  --workdir=$(pwd)/server \
+  --interactive \
+  --tty \
+  --rm \
+  node:7.5.0 \
+  npm --unsafe-perm "$@"
