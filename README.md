@@ -11,7 +11,7 @@
 
 ## Install
 
-`scripts/npm-install.sh`
+`scripts/npm i`
 
 or `npm i` if node installed
 

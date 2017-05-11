@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # NPM for top-level node modules.
+# Running npm as root sets unsafe-perm to false; set it back to true.
 
 docker pull gomoto/node-docker-compose
 
