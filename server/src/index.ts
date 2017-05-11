@@ -7,11 +7,9 @@ import * as mongo from './services/mongo';
 import { app } from './app';
 const server = http.createServer(app);
 
-// Connect to mongodb database once and reuse the connection.
-// https://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html#mongoclient-connection-pooling
 mongo.initialize(settings.mongo.url)
-.then((database) => {
-  app.use(routes(database));
+.then(() => {
+  app.use(routes());
 })
 .then(() => {
   server.listen(settings.port, settings.ip, () => {

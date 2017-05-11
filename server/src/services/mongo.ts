@@ -5,6 +5,17 @@ import logger from '../components/logger';
 const logPrefix = `[mongo]`;
 
 /**
+ * MongoDB database connection, which is null until connected.
+ * "Connect to mongodb database once and reuse the connection."
+ * https://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html#mongoclient-connection-pooling
+ */
+let _database: mongodb.Db = null;
+
+function getDatabase(): mongodb.Db {
+  return _database;
+}
+
+/**
  * Try to connect to a mongodb database.
  * Retry until connected or until maximum tries are exhausted.
  * If connection succeeds, resolve returned promise with the database object.
@@ -39,6 +50,7 @@ function initialize(url: string, options?: MongoInitializationOptions): Promise<
         }
         return;
       }
+      _database = database;
       resolve(database);
     });
   })
@@ -67,5 +79,6 @@ export interface MongoInitializationOptions {
 }
 
 export {
+  getDatabase,
   initialize
 }

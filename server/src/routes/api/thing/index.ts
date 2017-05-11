@@ -1,11 +1,10 @@
 import express = require('express');
-import * as mongodb from 'mongodb';
 import { ThingControllerFactory } from './thing.controller';
 import { permissionRequired } from '../../../middleware';
 
-export default (database: mongodb.Db) => {
+export default () => {
   const router = express.Router();
-  const controller = ThingControllerFactory(database);
+  const controller = ThingControllerFactory();
 
   router.get('/', permissionRequired('read:thing'), controller.index.bind(controller));
   router.get('/:id', permissionRequired('read:thing'), controller.show.bind(controller));
