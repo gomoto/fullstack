@@ -46,7 +46,10 @@ app.use((req, res, next) => {
 });
 
 if(settings.env === 'development' || settings.env === 'test') {
-  app.use(require('connect-livereload')());
+  // Inject script tag for LiveReload into index.html.
+  app.use(require('connect-livereload')({
+    port: settings.livereload.port
+  }));
   app.use(errorHandler()); // Error handler - has to be last
 }
 

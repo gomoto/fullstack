@@ -12,7 +12,7 @@ docker run \
   --tty \
   --rm \
   --expose 35729 \
-  -p 35729 \
+  -p ${LIVERELOAD_PORT:-35729}:35729 \
   $(printenv | grep -v ^TMPDIR | sed 's/^/-e /') \
   gomoto/node-docker-compose \
   /bin/bash -c 'ln -s /Users /users; node scripts/dev'
