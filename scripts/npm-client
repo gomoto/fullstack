@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# NPM for client modules.
+docker-compose run --rm npm-client "$@"

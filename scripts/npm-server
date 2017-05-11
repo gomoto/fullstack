@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# NPM for server modules.
+docker-compose run --rm npm-server "$@"
