@@ -2,6 +2,8 @@
 
 docker pull gomoto/node-docker-compose
 
+# NPM for top-level node modules.
+# Running npm as root sets unsafe-perm to false; set it back to true.
 docker run \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v $(pwd):$(pwd) \
@@ -10,4 +12,4 @@ docker run \
   --tty \
   --rm \
   gomoto/node-docker-compose \
-  npm install
+  npm --unsafe-perm "$@"

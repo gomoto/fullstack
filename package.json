@@ -2,7 +2,7 @@
   "name": "",
   "version": "0.0.0",
   "scripts": {
-    "postinstall": "docker-compose run --rm npm-client && docker-compose run --rm npm-server",
+    "postinstall": "scripts/npm-client install && scripts/npm-server install",
     "postversion": "git push && git push --tags"
   },
   "devDependencies": {
