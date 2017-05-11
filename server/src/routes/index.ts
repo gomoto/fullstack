@@ -3,7 +3,6 @@
  */
 
 import express = require('express');
-import mongodb = require('mongodb');
 import logger from '../components/logger';
 import { settings } from '../settings';
 import {
@@ -15,14 +14,14 @@ import {
 import thing from './api/thing';
 
 // Router factory
-export default (database: mongodb.Db) => {
+export default () => {
   logger.info('Configuring routes');
 
   const router = express.Router();
 
   // API routes
   router.use('/api', authenticationRequired(), rolesRequired([settings.apiRole]));
-  router.use('/api/things', thing(database));
+  router.use('/api/things', thing());
 
   router.get('/version', (req, res) => {
     res.sendFile(`${settings.root}/git-sha.txt`);

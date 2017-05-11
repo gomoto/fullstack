@@ -8,14 +8,13 @@
  */
 
 import express = require('express');
-import * as mongodb from 'mongodb';
 import { ThingModel, ThingModelFactory } from './thing.model';
 
 class ThingController {
   private model: ThingModel;
 
-  constructor(database: mongodb.Db) {
-    this.model = ThingModelFactory(database);
+  constructor() {
+    this.model = ThingModelFactory();
   }
 
   // Gets a list of Things
@@ -107,8 +106,8 @@ class ThingController {
   }
 }
 
-function ThingControllerFactory (database: mongodb.Db): ThingController {
-  return new ThingController(database);
+function ThingControllerFactory (): ThingController {
+  return new ThingController();
 }
 
 export {

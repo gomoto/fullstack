@@ -1,16 +1,11 @@
 import * as mongodb from 'mongodb';
+import * as mongo from '../../../services/mongo';
 
 class ThingModel {
 
-  private db: mongodb.Db;
-
-  constructor(database: mongodb.Db) {
-    this.db = database;
-  }
-
   createForUser(user_id: string, data: any): Promise<mongodb.InsertOneWriteOpResult> {
     return new Promise<mongodb.InsertOneWriteOpResult>((resolve, reject) => {
-      this.db.collection('thing', null, (err, collection) => {
+      mongo.getDatabase().collection('thing', null, (err, collection) => {
         if (err) {
           reject(err);
           return;
@@ -33,7 +28,7 @@ class ThingModel {
 
   findAllForUser(user_id: string): Promise<Thing[]> {
     return new Promise<Thing[]>((resolve, reject) => {
-      this.db.collection('thing', null, (err, collection) => {
+      mongo.getDatabase().collection('thing', null, (err, collection) => {
         if (err) {
           reject(err);
           return;
@@ -55,8 +50,8 @@ class ThingModel {
 
 }
 
-function ThingModelFactory(database: mongodb.Db): ThingModel {
-  return new ThingModel(database);
+function ThingModelFactory(): ThingModel {
+  return new ThingModel();
 }
 
 // Thing document
