@@ -16,7 +16,12 @@
 or `npm i` if node installed
 
 Client and server directories each have their own node_modules, which
-automatically get installed during `npm i`
+automatically get installed during `npm i`, but individual modules can also be
+installed.
+
+Client modules: `scripts/npm-client i`
+
+Server modules: `scripts/npm-server i`
 
 
 
