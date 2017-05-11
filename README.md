@@ -107,9 +107,10 @@ OFFLINE_USER_GROUPS        |                  | Offline user's groups, as a comm
 OFFLINE_USER_ROLES         |                  | Offline user's roles, as a comma-separated list.
 OFFLINE_USER_PERMISSIONS   |                  | Offline user's permissions, as a comma-separated list.
 PORT                       | 9000             | Server port in container
-DEV_PORT (development only)| 9000             | Port on host machine
+DEV_PORT (dev only)        | 9000             | Port on host machine
+LIVERELOAD_PORT (dev only) | 35729            | LiveReload port
 
-Each environment variable should appear in `scripts/dev.sh` and `docker-compose.yml`.
+Each environment variable should appear in `docker-compose.yml`.
 
 
 

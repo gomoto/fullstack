@@ -44,6 +44,11 @@ const settings = {
   seedDB: false,
 
   apiRole: process.env.API_ROLE || 'api',
+
+  // Which port is serving the LiveReload script?
+  livereload: {
+    port: process.env.LIVERELOAD_PORT || 35729
+  }
 }
 
 export { settings }
