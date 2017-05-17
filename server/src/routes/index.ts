@@ -5,13 +5,7 @@
 import express = require('express');
 import logger from '../components/logger';
 import { settings } from '../settings';
-import {
-  authenticationRequired,
-  rolesRequired
-} from '../middleware';
-
-// Routes
-import thing from './api/thing';
+import { apiRouter } from './api';
 
 // Router factory
 export default () => {
@@ -20,8 +14,7 @@ export default () => {
   const router = express.Router();
 
   // API routes
-  router.use('/api', authenticationRequired(), rolesRequired([settings.apiRole]));
-  router.use('/api/things', thing());
+  router.use('/api', apiRouter());
 
   router.get('/version', (req, res) => {
     res.sendFile(`${settings.root}/git-sha.txt`);
