@@ -1,10 +1,13 @@
 import * as auth0 from 'auth0-js';
+import * as jwtDecode from 'jwt-decode';
 import { Auth0User } from '../../../shared';
 
 const host = `${window.location.protocol}//${window.location.host}`;
-const idTokenName = 'id_token';
+
+let _idToken = '';
+
 const authOptions = {
-  scope: 'openid user_id app_metadata user_metadata',
+  scope: 'openid user_id email app_metadata user_metadata multifactor',
   responseType: 'id_token'
 };
 
@@ -17,7 +20,7 @@ const webAuth = new auth0.WebAuth({
 });
 
 /**
- * User object.
+ * User object (decoded token).
  * @private
  */
 let _user: Auth0User = null;
@@ -81,37 +84,10 @@ function authenticateOnline(callback: (err: auth0.Auth0Error) => void): void {
         return;
       }
       setIdToken(parsedHash.idToken);
-      setUser(parsedHash.idTokenPayload);
       callback(null);
     });
   } else {
-    /**
-     * Renew tokens or redirect to Auth0 to start auth flow.
-     * If user is signed into another app via SSO, tokens should get renewed.
-     */
-    webAuth.renewAuth({
-      scope: authOptions.scope,
-      responseType: authOptions.responseType,
-      clientID: AppGlobals.settings.AUTH0_CLIENT_ID,
-      redirectUri: `${host}${AppGlobals.settings.SILENT_CALLBACK_PATH}`,
-      usePostMessage: true
-    }, (err, response: auth0.Auth0DecodedHash) => {
-      /**
-       * If unable to renew tokens, start auth flow from the beginning by
-       * redirecting to auth0.com
-       */
-      if (err) {
-        // Redirect to this path after reaching callback URL.
-        const redirect = window.location.pathname;
-        webAuth.authorize({
-          scope: authOptions.scope,
-          responseType: authOptions.responseType,
-          redirectUri: `${host}${AppGlobals.settings.CALLBACK_PATH}?${AppGlobals.settings.CALLBACK_REDIRECT}=${redirect}`
-        });
-        return;
-      }
-      setIdToken(response.idToken);
-      setUser(response.idTokenPayload);
+    renewIdToken((token) => {
       callback(null);
     });
   }
@@ -130,21 +106,82 @@ function unauthenticate(): void {
 }
 
 /**
+ * Get id token asynchronously.
+ * If token does not exist or is expired, attempt to fetch a new token.
+ * If renewal fails, redirect user to the login page.
+ * @public
+ */
+function fetchIdToken(callback: (error: Error, token: string) => void): void {
+  // Return dummy token when offline.
+  if (AppGlobals.settings.OFFLINE_USER === 'true') {
+    callback(null, '');
+    return;
+  }
+  let token = getIdToken();
+  if (token && !isTokenExpired(token)) {
+    callback(null, token);
+    return;
+  }
+  renewIdToken((token) => {
+    callback(null, token);
+  })
+}
+
+/**
+ * Renew tokens or redirect to Auth0 to start auth flow.
+ * If user is signed into another app via SSO, tokens should get renewed.
+ * Make sure user object (decoded token) is always in sync with token.
+ * @public
+ */
+function renewIdToken(callback: (token: string) => void): void {
+  webAuth.renewAuth({
+    scope: authOptions.scope,
+    responseType: authOptions.responseType,
+    clientID: AppGlobals.settings.AUTH0_CLIENT_ID,
+    redirectUri: `${host}${AppGlobals.settings.SILENT_CALLBACK_PATH}`,
+    usePostMessage: true
+  }, (err: auth0.Auth0Error, response: auth0.Auth0DecodedHash) => {
+    if (err) {
+      login();
+      return;
+    }
+    const token = response.idToken;
+    setIdToken(token);
+    callback(token);
+  });
+}
+
+/**
+ * Start auth flow from the beginning by redirecting to auth0.com.
+ */
+function login(): void {
+  // Redirect to current path after reaching callback URL.
+  const redirectUponReturn = window.location.pathname;
+  webAuth.authorize({
+    scope: authOptions.scope,
+    responseType: authOptions.responseType,
+    redirectUri: `${host}${AppGlobals.settings.CALLBACK_PATH}?${AppGlobals.settings.CALLBACK_REDIRECT}=${redirectUponReturn}`
+  });
+}
+
+/**
  * Get id token.
  * @public
  * @return {string}
  */
 function getIdToken(): string {
-  return localStorage.getItem(idTokenName);
+  return _idToken;
 }
 
 /**
  * Save id token.
+ * Keep decoded token (user object) in sync with token.
  * @private
  * @param {string} idToken
  */
 function setIdToken(idToken: string): void {
-  localStorage.setItem(idTokenName, idToken);
+  _idToken = idToken;
+  setUser(jwtDecode(idToken));
 }
 
 /**
@@ -152,12 +189,35 @@ function setIdToken(idToken: string): void {
  * @private
  */
 function removeIdToken(): void {
-  localStorage.removeItem(idTokenName);
+  _idToken = '';
+}
+
+// From angular-jwt
+function getTokenExpirationDate(token: string) {
+  const decodedToken = jwtDecode(token);
+  if(typeof decodedToken.exp === 'undefined') {
+    return null;
+  }
+  const expiry = new Date(0); // The 0 here is the key, which sets the date to the epoch
+  expiry.setUTCSeconds(decodedToken.exp);
+  return expiry;
+}
+
+// From angular-jwt
+function isTokenExpired(token: string, offsetSeconds = 0) {
+  const expiry = getTokenExpirationDate(token);
+  if (expiry === null) {
+    return false;
+  }
+  // Token expired?
+  return !(expiry.valueOf() > (new Date().valueOf() + (offsetSeconds * 1000)));
 }
 
 export {
   authenticate,
+  fetchIdToken,
   getIdToken,
   getUser,
+  renewIdToken,
   unauthenticate
 }
