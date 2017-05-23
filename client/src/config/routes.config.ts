@@ -16,10 +16,6 @@ function config(
     // Otherwise redirect to dashboard state.
     redirect: 'dashboard'
   })
-  // .state('login', {
-  //   url: '/login',
-  //   external: true
-  // })
   .state('dashboard', {
     url: '/dashboard',
     template: '<dashboard></dashboard>'

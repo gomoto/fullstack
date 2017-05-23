@@ -1,4 +1,4 @@
-import { getIdToken } from './auth-zero';
+import { fetchIdToken } from './auth-zero';
 
 /**
  * Inject providers into config block.
@@ -17,9 +17,18 @@ function configure(
 ): void {
   // Configuration for angular-jwt
   jwtOptionsProvider.config({
-    tokenGetter: () => {
-      return getIdToken();
-    }
+    // Get token asynchronously.
+    tokenGetter: ['$q', ($q: ng.IQService) => {
+      const deferred = $q.defer<string>();
+      fetchIdToken((error, token) => {
+        if (error) {
+          deferred.reject(error);
+          return;
+        }
+        deferred.resolve(token);
+      });
+      return deferred.promise;
+    }]
   });
 
   // Add Authorization header to requests
